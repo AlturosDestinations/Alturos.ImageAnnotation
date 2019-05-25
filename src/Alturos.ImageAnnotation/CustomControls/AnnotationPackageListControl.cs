@@ -53,6 +53,11 @@ namespace Alturos.ImageAnnotation.CustomControls
         {
             try
             {
+                this.groupBox1.Invoke((MethodInvoker)delegate
+                {
+                    this.groupBox1.Text = $"Packages";
+                });
+
                 this.dataGridView1.Invoke((MethodInvoker)delegate { this.dataGridView1.Visible = false; });
 
                 this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = true; });
@@ -65,6 +70,11 @@ namespace Alturos.ImageAnnotation.CustomControls
                     {
                         this.dataGridView1.Visible = true;
                         this.dataGridView1.DataSource = packages;
+                    });
+
+                    this.groupBox1.Invoke((MethodInvoker)delegate
+                    {
+                        this.groupBox1.Text = $"Packages ({packages.Length})";
                     });
                 }
             }
