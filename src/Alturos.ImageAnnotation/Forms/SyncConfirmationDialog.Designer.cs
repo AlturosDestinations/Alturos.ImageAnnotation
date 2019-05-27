@@ -98,7 +98,7 @@
             // 
             // ColumnName
             // 
-            this.ColumnName.DataPropertyName = "PackagePath";
+            this.ColumnName.DataPropertyName = "PackageName";
             this.ColumnName.HeaderText = "Package Path";
             this.ColumnName.Name = "ColumnName";
             this.ColumnName.ReadOnly = true;
