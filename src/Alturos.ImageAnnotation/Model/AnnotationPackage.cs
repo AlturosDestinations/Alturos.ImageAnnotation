@@ -9,15 +9,14 @@ namespace Alturos.ImageAnnotation.Model
     {
         public string ExternalId { get; set; }
 
-        public string PackagePath { get; set; }
-        public string DisplayName { get; set; }
+        public string PackageName { get; set; }
         public long TotalBytes { get; set; }
 
         public bool Downloading { get; set; }
+        public bool AvailableLocally { get; set; }
         public double DownloadProgress { get; set; }
         public long TransferredBytes { get; set; }
 
-        public bool Extracted { get; set; }
         public bool IsDirty { get; set; }
 
         public bool IsAnnotated { get; set; }
@@ -27,7 +26,7 @@ namespace Alturos.ImageAnnotation.Model
 
         private FileInfo[] _files;
 
-        public void PrepareImages()
+        public void PrepareImages(string packagePath)
         {
             if (this.Images == null)
             {
@@ -37,7 +36,7 @@ namespace Alturos.ImageAnnotation.Model
             if (this._files == null)
             {
                 var allowedExtensions = new[] { ".png", ".jpg", ".bmp" };
-                this._files = Directory.GetFiles(this.PackagePath)
+                this._files = Directory.GetFiles(packagePath)
                     .Where(file => allowedExtensions.Any(file.ToLower().EndsWith))
                     .Select(o => new FileInfo(o))
                     .OrderBy(o => o.Name.GetFirstNumber())
@@ -71,12 +70,12 @@ namespace Alturos.ImageAnnotation.Model
             this.IsAnnotated = annotationPercentage >= 100;
         }
 
-        public string DirtyDisplayName
+        public string DirtyPackageName
         {
             get
             {
                 // An asterisk is commonly attached to filenames when they are dirty
-                return $"{this.DisplayName}{(this.IsDirty ? "*" : "")}";
+                return $"{this.PackageName}{(this.IsDirty ? "*" : "")}";
             }
         }
     }

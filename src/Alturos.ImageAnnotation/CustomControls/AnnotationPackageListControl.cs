@@ -84,23 +84,6 @@ namespace Alturos.ImageAnnotation.CustomControls
             }
         }
 
-        public void UnzipPackage(AnnotationPackage package)
-        {
-            var zipFilePath = package.PackagePath;
-
-            var extractedPackagePath = Path.Combine(Path.GetDirectoryName(zipFilePath), Path.GetFileNameWithoutExtension(zipFilePath));
-            if (Directory.Exists(extractedPackagePath))
-            {
-                Directory.Delete(extractedPackagePath, true);
-            }
-
-            ZipFile.ExtractToDirectory(package.PackagePath, extractedPackagePath);
-            File.Delete(zipFilePath);
-
-            package.Extracted = true;
-            package.PackagePath = extractedPackagePath;
-        }
-
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             var package = this.dataGridView1.CurrentRow.DataBoundItem as AnnotationPackage;
@@ -120,7 +103,6 @@ namespace Alturos.ImageAnnotation.CustomControls
             this.PackageSelected?.Invoke(package);
 
             var downloadedPackage = await this._annotationPackageProvider.RefreshPackageAsync(package);
-            this.UnzipPackage(downloadedPackage);
 
             this.PackageSelected?.Invoke(downloadedPackage);
         }
@@ -135,7 +117,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 return;
             }
 
-            if (item.Extracted)
+            if (item.AvailableLocally)
             {
                 this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightBlue;
                 return;

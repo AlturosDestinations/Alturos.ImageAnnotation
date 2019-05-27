@@ -32,8 +32,8 @@ namespace Alturos.ImageAnnotation.Forms
             var tags = this.dataGridViewTags.SelectedRows.Cast<DataGridViewRow>().Select(o => o.DataBoundItem as AnnotationPackageTag);
 
             var items = await this._annotationPackageProvider.GetPackagesAsync(tags.ToArray());
-            this.dataGridViewResult.DataSource = items.Where(o => o.Extracted).ToList();
-            this.labelPackageCount.Text = $"{items.Length.ToString()} found, {items.Count(o => o.Extracted)} ready to export";
+            this.dataGridViewResult.DataSource = items.Where(o => o.AvailableLocally).ToList();
+            this.labelPackageCount.Text = $"{items.Length.ToString()} found, {items.Count(o => o.AvailableLocally)} ready to export";
         }
 
         private void ButtonExport_Click(object sender, EventArgs e)
