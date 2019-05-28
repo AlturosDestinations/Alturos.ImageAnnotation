@@ -38,6 +38,21 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             this._bucketName = ConfigurationManager.AppSettings["bucketName"];
             this._extractionFolder = ConfigurationManager.AppSettings["extractionFolder"];
 
+            if (string.IsNullOrEmpty(accessKeyId))
+            {
+                throw new ConfigurationErrorsException("The accessKeyId has not been configured. Please set it in the App.config");
+            }
+
+            if (string.IsNullOrEmpty(secretAccessKey))
+            {
+                throw new ConfigurationErrorsException("The secretAccessKey has not been configured. Please set it in the App.config");
+            }
+
+            if (string.IsNullOrEmpty(this._bucketName))
+            {
+                throw new ConfigurationErrorsException("The bucketName has not been configured. Please set it in the App.config");
+            }
+
             this._client = new AmazonS3Client(accessKeyId, secretAccessKey, RegionEndpoint.EUWest1);
             this._dynamoDbClient = new AmazonDynamoDBClient(accessKeyId, secretAccessKey, RegionEndpoint.EUWest1);
 
@@ -115,15 +130,16 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 try
                 {
                     var packageInfos = context.ScanAsync<AnnotationPackageDto>(scanConditions);
-
+                    
                     // Create packages
                     var retrievedPackages = await packageInfos.GetNextSetAsync().ConfigureAwait(false);
+
+                    //var packages = retrievedPackages.Where(o => o.Id == "S-1-16142028098304285338.zip").Select(o => new AnnotationPackage
                     var packages = retrievedPackages.Select(o => new AnnotationPackage
                     {
                         ExternalId = o.Id,
-                        Extracted = false,
-                        PackagePath = o.Id,
-                        DisplayName = Path.GetFileNameWithoutExtension(o.Id),
+                        PackageName = Path.GetFileNameWithoutExtension(o.Id),
+                        AvailableLocally = false,
                         IsAnnotated = o.IsAnnotated,
                         AnnotationPercentage = o.AnnotationPercentage,
                         Tags = o.Tags,
@@ -137,15 +153,16 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                     // Get local folder if the package was already downloaded
                     foreach (var package in packages)
                     {
-                        var path = Path.Combine(this._extractionFolder, Path.GetFileNameWithoutExtension(package.DisplayName));
+                        var path = Path.Combine(this._extractionFolder, package.PackageName);
                         if (Directory.Exists(path))
                         {
-                            package.Extracted = true;
-                            package.PackagePath = path;
-
-                            package.PrepareImages();
+                            package.AvailableLocally = true;
+                            package.PrepareImages(path);
                         }
                     }
+
+                    //TODO: Put that thing in its own table...
+                    packages.RemoveAll(o => o.PackageName == "AnnotationConfiguration");
 
                     return packages.ToArray();
                 }
@@ -158,8 +175,6 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
         public async Task<AnnotationPackage> RefreshPackageAsync(AnnotationPackage package)
         {
-            package.Extracted = false;
-            package.PackagePath = $"{package.DisplayName}.zip";
             return await this.DownloadPackageAsync(package).ConfigureAwait(false);
         }
 
@@ -170,39 +185,38 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 Directory.CreateDirectory(this._extractionFolder);
             }
 
-            var dir = new S3DirectoryInfo(this._client, this._bucketName);
-            var file = dir.GetFile(package.PackagePath);
-
-            var zipFilePath = Path.Combine(this._extractionFolder, file.Name);
-
-            package.Downloading = true;
-
-            var request = new GetObjectRequest
+            var files = await this._client.ListObjectsV2Async(new ListObjectsV2Request
             {
                 BucketName = this._bucketName,
-                Key = file.Name
-            };
-            using (var response = this._client.GetObject(request))
-            {
-                this._currentlyDownloadedPackages.Add(package);
-                response.WriteObjectProgressEvent += this.WriteObjectProgressEvent;
+                Prefix = package.PackageName
+            });
 
-                await response.WriteResponseStreamToFileAsync(zipFilePath, false, new System.Threading.CancellationToken()).ConfigureAwait(false);
+            var request = new TransferUtilityDownloadDirectoryRequest();
+            request.BucketName = this._bucketName;
+            request.S3Directory = package.PackageName;
+            request.LocalDirectory = Path.Combine(this._extractionFolder, package.PackageName);
 
-                this._currentlyDownloadedPackages.Remove(package);
-                response.WriteObjectProgressEvent -= this.WriteObjectProgressEvent;
-            }
+            this._currentlyDownloadedPackages.Add(package);
+            request.DownloadedDirectoryProgressEvent += this.DownloadedDirectoryProgressEvent;
+
+            var fileTransferUtility = new TransferUtility(this._client);
+            await fileTransferUtility.DownloadDirectoryAsync(request);
+
+            this._currentlyDownloadedPackages.Remove(package);
+            request.DownloadedDirectoryProgressEvent -= this.DownloadedDirectoryProgressEvent;
 
             package.Downloading = false;
-            package.PackagePath = zipFilePath;
-            package.DisplayName = Path.GetFileNameWithoutExtension(zipFilePath);
+            package.AvailableLocally = true;
+
+            var path = Path.Combine(this._extractionFolder, package.PackageName);
+            package.PrepareImages(path);
 
             return await Task.FromResult(package);
         }
 
-        private void WriteObjectProgressEvent(object sender, WriteObjectProgressArgs e)
+        private void DownloadedDirectoryProgressEvent(object sender, DownloadDirectoryProgressArgs e)
         {
-            var item = this._currentlyDownloadedPackages.FirstOrDefault(o => o.PackagePath == ((GetObjectResponse)sender).Key);
+            var item = this._currentlyDownloadedPackages.FirstOrDefault(o => o.PackageName == ((TransferUtilityDownloadDirectoryRequest)sender).S3Directory);
             if (item == null)
             {
                 return;
@@ -210,7 +224,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
             item.TotalBytes = e.TotalBytes;
             item.TransferredBytes = e.TransferredBytes;
-            item.DownloadProgress = e.PercentDone;
+            item.DownloadProgress = (e.TransferredBytes / (double)e.TotalBytes) * 100;
         }
 
         public async Task UploadPackageAsync(string packagePath)

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Alturos.ImageAnnotation.Forms
@@ -13,7 +14,10 @@ namespace Alturos.ImageAnnotation.Forms
     public partial class ExportDialog : Form
     {
         private readonly IAnnotationPackageProvider _annotationPackageProvider;
+
+        private IAnnotationExportProvider _annotationExportProvider;
         private AnnotationConfig _config;
+        private bool _exporting;
 
         public ExportDialog(IAnnotationPackageProvider annotationPackageProvider)
         {
@@ -23,6 +27,15 @@ namespace Alturos.ImageAnnotation.Forms
             this._config = this._annotationPackageProvider.GetAnnotationConfigAsync().GetAwaiter().GetResult();
             this.dataGridViewTags.DataSource = this._config.Tags;
 
+            // Set export providers
+            var exportProviders = new List<IAnnotationExportProvider>()
+            {
+                new YoloAnnotationExportProvider(this._config),
+            };
+
+            this.comboBoxExportProvider.DataSource = exportProviders;
+
+            // Make data grid views not create their own columns
             this.dataGridViewTags.AutoGenerateColumns = false;
             this.dataGridViewResult.AutoGenerateColumns = false;
         }
@@ -32,18 +45,21 @@ namespace Alturos.ImageAnnotation.Forms
             var tags = this.dataGridViewTags.SelectedRows.Cast<DataGridViewRow>().Select(o => o.DataBoundItem as AnnotationPackageTag);
 
             var items = await this._annotationPackageProvider.GetPackagesAsync(tags.ToArray());
-            this.dataGridViewResult.DataSource = items.Where(o => o.Extracted).ToList();
-            this.labelPackageCount.Text = $"{items.Length.ToString()} found, {items.Count(o => o.Extracted)} ready to export";
+            this.dataGridViewResult.DataSource = items.ToList();
+            this.labelPackageCount.Text = $"{items.Length.ToString()} found";
         }
 
-        private void ButtonExport_Click(object sender, EventArgs e)
+        private async void ButtonExport_Click(object sender, EventArgs e)
         {
-            this.Export();
+            await this.Export();
             this.Close();
         }
 
-        private void Export()
+        private async Task Export()
         {
+            this.EnableExportMenu(false);
+            this._exporting = true;
+            
             // Create folders
             var path = DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss");
             if (!Directory.Exists(path))
@@ -51,78 +67,53 @@ namespace Alturos.ImageAnnotation.Forms
                 Directory.CreateDirectory(path);
             }
 
-            // Copy images and create file lists
-            this.CreateFiles(path);
+            // Download what's missing
+            var packages = this.dataGridViewResult.DataSource as List<AnnotationPackage>;
+
+            for (var i = 0; i < packages.Count; i++)
+            {
+                if (!packages[i].AvailableLocally)
+                {
+                    packages[i].Downloading = true;
+                    this.downloadControl.ShowDownloadDialog(packages[i]);
+
+                    packages[i] = await this._annotationPackageProvider.DownloadPackageAsync(packages[i]);
+
+                    this.downloadControl.Hide();
+                }
+            }
+
+            // Export
+            this._annotationExportProvider.Export(path, packages.ToArray());
+
+            this.EnableExportMenu(true);
+            this._exporting = false;
 
             // Open folder
             Process.Start(path);
         }
 
-        /// <summary>
-        /// Creates the images, the annotation info and a list for every object listing each image that features it
-        /// </summary>
-        private void CreateFiles(string path)
+        private void EnableExportMenu(bool enable)
         {
-            var stringBuilderDict = new Dictionary<int, StringBuilder>();
-            foreach (var objectClass in this._config.ObjectClasses)
+            this.Invoke((MethodInvoker)delegate
             {
-                stringBuilderDict[objectClass.Id] = new StringBuilder();
-            }
-
-            var usedFileNames = new List<string>();
-            var packages = this.dataGridViewResult.DataSource as List<AnnotationPackage>;
-            var images = packages.SelectMany(o => o.Images);
-
-            foreach (var image in images)
-            {
-                if (image.BoundingBoxes == null || image.BoundingBoxes.Count == 0)
-                {
-                    continue;
-                }
-
-                var newFileName = Path.GetFileName(image.ImagePath);
-                while (usedFileNames.Contains(newFileName))
-                {
-                    newFileName = Path.GetFileNameWithoutExtension(image.ImagePath) + "(1)" + Path.GetExtension(image.ImagePath);
-                }
-
-                usedFileNames.Add(newFileName);
-
-                var newFilePath = Path.Combine(path, newFileName);
-
-                for (var i = 0; i < image.BoundingBoxes.Count; i++)
-                {
-                    if (image.BoundingBoxes[i] != null)
-                    {
-                        stringBuilderDict[image.BoundingBoxes[i].ObjectIndex].AppendLine(Path.GetFullPath(newFilePath));
-                    }
-                }
-
-                // Copy image
-                File.Copy(image.ImageName, newFilePath, true);
-
-                // Create bounding boxes
-                this.CreateBoundingBoxes(image.BoundingBoxes, Path.ChangeExtension(newFilePath, "txt"));
-            }
+                this.comboBoxExportProvider.Enabled = enable;
+                this.buttonSearch.Enabled = enable;
+                this.buttonExport.Enabled = enable;
+            });
         }
 
-        /// <summary>
-        /// Writes the bounding boxes to a file
-        /// </summary>
-        private void CreateBoundingBoxes(List<AnnotationBoundingBox> boundingBoxes, string filePath)
+        private void ComboBoxExportProvider_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var sb = new StringBuilder();
-            foreach (var box in boundingBoxes)
-            {
-                sb.Append(box.ObjectIndex).Append(" ");
-                sb.Append(box.CenterX).Append(" ");
-                sb.Append(box.CenterY).Append(" ");
-                sb.Append(box.Width).Append(" ");
-                sb.Append(box.Height).Append(" ");
-                sb.AppendLine();
-            }
+            this._annotationExportProvider = this.comboBoxExportProvider.SelectedItem as IAnnotationExportProvider;
+        }
 
-            File.WriteAllText(filePath, sb.ToString());
+        private void ExportDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (this._exporting)
+            {
+                e.Cancel = true;
+            }
         }
     }
 }

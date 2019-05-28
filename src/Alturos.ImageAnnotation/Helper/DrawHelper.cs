@@ -1,4 +1,5 @@
 ﻿using Alturos.ImageAnnotation.Model;
+using System;
 using System.Drawing;
 
 namespace Alturos.ImageAnnotation.Helper
@@ -11,11 +12,24 @@ namespace Alturos.ImageAnnotation.Helper
 
         public static Image DrawBoxes(AnnotationImage image)
         {
-            var originalBitmap = new Bitmap(image.ImagePath);
-            var bitmap = new Bitmap(originalBitmap, ImageSize);
-            originalBitmap.Dispose();
+            try
+            {
+                var originalBitmap = new Bitmap(image.ImagePath);
+                var bitmap = new Bitmap(originalBitmap, ImageSize);
+                originalBitmap.Dispose();
 
-            return bitmap;
+                return bitmap;
+            }
+            catch (Exception)
+            {
+                var bitmap = new Bitmap(ImageSize.Width, ImageSize.Height);
+                using (var graphics = Graphics.FromImage(bitmap))
+                {
+                    graphics.Clear(Color.White);
+                }
+
+                return bitmap;
+            }
         }
 
         public static Color GetColorCode(int index)

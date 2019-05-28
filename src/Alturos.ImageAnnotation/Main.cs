@@ -15,6 +15,7 @@ namespace Alturos.ImageAnnotation
         private readonly IAnnotationPackageProvider _annotationPackageProvider;
         private readonly AnnotationConfig _annotationConfig;
         private bool _changedPackage;
+        private AnnotationPackage _selectedPackage;
 
         public Main()
         {
@@ -64,11 +65,17 @@ namespace Alturos.ImageAnnotation
         private void EnableMainMenu(bool enable)
         {
             this.Invoke((MethodInvoker)delegate {
+                var showDownloadControl = enable;
+                if (this._selectedPackage != null)
+                {
+                    showDownloadControl = enable && !this._selectedPackage.AvailableLocally;
+                }
+
                 this.menuStripMain.Enabled = enable;
                 this.annotationPackageListControl.Enabled = enable;
                 this.annotationImageListControl.Visible = enable;
                 this.annotationDrawControl.Visible = enable;
-                this.downloadControl.Visible = enable;
+                this.downloadControl.Visible = showDownloadControl;
                 this.tagListControl.Visible = enable;
             });
         }
@@ -113,7 +120,7 @@ namespace Alturos.ImageAnnotation
             this.annotationPackageListControl.PackageSelected += this.PackageSelected;
 
             this.annotationImageListControl.ImageSelected += this.ImageSelected;
-            this.downloadControl.ExtractionRequested += this.ExtractionRequestedAsync;
+            this.downloadControl.DownloadRequested += this.DownloadRequestedAsync;
 
             this.annotationDrawControl.ImageEdited += this.ImageEdited;
 
@@ -127,7 +134,7 @@ namespace Alturos.ImageAnnotation
             this.annotationPackageListControl.PackageSelected -= this.PackageSelected;
 
             this.annotationImageListControl.ImageSelected -= this.ImageSelected;
-            this.downloadControl.ExtractionRequested -= this.ExtractionRequestedAsync;
+            this.downloadControl.DownloadRequested -= this.DownloadRequestedAsync;
 
             this.annotationDrawControl.ImageEdited -= this.ImageEdited;
 
@@ -243,6 +250,7 @@ namespace Alturos.ImageAnnotation
         private void PackageSelected(AnnotationPackage package)
         {
             this._changedPackage = true;
+            this._selectedPackage = package;
 
             this.annotationImageListControl.Hide();
             this.downloadControl.Hide();
@@ -255,7 +263,7 @@ namespace Alturos.ImageAnnotation
             {
                 this.tagListControl.SetTags(package);
 
-                if (package.Extracted)
+                if (package.AvailableLocally)
                 {
                     this.annotationImageListControl.SetPackage(package);
                     this.annotationImageListControl.Show();
@@ -310,10 +318,9 @@ namespace Alturos.ImageAnnotation
             this.annotationPackageListControl.RefreshData();
         }
 
-        private async Task ExtractionRequestedAsync(AnnotationPackage package)
+        private async Task DownloadRequestedAsync(AnnotationPackage package)
         {
             var downloadedPackage = await this._annotationPackageProvider.DownloadPackageAsync(package);
-            this.annotationPackageListControl.UnzipPackage(downloadedPackage);
 
             // Select folder to apply the images after extraction
             this.PackageSelected(downloadedPackage);
