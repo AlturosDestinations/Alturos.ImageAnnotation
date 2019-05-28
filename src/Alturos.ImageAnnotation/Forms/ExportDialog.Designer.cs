@@ -40,6 +40,7 @@
             this.comboBoxExportProvider = new System.Windows.Forms.ComboBox();
             this.groupBoxExportProvider = new System.Windows.Forms.GroupBox();
             this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.downloadControl = new Alturos.ImageAnnotation.CustomControls.DownloadControl();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTags)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).BeginInit();
             this.groupBoxTags.SuspendLayout();
@@ -123,6 +124,7 @@
             this.groupBoxResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxResult.Controls.Add(this.downloadControl);
             this.groupBoxResult.Controls.Add(this.dataGridViewResult);
             this.groupBoxResult.Location = new System.Drawing.Point(6, 3);
             this.groupBoxResult.Name = "groupBoxResult";
@@ -204,6 +206,16 @@
             this.ColumnName.Name = "ColumnName";
             this.ColumnName.ReadOnly = true;
             // 
+            // downloadControl
+            // 
+            this.downloadControl.BackColor = System.Drawing.Color.Transparent;
+            this.downloadControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.downloadControl.Location = new System.Drawing.Point(3, 16);
+            this.downloadControl.Name = "downloadControl";
+            this.downloadControl.Size = new System.Drawing.Size(549, 148);
+            this.downloadControl.TabIndex = 6;
+            this.downloadControl.Visible = false;
+            // 
             // ExportDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -242,5 +254,6 @@
         private System.Windows.Forms.ComboBox comboBoxExportProvider;
         private System.Windows.Forms.GroupBox groupBoxExportProvider;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
+        private CustomControls.DownloadControl downloadControl;
     }
 }

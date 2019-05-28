@@ -4,8 +4,6 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.IO.Compression;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -99,7 +97,10 @@ namespace Alturos.ImageAnnotation.CustomControls
                 return;
             }
 
+            package.AvailableLocally = false;
             package.Downloading = true;
+            package.DownloadProgress = 0;
+
             this.PackageSelected?.Invoke(package);
 
             var downloadedPackage = await this._annotationPackageProvider.RefreshPackageAsync(package);

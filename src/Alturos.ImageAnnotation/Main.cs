@@ -120,7 +120,7 @@ namespace Alturos.ImageAnnotation
             this.annotationPackageListControl.PackageSelected += this.PackageSelected;
 
             this.annotationImageListControl.ImageSelected += this.ImageSelected;
-            this.downloadControl.ExtractionRequested += this.ExtractionRequestedAsync;
+            this.downloadControl.DownloadRequested += this.DownloadRequestedAsync;
 
             this.annotationDrawControl.ImageEdited += this.ImageEdited;
 
@@ -134,7 +134,7 @@ namespace Alturos.ImageAnnotation
             this.annotationPackageListControl.PackageSelected -= this.PackageSelected;
 
             this.annotationImageListControl.ImageSelected -= this.ImageSelected;
-            this.downloadControl.ExtractionRequested -= this.ExtractionRequestedAsync;
+            this.downloadControl.DownloadRequested -= this.DownloadRequestedAsync;
 
             this.annotationDrawControl.ImageEdited -= this.ImageEdited;
 
@@ -318,7 +318,7 @@ namespace Alturos.ImageAnnotation
             this.annotationPackageListControl.RefreshData();
         }
 
-        private async Task ExtractionRequestedAsync(AnnotationPackage package)
+        private async Task DownloadRequestedAsync(AnnotationPackage package)
         {
             var downloadedPackage = await this._annotationPackageProvider.DownloadPackageAsync(package);
 

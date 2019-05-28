@@ -38,6 +38,21 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             this._bucketName = ConfigurationManager.AppSettings["bucketName"];
             this._extractionFolder = ConfigurationManager.AppSettings["extractionFolder"];
 
+            if (string.IsNullOrEmpty(accessKeyId))
+            {
+                throw new ConfigurationErrorsException("The accessKeyId has not been configured. Please set it in the App.config");
+            }
+
+            if (string.IsNullOrEmpty(secretAccessKey))
+            {
+                throw new ConfigurationErrorsException("The secretAccessKey has not been configured. Please set it in the App.config");
+            }
+
+            if (string.IsNullOrEmpty(this._bucketName))
+            {
+                throw new ConfigurationErrorsException("The bucketName has not been configured. Please set it in the App.config");
+            }
+
             this._client = new AmazonS3Client(accessKeyId, secretAccessKey, RegionEndpoint.EUWest1);
             this._dynamoDbClient = new AmazonDynamoDBClient(accessKeyId, secretAccessKey, RegionEndpoint.EUWest1);
 
@@ -115,9 +130,10 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 try
                 {
                     var packageInfos = context.ScanAsync<AnnotationPackageDto>(scanConditions);
-
+                    
                     // Create packages
                     var retrievedPackages = await packageInfos.GetNextSetAsync().ConfigureAwait(false);
+
                     //var packages = retrievedPackages.Where(o => o.Id == "S-1-16142028098304285338.zip").Select(o => new AnnotationPackage
                     var packages = retrievedPackages.Select(o => new AnnotationPackage
                     {
@@ -145,6 +161,9 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                         }
                     }
 
+                    //TODO: Put that thing in its own table...
+                    packages.RemoveAll(o => o.PackageName == "AnnotationConfiguration");
+
                     return packages.ToArray();
                 }
                 catch (Exception exception)
@@ -165,9 +184,6 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             {
                 Directory.CreateDirectory(this._extractionFolder);
             }
-
-            package.Downloading = true;
-            package.AvailableLocally = false;
 
             var files = await this._client.ListObjectsV2Async(new ListObjectsV2Request
             {

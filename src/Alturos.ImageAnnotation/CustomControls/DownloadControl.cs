@@ -7,7 +7,7 @@ namespace Alturos.ImageAnnotation.CustomControls
 {
     public partial class DownloadControl : UserControl
     {
-        public event Func<AnnotationPackage, Task> ExtractionRequested;
+        public event Func<AnnotationPackage, Task> DownloadRequested;
 
         private AnnotationPackage _packageToExtract;
 
@@ -22,6 +22,9 @@ namespace Alturos.ImageAnnotation.CustomControls
             this.buttonDownload.Visible = !package.Downloading;
             this.progressBarDownload.Visible = package.Downloading;
             this.labelPercentage.Visible = package.Downloading;
+            this.labelNotification.Text = package.Downloading ?
+                $"Downloading {package.PackageName}. Please wait..." :
+                "The package is not available locally yet. Please download it first";
 
             this._packageToExtract = package;
 
@@ -53,16 +56,11 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private async void buttonDownload_Click(object sender, EventArgs e)
         {
-            this.buttonDownload.Visible = false;
-            this.progressBarDownload.Visible = true;
-            this.labelPercentage.Visible = true;
-
-            this.labelPercentage.BringToFront();
-
             this._packageToExtract.Downloading = true;
-            _ = Task.Run(() => this.ShowDownloadProgress(this._packageToExtract));
 
-            await this.ExtractionRequested?.Invoke(this._packageToExtract);
+            this.ShowDownloadDialog(this._packageToExtract);
+
+            await this.DownloadRequested?.Invoke(this._packageToExtract);
         }
     }
 }

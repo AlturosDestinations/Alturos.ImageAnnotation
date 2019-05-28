@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Alturos.ImageAnnotation.Forms
@@ -47,13 +48,13 @@ namespace Alturos.ImageAnnotation.Forms
             this.labelPackageCount.Text = $"{items.Length.ToString()} found";
         }
 
-        private void ButtonExport_Click(object sender, EventArgs e)
+        private async void ButtonExport_Click(object sender, EventArgs e)
         {
-            this.Export();
+            await this.Export();
             this.Close();
         }
 
-        private async void Export()
+        private async Task Export()
         {
             // Create folders
             var path = DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss");
@@ -62,18 +63,28 @@ namespace Alturos.ImageAnnotation.Forms
                 Directory.CreateDirectory(path);
             }
 
-            // Copy images and create file lists
+            this.Invoke((MethodInvoker)delegate { this.Enabled = false; });
+
+            // Download what's missing
             var packages = this.dataGridViewResult.DataSource as List<AnnotationPackage>;
 
             for (var i = 0; i < packages.Count; i++)
             {
                 if (!packages[i].AvailableLocally)
                 {
+                    packages[i].Downloading = true;
+                    this.downloadControl.ShowDownloadDialog(packages[i]);
+
                     packages[i] = await this._annotationPackageProvider.DownloadPackageAsync(packages[i]);
+
+                    this.downloadControl.Hide();
                 }
             }
 
+            // Export
             this._annotationExportProvider.Export(path, packages.ToArray());
+
+            this.Invoke((MethodInvoker)delegate { this.Enabled = true; });
 
             // Open folder
             Process.Start(path);

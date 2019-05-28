@@ -61,7 +61,6 @@
             this.labelNotification.Size = new System.Drawing.Size(294, 13);
             this.labelNotification.TabIndex = 2;
             this.labelNotification.Text = "Package isn\'t available locally, please start the download first";
-            this.labelNotification.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // progressBarDownload
             // 
