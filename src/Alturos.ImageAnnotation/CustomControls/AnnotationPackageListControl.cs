@@ -88,11 +88,36 @@ namespace Alturos.ImageAnnotation.CustomControls
             this.PackageSelected?.Invoke(package);
         }
 
-        private async void redownloadToolStripMenuItem_Click(object sender, EventArgs e)
+        private void DownloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var package = this.dataGridView1.Rows[this.dataGridView1.CurrentCell.RowIndex].DataBoundItem as AnnotationPackage;
+            var packages = new List<AnnotationPackage>();
+            foreach (DataGridViewRow row in this.dataGridView1.SelectedRows)
+            {
+                packages.Add(row.DataBoundItem as AnnotationPackage);
+            }
 
+            packages.ForEach(o => Task.Run(() => this.DownloadPackage(o, false)));
+        }
+
+        private void RedownloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var packages = new List<AnnotationPackage>();
+            foreach (DataGridViewRow row in this.dataGridView1.SelectedRows)
+            {
+                packages.Add(row.DataBoundItem as AnnotationPackage);
+            }
+
+            packages.ForEach(o => Task.Run(() => this.DownloadPackage(o, true)));
+        }
+
+        private async Task DownloadPackage(AnnotationPackage package, bool redownload)
+        {
             if (package.Downloading)
+            {
+                return;
+            }
+
+            if (package.AvailableLocally && !redownload)
             {
                 return;
             }
