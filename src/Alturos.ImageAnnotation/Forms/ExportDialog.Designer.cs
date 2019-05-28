@@ -30,14 +30,16 @@
         {
             this.buttonExport = new System.Windows.Forms.Button();
             this.dataGridViewTags = new System.Windows.Forms.DataGridView();
+            this.ColumnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewResult = new System.Windows.Forms.DataGridView();
             this.groupBoxTags = new System.Windows.Forms.GroupBox();
             this.groupBoxResult = new System.Windows.Forms.GroupBox();
             this.buttonSearch = new System.Windows.Forms.Button();
             this.labelPackageCount = new System.Windows.Forms.Label();
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
+            this.comboBoxExportProvider = new System.Windows.Forms.ComboBox();
+            this.groupBoxExportProvider = new System.Windows.Forms.GroupBox();
             this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTags)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).BeginInit();
             this.groupBoxTags.SuspendLayout();
@@ -46,13 +48,14 @@
             this.splitContainerMain.Panel1.SuspendLayout();
             this.splitContainerMain.Panel2.SuspendLayout();
             this.splitContainerMain.SuspendLayout();
+            this.groupBoxExportProvider.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonExport
             // 
-            this.buttonExport.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.buttonExport.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonExport.Location = new System.Drawing.Point(12, 362);
+            this.buttonExport.Location = new System.Drawing.Point(12, 441);
             this.buttonExport.Name = "buttonExport";
             this.buttonExport.Size = new System.Drawing.Size(564, 41);
             this.buttonExport.TabIndex = 3;
@@ -75,8 +78,15 @@
             this.dataGridViewTags.ReadOnly = true;
             this.dataGridViewTags.RowHeadersVisible = false;
             this.dataGridViewTags.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewTags.Size = new System.Drawing.Size(552, 118);
+            this.dataGridViewTags.Size = new System.Drawing.Size(552, 133);
             this.dataGridViewTags.TabIndex = 4;
+            // 
+            // ColumnValue
+            // 
+            this.ColumnValue.DataPropertyName = "Value";
+            this.ColumnValue.HeaderText = "Value";
+            this.ColumnValue.Name = "ColumnValue";
+            this.ColumnValue.ReadOnly = true;
             // 
             // dataGridViewResult
             // 
@@ -92,31 +102,31 @@
             this.dataGridViewResult.Name = "dataGridViewResult";
             this.dataGridViewResult.ReadOnly = true;
             this.dataGridViewResult.RowHeadersVisible = false;
-            this.dataGridViewResult.Size = new System.Drawing.Size(549, 132);
+            this.dataGridViewResult.Size = new System.Drawing.Size(549, 148);
             this.dataGridViewResult.TabIndex = 5;
             // 
             // groupBoxTags
             // 
-            this.groupBoxTags.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.groupBoxTags.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxTags.Controls.Add(this.dataGridViewTags);
             this.groupBoxTags.Location = new System.Drawing.Point(3, 3);
             this.groupBoxTags.Name = "groupBoxTags";
-            this.groupBoxTags.Size = new System.Drawing.Size(558, 137);
+            this.groupBoxTags.Size = new System.Drawing.Size(558, 152);
             this.groupBoxTags.TabIndex = 6;
             this.groupBoxTags.TabStop = false;
             this.groupBoxTags.Text = "Tags";
             // 
             // groupBoxResult
             // 
-            this.groupBoxResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.groupBoxResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxResult.Controls.Add(this.dataGridViewResult);
             this.groupBoxResult.Location = new System.Drawing.Point(6, 3);
             this.groupBoxResult.Name = "groupBoxResult";
-            this.groupBoxResult.Size = new System.Drawing.Size(555, 151);
+            this.groupBoxResult.Size = new System.Drawing.Size(555, 167);
             this.groupBoxResult.TabIndex = 7;
             this.groupBoxResult.TabStop = false;
             this.groupBoxResult.Text = "Result";
@@ -124,7 +134,7 @@
             // buttonSearch
             // 
             this.buttonSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonSearch.Location = new System.Drawing.Point(3, 143);
+            this.buttonSearch.Location = new System.Drawing.Point(3, 158);
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(75, 24);
             this.buttonSearch.TabIndex = 8;
@@ -136,7 +146,7 @@
             // 
             this.labelPackageCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelPackageCount.AutoSize = true;
-            this.labelPackageCount.Location = new System.Drawing.Point(3, 157);
+            this.labelPackageCount.Location = new System.Drawing.Point(3, 173);
             this.labelPackageCount.Name = "labelPackageCount";
             this.labelPackageCount.Size = new System.Drawing.Size(13, 13);
             this.labelPackageCount.TabIndex = 9;
@@ -144,10 +154,10 @@
             // 
             // splitContainerMain
             // 
-            this.splitContainerMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.splitContainerMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainerMain.Location = new System.Drawing.Point(12, 12);
+            this.splitContainerMain.Location = new System.Drawing.Point(12, 60);
             this.splitContainerMain.Name = "splitContainerMain";
             this.splitContainerMain.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -160,29 +170,46 @@
             // 
             this.splitContainerMain.Panel2.Controls.Add(this.groupBoxResult);
             this.splitContainerMain.Panel2.Controls.Add(this.labelPackageCount);
-            this.splitContainerMain.Size = new System.Drawing.Size(564, 344);
-            this.splitContainerMain.SplitterDistance = 170;
+            this.splitContainerMain.Size = new System.Drawing.Size(564, 375);
+            this.splitContainerMain.SplitterDistance = 185;
             this.splitContainerMain.TabIndex = 10;
+            // 
+            // comboBoxExportProvider
+            // 
+            this.comboBoxExportProvider.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxExportProvider.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxExportProvider.FormattingEnabled = true;
+            this.comboBoxExportProvider.Location = new System.Drawing.Point(3, 16);
+            this.comboBoxExportProvider.Name = "comboBoxExportProvider";
+            this.comboBoxExportProvider.Size = new System.Drawing.Size(558, 21);
+            this.comboBoxExportProvider.TabIndex = 11;
+            this.comboBoxExportProvider.SelectedIndexChanged += new System.EventHandler(this.ComboBoxExportProvider_SelectedIndexChanged);
+            // 
+            // groupBoxExportProvider
+            // 
+            this.groupBoxExportProvider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxExportProvider.Controls.Add(this.comboBoxExportProvider);
+            this.groupBoxExportProvider.Location = new System.Drawing.Point(12, 12);
+            this.groupBoxExportProvider.Name = "groupBoxExportProvider";
+            this.groupBoxExportProvider.Size = new System.Drawing.Size(564, 42);
+            this.groupBoxExportProvider.TabIndex = 5;
+            this.groupBoxExportProvider.TabStop = false;
+            this.groupBoxExportProvider.Text = "Export Provider";
             // 
             // ColumnName
             // 
-            this.ColumnName.DataPropertyName = "PackagePath";
+            this.ColumnName.DataPropertyName = "PackageName";
             this.ColumnName.HeaderText = "Package Path";
             this.ColumnName.Name = "ColumnName";
             this.ColumnName.ReadOnly = true;
-            // 
-            // ColumnValue
-            // 
-            this.ColumnValue.DataPropertyName = "Value";
-            this.ColumnValue.HeaderText = "Value";
-            this.ColumnValue.Name = "ColumnValue";
-            this.ColumnValue.ReadOnly = true;
             // 
             // ExportDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(588, 415);
+            this.ClientSize = new System.Drawing.Size(588, 494);
+            this.Controls.Add(this.groupBoxExportProvider);
             this.Controls.Add(this.splitContainerMain);
             this.Controls.Add(this.buttonExport);
             this.Name = "ExportDialog";
@@ -197,6 +224,7 @@
             this.splitContainerMain.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).EndInit();
             this.splitContainerMain.ResumeLayout(false);
+            this.groupBoxExportProvider.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -210,7 +238,9 @@
         private System.Windows.Forms.Button buttonSearch;
         private System.Windows.Forms.Label labelPackageCount;
         private System.Windows.Forms.SplitContainer splitContainerMain;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnValue;
+        private System.Windows.Forms.ComboBox comboBoxExportProvider;
+        private System.Windows.Forms.GroupBox groupBoxExportProvider;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
     }
 }

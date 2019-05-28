@@ -64,6 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contract\Amazon\AnnotationTagDto.cs" />
+    <Compile Include="Contract\IAnnotationExportProvider.cs" />
+    <Compile Include="Contract\YoloAnnotationExportProvider.cs" />
     <Compile Include="Forms\ConfigurationDialog.cs">
       <SubType>Form</SubType>
     </Compile>

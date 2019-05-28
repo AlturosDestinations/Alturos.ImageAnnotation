@@ -192,6 +192,9 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             package.Downloading = false;
             package.AvailableLocally = true;
 
+            var path = Path.Combine(this._extractionFolder, package.PackageName);
+            package.PrepareImages(path);
+
             return await Task.FromResult(package);
         }
 
