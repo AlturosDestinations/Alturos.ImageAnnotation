@@ -59,7 +59,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 this.dataGridView1.Invoke((MethodInvoker)delegate { this.dataGridView1.Visible = false; });
 
                 this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = true; });
-                var packages = await this._annotationPackageProvider.GetPackagesAsync(true);
+                var packages = await this._annotationPackageProvider.GetPackagesAsync(false);
                 this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = false; });
 
                 if (packages?.Length > 0)
