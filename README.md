@@ -16,3 +16,7 @@ For every AnnotationPackage we have some Metadata, Weather, Color, ... this info
  - Image annotation together
  - Verify Image annotation data
  - Export for yolo (train.txt, test.txt, obj.names) with filters
+
+## Articles of interest
+
+- [Training YOLOv3 : Deep Learning based Custom Object Detector](https://www.learnopencv.com/training-yolov3-deep-learning-based-custom-object-detector/)
