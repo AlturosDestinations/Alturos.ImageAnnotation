@@ -227,6 +227,7 @@
             this.Name = "ExportDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Export";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ExportDialog_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTags)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).EndInit();
             this.groupBoxTags.ResumeLayout(false);

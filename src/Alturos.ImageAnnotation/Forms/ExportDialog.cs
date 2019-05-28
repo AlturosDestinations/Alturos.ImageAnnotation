@@ -17,6 +17,7 @@ namespace Alturos.ImageAnnotation.Forms
 
         private IAnnotationExportProvider _annotationExportProvider;
         private AnnotationConfig _config;
+        private bool _exporting;
 
         public ExportDialog(IAnnotationPackageProvider annotationPackageProvider)
         {
@@ -56,14 +57,15 @@ namespace Alturos.ImageAnnotation.Forms
 
         private async Task Export()
         {
+            this.EnableExportMenu(false);
+            this._exporting = true;
+            
             // Create folders
             var path = DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss");
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
-
-            this.Invoke((MethodInvoker)delegate { this.Enabled = false; });
 
             // Download what's missing
             var packages = this.dataGridViewResult.DataSource as List<AnnotationPackage>;
@@ -84,15 +86,34 @@ namespace Alturos.ImageAnnotation.Forms
             // Export
             this._annotationExportProvider.Export(path, packages.ToArray());
 
-            this.Invoke((MethodInvoker)delegate { this.Enabled = true; });
+            this.EnableExportMenu(true);
+            this._exporting = false;
 
             // Open folder
             Process.Start(path);
         }
 
+        private void EnableExportMenu(bool enable)
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                this.comboBoxExportProvider.Enabled = enable;
+                this.buttonSearch.Enabled = enable;
+                this.buttonExport.Enabled = enable;
+            });
+        }
+
         private void ComboBoxExportProvider_SelectedIndexChanged(object sender, EventArgs e)
         {
             this._annotationExportProvider = this.comboBoxExportProvider.SelectedItem as IAnnotationExportProvider;
+        }
+
+        private void ExportDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (this._exporting)
+            {
+                e.Cancel = true;
+            }
         }
     }
 }
