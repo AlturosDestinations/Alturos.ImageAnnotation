@@ -116,7 +116,9 @@
     <Compile Include="Forms\UploadProgressDialog.Designer.cs">
       <DependentUpon>UploadProgressDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helper\InterfaceHelper.cs" />
     <Compile Include="Helper\DrawHelper.cs" />
+    <Compile Include="Model\NameValueObject.cs" />
     <Compile Include="Helper\MathExtension.cs" />
     <Compile Include="Helper\StringExtension.cs" />
     <Compile Include="Model\AnnotationConfig.cs" />

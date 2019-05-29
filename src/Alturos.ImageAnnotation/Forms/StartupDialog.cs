@@ -1,5 +1,6 @@
 ﻿using Alturos.ImageAnnotation.Contract;
 using Alturos.ImageAnnotation.Contract.Amazon;
+using Alturos.ImageAnnotation.Helper;
 using Alturos.ImageAnnotation.Model;
 using System;
 using System.Collections.Generic;
@@ -23,12 +24,7 @@ namespace Alturos.ImageAnnotation.Forms
             this.InitializeComponent();
 
             // Set package providers
-            var packageProviders = new List<IAnnotationPackageProvider>()
-            {
-                new AmazonAnnotationPackageProvider(),
-                //new WindowsFileSystemPackageProvider()
-            };
-
+            var packageProviders = InterfaceHelper.GetImplementations<IAnnotationPackageProvider>();
             this.comboBoxAnnotationPackageProvider.DataSource = packageProviders;
 
             // Create check boxes
@@ -65,7 +61,8 @@ namespace Alturos.ImageAnnotation.Forms
 
         private void comboBoxAnnotationPackageProvider_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.AnnotationPackageProvider = this.comboBoxAnnotationPackageProvider.SelectedItem as IAnnotationPackageProvider;
+            var obj = ((NameValueObject)this.comboBoxAnnotationPackageProvider.SelectedItem).Value;
+            this.AnnotationPackageProvider = (IAnnotationPackageProvider)Activator.CreateInstance((Type)obj);
         }
 
         private void buttonConfirm_Click(object sender, System.EventArgs e)

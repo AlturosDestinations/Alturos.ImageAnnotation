@@ -9,6 +9,7 @@ using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -16,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace Alturos.ImageAnnotation.Contract.Amazon
 {
+    [Description("Amazon")]
     public class AmazonAnnotationPackageProvider : IAnnotationPackageProvider
     {
         public bool IsSyncing { get; set; }

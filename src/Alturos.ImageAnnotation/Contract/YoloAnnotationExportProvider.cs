@@ -1,6 +1,7 @@
 ﻿using Alturos.ImageAnnotation.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -8,15 +9,16 @@ using System.Text;
 
 namespace Alturos.ImageAnnotation.Contract
 {
+    [Description("Yolo")]
     public class YoloAnnotationExportProvider : IAnnotationExportProvider
     {
         private const double _trainingPercentage = 70;
         private const string _dataFolderName = "data";
         private const string _imageFolderName = "obj";
 
-        private readonly AnnotationConfig _config;
+        private AnnotationConfig _config;
 
-        public YoloAnnotationExportProvider(AnnotationConfig config)
+        public void Setup(AnnotationConfig config)
         {
             this._config = config;
         }
