@@ -36,13 +36,13 @@ namespace Alturos.ImageAnnotation.Forms
         {
             while (this._uploading)
             {
-                    var progress = this._annotationPackageProvider.GetUploadProgress();
-                    if (!double.IsNaN(progress))
-                    {
-                        this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)progress; });
-                    }
+                var progress = this._annotationPackageProvider.GetUploadProgress();
+                if (!double.IsNaN(progress))
+                {
+                    this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)progress; });
+                }
 
-                    await Task.Delay(100);
+                await Task.Delay(100);
             }
         }
     }
