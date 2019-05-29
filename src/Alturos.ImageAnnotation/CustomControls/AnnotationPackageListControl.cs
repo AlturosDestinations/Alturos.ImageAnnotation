@@ -126,11 +126,13 @@ namespace Alturos.ImageAnnotation.CustomControls
             package.Downloading = true;
             package.DownloadProgress = 0;
 
-            this.PackageSelected?.Invoke(package);
+            // Reset UI for this package
+            this.Invoke((MethodInvoker)delegate { this.PackageSelected?.Invoke(package); });
 
-            var downloadedPackage = await this._annotationPackageProvider.RefreshPackageAsync(package);
+            var downloadedPackage = await this._annotationPackageProvider.DownloadPackageAsync(package);
 
-            this.PackageSelected?.Invoke(downloadedPackage);
+            // Refresh UI once download is complete
+            this.Invoke((MethodInvoker)delegate { this.PackageSelected?.Invoke(downloadedPackage); });
         }
 
         private void dataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)

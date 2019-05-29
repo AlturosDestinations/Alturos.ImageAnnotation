@@ -173,11 +173,6 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             }
         }
 
-        public async Task<AnnotationPackage> RefreshPackageAsync(AnnotationPackage package)
-        {
-            return await this.DownloadPackageAsync(package).ConfigureAwait(false);
-        }
-
         public async Task<AnnotationPackage> DownloadPackageAsync(AnnotationPackage package)
         {
             if (!Directory.Exists(this._extractionFolder))
