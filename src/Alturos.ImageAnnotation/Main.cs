@@ -263,7 +263,6 @@ namespace Alturos.ImageAnnotation
 
             this.annotationImageListControl.Hide();
             this.downloadControl.Hide();
-            this.tagListControl.Hide();
 
             this.annotationImageListControl.Reset();
             this.annotationDrawControl.Reset();
@@ -278,8 +277,6 @@ namespace Alturos.ImageAnnotation
                     this.annotationImageListControl.Show();
 
                     this.annotationPackageListControl.RefreshData();
-
-                    this.tagListControl.Show();
                 }
                 else
                 {
