@@ -1,3 +1,5 @@
+![Alturos.ImageAnnotation](doc/logo-banner.png)
+
 # Alturos.ImageAnnotation
 
 The purpose of this project is to manage training data for Neural Networks. The data is stored at a central location, for example Amazon S3.
