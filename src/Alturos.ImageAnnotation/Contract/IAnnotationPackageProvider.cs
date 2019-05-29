@@ -1,10 +1,14 @@
 ﻿using Alturos.ImageAnnotation.Model;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Alturos.ImageAnnotation.Contract
 {
     public interface IAnnotationPackageProvider
     {
+        bool IsSyncing { get; set; }
+        bool IsUploading { get; set; }
+
         Task SetAnnotationConfigAsync(AnnotationConfig config);
         Task<AnnotationConfig> GetAnnotationConfigAsync();
 
@@ -12,10 +16,10 @@ namespace Alturos.ImageAnnotation.Contract
         Task<AnnotationPackage[]> GetPackagesAsync(AnnotationPackageTag[] tags);
 
         Task<AnnotationPackage> DownloadPackageAsync(AnnotationPackage package);
-        Task UploadPackageAsync(string packagePath);
-
-        bool IsSyncing { get; set; }
+        Task UploadPackagesAsync(List<string> packagePath, List<string> tags);
         Task SyncPackagesAsync(AnnotationPackage[] packages);
+
+        double GetUploadProgress();
         double GetSyncProgress();
     }
 }

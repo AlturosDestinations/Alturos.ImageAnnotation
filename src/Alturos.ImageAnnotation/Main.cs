@@ -2,6 +2,7 @@
 using Alturos.ImageAnnotation.Contract.Amazon;
 using Alturos.ImageAnnotation.Forms;
 using Alturos.ImageAnnotation.Model;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -194,18 +195,27 @@ namespace Alturos.ImageAnnotation
 
         private void AddPackageStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var openFileDialog = new OpenFileDialog
+            using (var openFileDialog = new CommonOpenFileDialog()
             {
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                Filter = "ZIP files (*.zip)|*.zip"
+                IsFolderPicker = true,
+                Multiselect = true
             })
             {
-
                 var dialogResult = openFileDialog.ShowDialog();
-                if (dialogResult == DialogResult.OK)
+                if (dialogResult == CommonFileDialogResult.Ok)
                 {
-                    var file = openFileDialog.FileName;
-                    this._annotationPackageProvider.UploadPackageAsync(file);
+                    var tagDialog = new TagSelectionDialog();
+                    tagDialog.Setup(this._annotationConfig);
+
+                    var tagDialogResult = tagDialog.ShowDialog();
+                    if (tagDialogResult == DialogResult.OK)
+                    {
+                        var uploadDialog = new UploadProgressDialog(this._annotationPackageProvider);
+                        uploadDialog.Show();
+
+                        _ = Task.Run(() => uploadDialog.Upload(openFileDialog.FileNames.ToList(), tagDialog.SelectedTags));
+                    }
                 }
             }
         }

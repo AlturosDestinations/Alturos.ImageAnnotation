@@ -45,6 +45,15 @@
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Core.1.1.0.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -99,6 +108,12 @@
     </Compile>
     <Compile Include="Forms\SyncConfirmationDialog.Designer.cs">
       <DependentUpon>SyncConfirmationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\UploadProgressDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\UploadProgressDialog.Designer.cs">
+      <DependentUpon>UploadProgressDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Helper\DrawHelper.cs" />
     <Compile Include="Helper\MathExtension.cs" />
@@ -200,6 +215,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SyncConfirmationDialog.resx">
       <DependentUpon>SyncConfirmationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\UploadProgressDialog.resx">
+      <DependentUpon>UploadProgressDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\TagSelectionDialog.resx">
       <DependentUpon>TagSelectionDialog.cs</DependentUpon>

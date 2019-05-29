@@ -62,7 +62,7 @@
             this.dataGridView1.Size = new System.Drawing.Size(544, 281);
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dataGridView1_RowPrePaint);
-            this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
+            this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
             // 
             // ColumnName
             // 
