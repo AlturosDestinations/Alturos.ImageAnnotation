@@ -44,6 +44,7 @@ namespace Alturos.ImageAnnotation
             this.annotationDrawControl.AutoplaceAnnotations = true;
             this.annotationDrawControl.SetObjectClasses(this._annotationConfig.ObjectClasses);
             this.annotationDrawControl.ShowLabels = true;
+            this.annotationDrawControl.ShowLegend(false);
 
             this.showLabelsToolStripMenuItem.Checked = true;
         }
@@ -229,6 +230,12 @@ namespace Alturos.ImageAnnotation
         {
             this.showLabelsToolStripMenuItem.Checked = !this.showLabelsToolStripMenuItem.Checked;
             this.annotationDrawControl.ShowLabels = this.showLabelsToolStripMenuItem.Checked;
+        }
+
+        private void ShowLegendToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.showLegendToolStripMenuItem.Checked = !this.showLegendToolStripMenuItem.Checked;
+            this.annotationDrawControl.ShowLegend(this.showLegendToolStripMenuItem.Checked);
         }
 
         private async void SettingsToolStripMenuItem_Click(object sender, EventArgs e)

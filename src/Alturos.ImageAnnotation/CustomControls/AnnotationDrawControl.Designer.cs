@@ -29,11 +29,17 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.LegendItem legendItem1 = new System.Windows.Forms.DataVisualization.Charting.LegendItem();
+            System.Windows.Forms.DataVisualization.Charting.LegendItem legendItem2 = new System.Windows.Forms.DataVisualization.Charting.LegendItem();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.contextMenuStripPicture = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.clearAnnotationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.legendsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.contextMenuStripPicture.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.legendsChart)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -68,15 +74,41 @@
             this.clearAnnotationsToolStripMenuItem.Text = "Clear Annotations";
             this.clearAnnotationsToolStripMenuItem.Click += new System.EventHandler(this.ClearAnnotationsToolStripMenuItem_Click);
             // 
+            // legendsChart
+            // 
+            this.legendsChart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            legend1.Alignment = System.Drawing.StringAlignment.Center;
+            legendItem1.Color = System.Drawing.Color.Aqua;
+            legendItem1.Name = "Legend 1";
+            legendItem2.Color = System.Drawing.Color.Red;
+            legendItem2.Name = "Legend 2";
+            legend1.CustomItems.Add(legendItem1);
+            legend1.CustomItems.Add(legendItem2);
+            legend1.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Top;
+            legend1.IsDockedInsideChartArea = false;
+            legend1.Name = "Legend1";
+            this.legendsChart.Legends.Add(legend1);
+            this.legendsChart.Location = new System.Drawing.Point(0, 287);
+            this.legendsChart.Name = "legendsChart";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            this.legendsChart.Series.Add(series1);
+            this.legendsChart.Size = new System.Drawing.Size(624, 49);
+            this.legendsChart.TabIndex = 2;
+            this.legendsChart.Text = "chart1";
+            // 
             // AnnotationDrawControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.legendsChart);
             this.Controls.Add(this.pictureBox1);
             this.Name = "AnnotationDrawControl";
             this.Size = new System.Drawing.Size(624, 336);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.contextMenuStripPicture.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.legendsChart)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -86,5 +118,6 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripPicture;
         private System.Windows.Forms.ToolStripMenuItem clearAnnotationsToolStripMenuItem;
+        private System.Windows.Forms.DataVisualization.Charting.Chart legendsChart;
     }
 }

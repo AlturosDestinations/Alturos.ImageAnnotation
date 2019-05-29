@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Alturos.ImageAnnotation.CustomControls
 {
@@ -40,6 +41,24 @@ namespace Alturos.ImageAnnotation.CustomControls
         public void SetObjectClasses(List<ObjectClass> objectClasses)
         {
             this._objectClasses = objectClasses;
+
+            this.legendsChart.Legends[0].CustomItems.Clear();
+
+            for (var i = 0; i < objectClasses.Count; i++)
+            {
+                var legendItem = new LegendItem
+                {
+                    Name = $"{objectClasses[i].Id} - {objectClasses[i].Name}",
+                    Color = DrawHelper.GetColorCode(i)
+                };
+
+                this.legendsChart.Legends[0].CustomItems.Add(legendItem);
+            }
+        }
+
+        public void ShowLegend(bool show)
+        {
+            this.legendsChart.Visible = show;
         }
 
         private void CacheLastBoundingBoxes()
@@ -182,7 +201,7 @@ namespace Alturos.ImageAnnotation.CustomControls
 
             var drawOffset = this._mouseDragElementSize / 2;
 
-            Cursor.Current = Cursors.Default;
+            System.Windows.Forms.Cursor.Current = Cursors.Default;
 
             if (this._mouseOver)
             {
@@ -219,7 +238,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                         var dragElementBrush = Brushes.LightPink;
                         if (this.PointDistance(this._mousePosition, new Point(dragPoint.Point.X, dragPoint.Point.Y)) < 15)
                         {
-                            Cursor.Current = Cursors.Hand;
+                            System.Windows.Forms.Cursor.Current = Cursors.Hand;
                             dragElementBrush = Brushes.Yellow;
                         }
 
