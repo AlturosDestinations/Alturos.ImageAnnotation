@@ -479,8 +479,16 @@ namespace Alturos.ImageAnnotation.CustomControls
             {
                 index = (int)e.KeyCode - (int)Keys.NumPad0;
             }
+            else if (e.KeyCode == Keys.Right)
+            {
+                index = currentBoundingBox.ObjectIndex + 1;
+            }
+            else if (e.KeyCode == Keys.Left)
+            {
+                index = currentBoundingBox.ObjectIndex - 1;
+            }
 
-            if (index == -1 || index >= this._objectClasses.Count)
+            if (index < 0 || index >= this._objectClasses.Count)
             {
                 return;
             }
