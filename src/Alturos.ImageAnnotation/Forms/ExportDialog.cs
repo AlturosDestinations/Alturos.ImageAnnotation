@@ -47,6 +47,14 @@ namespace Alturos.ImageAnnotation.Forms
             var items = await this._annotationPackageProvider.GetPackagesAsync(tags.ToArray());
             this.dataGridViewResult.DataSource = items.ToList();
             this.labelPackageCount.Text = $"{items.Length.ToString()} found";
+
+            foreach (DataGridViewRow row in this.dataGridViewResult.Rows)
+            {
+                if ((row.DataBoundItem as AnnotationPackage).AvailableLocally)
+                {
+                    row.Cells[1].Value = true;
+                }
+            }
         }
 
         private async void ButtonExport_Click(object sender, EventArgs e)
@@ -78,6 +86,9 @@ namespace Alturos.ImageAnnotation.Forms
                     this.downloadControl.ShowDownloadDialog(packages[i]);
 
                     packages[i] = await this._annotationPackageProvider.DownloadPackageAsync(packages[i]);
+
+                    var row = this.dataGridViewResult.Rows.Cast<DataGridViewRow>().Single(o => (o.DataBoundItem as AnnotationPackage).ExternalId == packages[i].ExternalId);
+                    row.Cells[1].Value = true;
 
                     this.downloadControl.Hide();
                 }
