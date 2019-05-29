@@ -20,6 +20,11 @@ namespace Alturos.ImageAnnotation.Forms
             this.labelLowerDescription.Text = lowerText;
         }
 
+        public void SetButtonName(string okButton)
+        {
+            this.buttonOK.Text = okButton;
+        }
+
         public void SetUnsyncedPackages(List<AnnotationPackage> packages)
         {
             this.dataGridView.DataSource = packages;

@@ -4,7 +4,6 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.S3;
-using Amazon.S3.IO;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using System;
@@ -40,7 +39,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             var accessKeyId = ConfigurationManager.AppSettings["accessKeyId"];
             var secretAccessKey = ConfigurationManager.AppSettings["secretAccessKey"];
 
-            this._bucketName = ConfigurationManager.AppSettings["bucketName"];
+            this._bucketName = ConfigurationManager.AppSettings["bucketName"]?.ToLower();
             this._extractionFolder = ConfigurationManager.AppSettings["extractionFolder"];
 
             if (string.IsNullOrEmpty(accessKeyId))

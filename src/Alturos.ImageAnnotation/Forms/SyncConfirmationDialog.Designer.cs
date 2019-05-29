@@ -40,32 +40,41 @@
             // labelUpperDescription
             // 
             this.labelUpperDescription.AutoSize = true;
+            this.labelUpperDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelUpperDescription.Location = new System.Drawing.Point(13, 13);
             this.labelUpperDescription.Name = "labelUpperDescription";
-            this.labelUpperDescription.Size = new System.Drawing.Size(222, 13);
+            this.labelUpperDescription.Size = new System.Drawing.Size(316, 16);
             this.labelUpperDescription.TabIndex = 0;
             this.labelUpperDescription.Text = "Do you want to sync the following packages?";
             // 
             // buttonOK
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOK.Location = new System.Drawing.Point(440, 264);
+            this.buttonOK.BackColor = System.Drawing.Color.Red;
+            this.buttonOK.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonOK.ForeColor = System.Drawing.Color.White;
+            this.buttonOK.Location = new System.Drawing.Point(431, 257);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(75, 23);
+            this.buttonOK.Padding = new System.Windows.Forms.Padding(5);
+            this.buttonOK.Size = new System.Drawing.Size(84, 30);
             this.buttonOK.TabIndex = 1;
-            this.buttonOK.Text = "OK";
-            this.buttonOK.UseVisualStyleBackColor = true;
+            this.buttonOK.Text = "Discard";
+            this.buttonOK.UseVisualStyleBackColor = false;
             this.buttonOK.Click += new System.EventHandler(this.ButtonOK_Click);
             // 
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCancel.Location = new System.Drawing.Point(359, 264);
+            this.buttonCancel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.buttonCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonCancel.ForeColor = System.Drawing.Color.White;
+            this.buttonCancel.Location = new System.Drawing.Point(341, 257);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+            this.buttonCancel.Padding = new System.Windows.Forms.Padding(5);
+            this.buttonCancel.Size = new System.Drawing.Size(84, 30);
             this.buttonCancel.TabIndex = 2;
             this.buttonCancel.Text = "Cancel";
-            this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.UseVisualStyleBackColor = false;
             this.buttonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);
             // 
             // dataGridView
@@ -90,7 +99,7 @@
             // ColumnName
             // 
             this.ColumnName.DataPropertyName = "PackageName";
-            this.ColumnName.HeaderText = "Package Path";
+            this.ColumnName.HeaderText = "Name";
             this.ColumnName.Name = "ColumnName";
             this.ColumnName.ReadOnly = true;
             // 
@@ -113,9 +122,11 @@
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.labelUpperDescription);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SyncConfirmationDialog";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Confirm Syncing";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.ResumeLayout(false);

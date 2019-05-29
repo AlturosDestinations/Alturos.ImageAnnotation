@@ -30,14 +30,14 @@
         {
             this.components = new System.ComponentModel.Container();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.removeTagToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.buttonAdd = new System.Windows.Forms.Button();
             this.Value = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.removeTagToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            this.groupBox1.SuspendLayout();
             this.contextMenuStrip.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -54,13 +54,30 @@
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Value});
             this.dataGridView1.ContextMenuStrip = this.contextMenuStrip;
+            this.dataGridView1.Enabled = false;
             this.dataGridView1.Location = new System.Drawing.Point(3, 16);
+            this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView1.Size = new System.Drawing.Size(663, 324);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.TabStop = false;
+            // 
+            // contextMenuStrip
+            // 
+            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.removeTagToolStripMenuItem});
+            this.contextMenuStrip.Name = "contextMenuStrip";
+            this.contextMenuStrip.Size = new System.Drawing.Size(140, 26);
+            // 
+            // removeTagToolStripMenuItem
+            // 
+            this.removeTagToolStripMenuItem.Name = "removeTagToolStripMenuItem";
+            this.removeTagToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.removeTagToolStripMenuItem.Text = "Remove Tag";
+            this.removeTagToolStripMenuItem.Click += new System.EventHandler(this.RemoveTagToolStripMenuItem_Click);
             // 
             // groupBox1
             // 
@@ -89,23 +106,9 @@
             // Value
             // 
             this.Value.DataPropertyName = "Value";
-            this.Value.HeaderText = "Value";
+            this.Value.HeaderText = "Tag";
             this.Value.Name = "Value";
             this.Value.ReadOnly = true;
-            // 
-            // contextMenuStrip
-            // 
-            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.removeTagToolStripMenuItem});
-            this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(181, 48);
-            // 
-            // removeTagToolStripMenuItem
-            // 
-            this.removeTagToolStripMenuItem.Name = "removeTagToolStripMenuItem";
-            this.removeTagToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.removeTagToolStripMenuItem.Text = "Remove Tag";
-            this.removeTagToolStripMenuItem.Click += new System.EventHandler(this.RemoveTagToolStripMenuItem_Click);
             // 
             // TagListControl
             // 
@@ -115,8 +118,8 @@
             this.Name = "TagListControl";
             this.Size = new System.Drawing.Size(669, 386);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            this.groupBox1.ResumeLayout(false);
             this.contextMenuStrip.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -126,8 +129,8 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button buttonAdd;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Value;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem removeTagToolStripMenuItem;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Value;
     }
 }

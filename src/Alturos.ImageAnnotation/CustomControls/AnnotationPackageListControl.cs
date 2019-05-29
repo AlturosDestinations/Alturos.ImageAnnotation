@@ -50,11 +50,13 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         public async Task LoadPackagesAsync()
         {
+            var groupBoxName = "Packages";
+
             try
             {
                 this.groupBox1.Invoke((MethodInvoker)delegate
                 {
-                    this.groupBox1.Text = $"Packages";
+                    this.groupBox1.Text = groupBoxName;
                 });
 
                 this.textBoxSearch.Invoke((MethodInvoker)delegate { this.textBoxSearch.Visible = false; });
@@ -76,7 +78,7 @@ namespace Alturos.ImageAnnotation.CustomControls
 
                     this.groupBox1.Invoke((MethodInvoker)delegate
                     {
-                        this.groupBox1.Text = $"Packages ({this._annotationPackages.Length})";
+                        this.groupBox1.Text = $"{groupBoxName} ({this._annotationPackages.Length:n0})";
                     });
                 }
             }
