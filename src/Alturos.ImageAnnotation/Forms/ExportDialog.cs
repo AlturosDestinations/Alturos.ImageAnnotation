@@ -44,6 +44,8 @@ namespace Alturos.ImageAnnotation.Forms
         {
             var tags = this.dataGridViewTags.SelectedRows.Cast<DataGridViewRow>().Select(o => o.DataBoundItem as AnnotationPackageTag);
 
+            this.Invoke((MethodInvoker)delegate { this.EnableExportMenu(false); });
+
             var items = await this._annotationPackageProvider.GetPackagesAsync(tags.ToArray());
             this.dataGridViewResult.DataSource = items.ToList();
             this.labelPackageCount.Text = $"{items.Length.ToString()} found";
@@ -55,6 +57,8 @@ namespace Alturos.ImageAnnotation.Forms
                     row.Cells[1].Value = true;
                 }
             }
+
+            this.Invoke((MethodInvoker)delegate { this.EnableExportMenu(true); });
         }
 
         private async void ButtonExport_Click(object sender, EventArgs e)

@@ -56,6 +56,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                     this.groupBox1.Text = $"Packages";
                 });
 
+                this.textBoxSearchbar.Invoke((MethodInvoker)delegate { this.textBoxSearchbar.Visible = false; });
                 this.dataGridView1.Invoke((MethodInvoker)delegate { this.dataGridView1.Visible = false; });
 
                 this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = true; });
@@ -64,6 +65,8 @@ namespace Alturos.ImageAnnotation.CustomControls
 
                 if (packages?.Length > 0)
                 {
+                    this.textBoxSearchbar.Invoke((MethodInvoker)delegate { this.textBoxSearchbar.Visible = true; });
+
                     this.dataGridView1.Invoke((MethodInvoker)delegate
                     {
                         this.dataGridView1.Visible = true;
