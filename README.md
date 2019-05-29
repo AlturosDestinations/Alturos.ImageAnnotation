@@ -70,3 +70,7 @@ AWS has a free tier for the first 12 months of S3 use (up to 5GB) and DynamoDB i
     ]
 }
 ```
+
+## Use this tool without AWS
+
+You can also use [MinIO](https://github.com/minio/minio) instead of S3 and a [local dynamodb]( https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html)
