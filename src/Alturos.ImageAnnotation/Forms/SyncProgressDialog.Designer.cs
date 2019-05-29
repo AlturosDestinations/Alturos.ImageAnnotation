@@ -48,14 +48,16 @@
             this.labelSyncing.TabIndex = 1;
             this.labelSyncing.Text = "Syncing... Please wait...";
             // 
-            // SyncForm
+            // SyncProgressDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(392, 63);
             this.Controls.Add(this.labelSyncing);
             this.Controls.Add(this.progressBar);
-            this.Name = "SyncForm";
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "SyncProgressDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Syncing";
             this.ResumeLayout(false);

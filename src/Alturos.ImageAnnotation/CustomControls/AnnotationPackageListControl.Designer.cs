@@ -37,8 +37,8 @@
             this.downloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redownloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.textBoxSearch = new System.Windows.Forms.TextBox();
             this.labelLoading = new System.Windows.Forms.Label();
-            this.textBoxSearchbar = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -111,7 +111,7 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.textBoxSearchbar);
+            this.groupBox1.Controls.Add(this.textBoxSearch);
             this.groupBox1.Controls.Add(this.labelLoading);
             this.groupBox1.Controls.Add(this.dataGridView1);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -122,6 +122,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Packages";
             // 
+            // textBoxSearch
+            // 
+            this.textBoxSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxSearch.Location = new System.Drawing.Point(3, 19);
+            this.textBoxSearch.Name = "textBoxSearch";
+            this.textBoxSearch.Size = new System.Drawing.Size(544, 20);
+            this.textBoxSearch.TabIndex = 4;
+            this.textBoxSearch.TextChanged += new System.EventHandler(this.textBoxSearch_TextChanged);
+            // 
             // labelLoading
             // 
             this.labelLoading.AutoSize = true;
@@ -130,15 +140,6 @@
             this.labelLoading.Size = new System.Drawing.Size(203, 13);
             this.labelLoading.TabIndex = 3;
             this.labelLoading.Text = "Loading package information, please wait";
-            // 
-            // textBoxSearchbar
-            // 
-            this.textBoxSearchbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxSearchbar.Location = new System.Drawing.Point(3, 19);
-            this.textBoxSearchbar.Name = "textBoxSearchbar";
-            this.textBoxSearchbar.Size = new System.Drawing.Size(544, 20);
-            this.textBoxSearchbar.TabIndex = 4;
             // 
             // AnnotationPackageListControl
             // 
@@ -165,6 +166,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnPercentage;
         private System.Windows.Forms.ToolStripMenuItem downloadToolStripMenuItem;
-        private System.Windows.Forms.TextBox textBoxSearchbar;
+        private System.Windows.Forms.TextBox textBoxSearch;
     }
 }

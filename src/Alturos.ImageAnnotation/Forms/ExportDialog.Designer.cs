@@ -32,29 +32,26 @@
             this.dataGridViewTags = new System.Windows.Forms.DataGridView();
             this.ColumnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewResult = new System.Windows.Forms.DataGridView();
+            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnExported = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.groupBoxTags = new System.Windows.Forms.GroupBox();
-            this.groupBoxResult = new System.Windows.Forms.GroupBox();
-            this.downloadControl = new Alturos.ImageAnnotation.CustomControls.DownloadControl();
             this.buttonSearch = new System.Windows.Forms.Button();
+            this.groupBoxResult = new System.Windows.Forms.GroupBox();
             this.labelPackageCount = new System.Windows.Forms.Label();
             this.comboBoxExportProvider = new System.Windows.Forms.ComboBox();
             this.groupBoxExportProvider = new System.Windows.Forms.GroupBox();
-            this.tableLayoutPanelMain = new System.Windows.Forms.TableLayoutPanel();
-            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnExported = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTags)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).BeginInit();
             this.groupBoxTags.SuspendLayout();
             this.groupBoxResult.SuspendLayout();
             this.groupBoxExportProvider.SuspendLayout();
-            this.tableLayoutPanelMain.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonExport
             // 
-            this.buttonExport.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonExport.Location = new System.Drawing.Point(12, 545);
+            this.buttonExport.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.buttonExport.Location = new System.Drawing.Point(12, 454);
             this.buttonExport.Name = "buttonExport";
             this.buttonExport.Size = new System.Drawing.Size(564, 41);
             this.buttonExport.TabIndex = 3;
@@ -79,7 +76,7 @@
             this.dataGridViewTags.ReadOnly = true;
             this.dataGridViewTags.RowHeadersVisible = false;
             this.dataGridViewTags.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewTags.Size = new System.Drawing.Size(546, 128);
+            this.dataGridViewTags.Size = new System.Drawing.Size(552, 112);
             this.dataGridViewTags.TabIndex = 4;
             // 
             // ColumnValue
@@ -106,109 +103,8 @@
             this.dataGridViewResult.Name = "dataGridViewResult";
             this.dataGridViewResult.ReadOnly = true;
             this.dataGridViewResult.RowHeadersVisible = false;
-            this.dataGridViewResult.Size = new System.Drawing.Size(549, 148);
+            this.dataGridViewResult.Size = new System.Drawing.Size(555, 175);
             this.dataGridViewResult.TabIndex = 5;
-            // 
-            // groupBoxTags
-            // 
-            this.groupBoxTags.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxTags.Controls.Add(this.buttonSearch);
-            this.groupBoxTags.Controls.Add(this.dataGridViewTags);
-            this.groupBoxTags.Location = new System.Drawing.Point(3, 3);
-            this.groupBoxTags.Name = "groupBoxTags";
-            this.groupBoxTags.Size = new System.Drawing.Size(558, 183);
-            this.groupBoxTags.TabIndex = 6;
-            this.groupBoxTags.TabStop = false;
-            this.groupBoxTags.Text = "Tags";
-            // 
-            // groupBoxResult
-            // 
-            this.groupBoxResult.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxResult.Controls.Add(this.labelPackageCount);
-            this.groupBoxResult.Controls.Add(this.dataGridViewResult);
-            this.groupBoxResult.Location = new System.Drawing.Point(3, 192);
-            this.groupBoxResult.Name = "groupBoxResult";
-            this.groupBoxResult.Size = new System.Drawing.Size(558, 183);
-            this.groupBoxResult.TabIndex = 7;
-            this.groupBoxResult.TabStop = false;
-            this.groupBoxResult.Text = "Result";
-            // 
-            // downloadControl
-            // 
-            this.downloadControl.BackColor = System.Drawing.Color.Transparent;
-            this.downloadControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.downloadControl.Location = new System.Drawing.Point(3, 381);
-            this.downloadControl.Name = "downloadControl";
-            this.downloadControl.Size = new System.Drawing.Size(558, 95);
-            this.downloadControl.TabIndex = 6;
-            this.downloadControl.Visible = false;
-            // 
-            // buttonSearch
-            // 
-            this.buttonSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonSearch.Location = new System.Drawing.Point(6, 153);
-            this.buttonSearch.Name = "buttonSearch";
-            this.buttonSearch.Size = new System.Drawing.Size(75, 24);
-            this.buttonSearch.TabIndex = 8;
-            this.buttonSearch.Text = "Search";
-            this.buttonSearch.UseVisualStyleBackColor = true;
-            this.buttonSearch.Click += new System.EventHandler(this.ButtonSearch_Click);
-            // 
-            // labelPackageCount
-            // 
-            this.labelPackageCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelPackageCount.AutoSize = true;
-            this.labelPackageCount.Location = new System.Drawing.Point(6, 167);
-            this.labelPackageCount.Name = "labelPackageCount";
-            this.labelPackageCount.Size = new System.Drawing.Size(13, 13);
-            this.labelPackageCount.TabIndex = 9;
-            this.labelPackageCount.Text = "0";
-            // 
-            // comboBoxExportProvider
-            // 
-            this.comboBoxExportProvider.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.comboBoxExportProvider.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxExportProvider.FormattingEnabled = true;
-            this.comboBoxExportProvider.Location = new System.Drawing.Point(3, 16);
-            this.comboBoxExportProvider.Name = "comboBoxExportProvider";
-            this.comboBoxExportProvider.Size = new System.Drawing.Size(558, 21);
-            this.comboBoxExportProvider.TabIndex = 11;
-            this.comboBoxExportProvider.SelectedIndexChanged += new System.EventHandler(this.ComboBoxExportProvider_SelectedIndexChanged);
-            // 
-            // groupBoxExportProvider
-            // 
-            this.groupBoxExportProvider.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxExportProvider.Controls.Add(this.comboBoxExportProvider);
-            this.groupBoxExportProvider.Location = new System.Drawing.Point(12, 12);
-            this.groupBoxExportProvider.Name = "groupBoxExportProvider";
-            this.groupBoxExportProvider.Size = new System.Drawing.Size(564, 42);
-            this.groupBoxExportProvider.TabIndex = 5;
-            this.groupBoxExportProvider.TabStop = false;
-            this.groupBoxExportProvider.Text = "Export Provider";
-            // 
-            // tableLayoutPanelMain
-            // 
-            this.tableLayoutPanelMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanelMain.ColumnCount = 1;
-            this.tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanelMain.Controls.Add(this.downloadControl, 0, 2);
-            this.tableLayoutPanelMain.Controls.Add(this.groupBoxResult, 0, 1);
-            this.tableLayoutPanelMain.Controls.Add(this.groupBoxTags, 0, 0);
-            this.tableLayoutPanelMain.Location = new System.Drawing.Point(12, 60);
-            this.tableLayoutPanelMain.Name = "tableLayoutPanelMain";
-            this.tableLayoutPanelMain.RowCount = 3;
-            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
-            this.tableLayoutPanelMain.Size = new System.Drawing.Size(564, 479);
-            this.tableLayoutPanelMain.TabIndex = 11;
             // 
             // ColumnName
             // 
@@ -225,14 +121,91 @@
             this.ColumnExported.Name = "ColumnExported";
             this.ColumnExported.ReadOnly = true;
             // 
+            // groupBoxTags
+            // 
+            this.groupBoxTags.Controls.Add(this.buttonSearch);
+            this.groupBoxTags.Controls.Add(this.dataGridViewTags);
+            this.groupBoxTags.Location = new System.Drawing.Point(12, 9);
+            this.groupBoxTags.Name = "groupBoxTags";
+            this.groupBoxTags.Size = new System.Drawing.Size(564, 167);
+            this.groupBoxTags.TabIndex = 6;
+            this.groupBoxTags.TabStop = false;
+            this.groupBoxTags.Text = "Tags";
+            // 
+            // buttonSearch
+            // 
+            this.buttonSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonSearch.Location = new System.Drawing.Point(6, 137);
+            this.buttonSearch.Name = "buttonSearch";
+            this.buttonSearch.Size = new System.Drawing.Size(75, 24);
+            this.buttonSearch.TabIndex = 8;
+            this.buttonSearch.Text = "Search";
+            this.buttonSearch.UseVisualStyleBackColor = true;
+            this.buttonSearch.Click += new System.EventHandler(this.ButtonSearch_Click);
+            // 
+            // groupBoxResult
+            // 
+            this.groupBoxResult.Controls.Add(this.labelPackageCount);
+            this.groupBoxResult.Controls.Add(this.dataGridViewResult);
+            this.groupBoxResult.Location = new System.Drawing.Point(12, 182);
+            this.groupBoxResult.Name = "groupBoxResult";
+            this.groupBoxResult.Size = new System.Drawing.Size(564, 210);
+            this.groupBoxResult.TabIndex = 7;
+            this.groupBoxResult.TabStop = false;
+            this.groupBoxResult.Text = "Result";
+            // 
+            // labelPackageCount
+            // 
+            this.labelPackageCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelPackageCount.AutoSize = true;
+            this.labelPackageCount.Location = new System.Drawing.Point(6, 194);
+            this.labelPackageCount.Name = "labelPackageCount";
+            this.labelPackageCount.Size = new System.Drawing.Size(13, 13);
+            this.labelPackageCount.TabIndex = 9;
+            this.labelPackageCount.Text = "0";
+            // 
+            // comboBoxExportProvider
+            // 
+            this.comboBoxExportProvider.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxExportProvider.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxExportProvider.FormattingEnabled = true;
+            this.comboBoxExportProvider.Location = new System.Drawing.Point(3, 19);
+            this.comboBoxExportProvider.Name = "comboBoxExportProvider";
+            this.comboBoxExportProvider.Size = new System.Drawing.Size(558, 21);
+            this.comboBoxExportProvider.TabIndex = 11;
+            this.comboBoxExportProvider.SelectedIndexChanged += new System.EventHandler(this.ComboBoxExportProvider_SelectedIndexChanged);
+            // 
+            // groupBoxExportProvider
+            // 
+            this.groupBoxExportProvider.Controls.Add(this.comboBoxExportProvider);
+            this.groupBoxExportProvider.Location = new System.Drawing.Point(12, 398);
+            this.groupBoxExportProvider.Name = "groupBoxExportProvider";
+            this.groupBoxExportProvider.Padding = new System.Windows.Forms.Padding(3, 6, 3, 6);
+            this.groupBoxExportProvider.Size = new System.Drawing.Size(564, 50);
+            this.groupBoxExportProvider.TabIndex = 5;
+            this.groupBoxExportProvider.TabStop = false;
+            this.groupBoxExportProvider.Text = "Export Provider";
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(12, 501);
+            this.progressBar1.Maximum = 1000;
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(564, 23);
+            this.progressBar1.TabIndex = 8;
+            // 
             // ExportDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(588, 598);
-            this.Controls.Add(this.tableLayoutPanelMain);
+            this.ClientSize = new System.Drawing.Size(588, 535);
+            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.groupBoxTags);
+            this.Controls.Add(this.groupBoxResult);
             this.Controls.Add(this.groupBoxExportProvider);
             this.Controls.Add(this.buttonExport);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "ExportDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Export";
@@ -243,7 +216,6 @@
             this.groupBoxResult.ResumeLayout(false);
             this.groupBoxResult.PerformLayout();
             this.groupBoxExportProvider.ResumeLayout(false);
-            this.tableLayoutPanelMain.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -259,9 +231,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnValue;
         private System.Windows.Forms.ComboBox comboBoxExportProvider;
         private System.Windows.Forms.GroupBox groupBoxExportProvider;
-        private CustomControls.DownloadControl downloadControl;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanelMain;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
         private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnExported;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }

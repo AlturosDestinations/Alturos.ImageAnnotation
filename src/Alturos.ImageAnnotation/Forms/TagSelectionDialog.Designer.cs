@@ -92,7 +92,7 @@
             this.buttonSelect.UseVisualStyleBackColor = true;
             this.buttonSelect.Click += new System.EventHandler(this.ButtonSelect_Click);
             // 
-            // TagSelectionForm
+            // TagSelectionDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -101,7 +101,9 @@
             this.Controls.Add(this.dataGridViewTags);
             this.Controls.Add(this.textBoxFilter);
             this.Controls.Add(this.labelFilter);
-            this.Name = "TagSelectionForm";
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "TagSelectionDialog";
             this.Text = "TagSelectionForm";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTags)).EndInit();
             this.ResumeLayout(false);

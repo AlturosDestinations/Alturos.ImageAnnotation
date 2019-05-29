@@ -32,8 +32,8 @@
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.dataGridView = new System.Windows.Forms.DataGridView();
-            this.labelLowerDescription = new System.Windows.Forms.Label();
             this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.labelLowerDescription = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -87,6 +87,13 @@
             this.dataGridView.Size = new System.Drawing.Size(499, 192);
             this.dataGridView.TabIndex = 3;
             // 
+            // ColumnName
+            // 
+            this.ColumnName.DataPropertyName = "PackageName";
+            this.ColumnName.HeaderText = "Package Path";
+            this.ColumnName.Name = "ColumnName";
+            this.ColumnName.ReadOnly = true;
+            // 
             // labelLowerDescription
             // 
             this.labelLowerDescription.AutoSize = true;
@@ -95,13 +102,6 @@
             this.labelLowerDescription.Size = new System.Drawing.Size(148, 13);
             this.labelLowerDescription.TabIndex = 4;
             this.labelLowerDescription.Text = "Unsaved changes will be lost.";
-            // 
-            // ColumnName
-            // 
-            this.ColumnName.DataPropertyName = "PackageName";
-            this.ColumnName.HeaderText = "Package Path";
-            this.ColumnName.Name = "ColumnName";
-            this.ColumnName.ReadOnly = true;
             // 
             // SyncConfirmationDialog
             // 
@@ -113,6 +113,8 @@
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.labelUpperDescription);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "SyncConfirmationDialog";
             this.Text = "Confirm Syncing";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();

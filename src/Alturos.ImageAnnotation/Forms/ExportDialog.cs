@@ -84,17 +84,16 @@ namespace Alturos.ImageAnnotation.Forms
 
             for (var i = 0; i < packages.Count; i++)
             {
+                var percent = 100.0 * (i + 1) / packages.Count;
+                this.progressBar1.Value = (int)Math.Ceiling(percent * 10);
+
                 if (!packages[i].AvailableLocally)
                 {
                     packages[i].Downloading = true;
-                    this.downloadControl.ShowDownloadDialog(packages[i]);
-
                     packages[i] = await this._annotationPackageProvider.DownloadPackageAsync(packages[i]);
 
                     var row = this.dataGridViewResult.Rows.Cast<DataGridViewRow>().Single(o => (o.DataBoundItem as AnnotationPackage).ExternalId == packages[i].ExternalId);
                     row.Cells[1].Value = true;
-
-                    this.downloadControl.Hide();
                 }
             }
 

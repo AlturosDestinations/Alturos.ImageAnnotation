@@ -75,6 +75,8 @@
             this.ClientSize = new System.Drawing.Size(424, 133);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.groupBoxAnnotation);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "HelpDialog";
             this.Text = "Help";
             this.groupBoxAnnotation.ResumeLayout(false);

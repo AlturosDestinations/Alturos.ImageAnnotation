@@ -4,6 +4,7 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -12,10 +13,10 @@ namespace Alturos.ImageAnnotation.CustomControls
     public partial class AnnotationPackageListControl : UserControl
     {
         private static ILog Log = LogManager.GetLogger(typeof(AnnotationPackageListControl));
+        private IAnnotationPackageProvider _annotationPackageProvider;
+        private AnnotationPackage[] _annotationPackages;
 
         public event Action<AnnotationPackage> PackageSelected;
-
-        private IAnnotationPackageProvider _annotationPackageProvider;
 
         public AnnotationPackageListControl()
         {
@@ -56,26 +57,26 @@ namespace Alturos.ImageAnnotation.CustomControls
                     this.groupBox1.Text = $"Packages";
                 });
 
-                this.textBoxSearchbar.Invoke((MethodInvoker)delegate { this.textBoxSearchbar.Visible = false; });
+                this.textBoxSearch.Invoke((MethodInvoker)delegate { this.textBoxSearch.Visible = false; });
                 this.dataGridView1.Invoke((MethodInvoker)delegate { this.dataGridView1.Visible = false; });
 
                 this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = true; });
-                var packages = await this._annotationPackageProvider.GetPackagesAsync(false);
+                this._annotationPackages = await this._annotationPackageProvider.GetPackagesAsync(false);
                 this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = false; });
 
-                if (packages?.Length > 0)
+                if (this._annotationPackages?.Length > 0)
                 {
-                    this.textBoxSearchbar.Invoke((MethodInvoker)delegate { this.textBoxSearchbar.Visible = true; });
+                    this.textBoxSearch.Invoke((MethodInvoker)delegate { this.textBoxSearch.Visible = true; });
 
                     this.dataGridView1.Invoke((MethodInvoker)delegate
                     {
                         this.dataGridView1.Visible = true;
-                        this.dataGridView1.DataSource = packages;
+                        this.dataGridView1.DataSource = this._annotationPackages;
                     });
 
                     this.groupBox1.Invoke((MethodInvoker)delegate
                     {
-                        this.groupBox1.Text = $"Packages ({packages.Length})";
+                        this.groupBox1.Text = $"Packages ({this._annotationPackages.Length})";
                     });
                 }
             }
@@ -155,6 +156,18 @@ namespace Alturos.ImageAnnotation.CustomControls
             }
 
             this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
+        }
+
+        private void textBoxSearch_TextChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(this.textBoxSearch.Text))
+            {
+                this.dataGridView1.DataSource = this._annotationPackages;
+                return;
+            }
+
+            var packages = this._annotationPackages.Where(o => o.PackageName.Contains(this.textBoxSearch.Text)).ToArray();
+            this.dataGridView1.DataSource = packages;
         }
     }
 }
