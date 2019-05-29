@@ -1,7 +1,9 @@
 ﻿using Alturos.ImageAnnotation.Contract;
+using Alturos.ImageAnnotation.Helper;
 using Alturos.ImageAnnotation.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -14,9 +16,9 @@ namespace Alturos.ImageAnnotation.Forms
     public partial class ExportDialog : Form
     {
         private readonly IAnnotationPackageProvider _annotationPackageProvider;
+        private readonly AnnotationConfig _config;
 
         private IAnnotationExportProvider _annotationExportProvider;
-        private AnnotationConfig _config;
         private bool _exporting;
 
         public ExportDialog(IAnnotationPackageProvider annotationPackageProvider)
@@ -28,12 +30,10 @@ namespace Alturos.ImageAnnotation.Forms
             this.dataGridViewTags.DataSource = this._config.Tags;
 
             // Set export providers
-            var exportProviders = new List<IAnnotationExportProvider>()
-            {
-                new YoloAnnotationExportProvider(this._config),
-            };
+            var objects = InterfaceHelper.GetImplementations<IAnnotationExportProvider>();
 
-            this.comboBoxExportProvider.DataSource = exportProviders;
+            this.comboBoxExportProvider.DataSource = objects;
+            this.comboBoxExportProvider.DisplayMember = "Name";
 
             // Make data grid views not create their own columns
             this.dataGridViewTags.AutoGenerateColumns = false;
@@ -44,9 +44,21 @@ namespace Alturos.ImageAnnotation.Forms
         {
             var tags = this.dataGridViewTags.SelectedRows.Cast<DataGridViewRow>().Select(o => o.DataBoundItem as AnnotationPackageTag);
 
+            this.Invoke((MethodInvoker)delegate { this.EnableExportMenu(false); });
+
             var items = await this._annotationPackageProvider.GetPackagesAsync(tags.ToArray());
             this.dataGridViewResult.DataSource = items.ToList();
             this.labelPackageCount.Text = $"{items.Length.ToString()} found";
+
+            foreach (DataGridViewRow row in this.dataGridViewResult.Rows)
+            {
+                if ((row.DataBoundItem as AnnotationPackage).AvailableLocally)
+                {
+                    row.Cells[1].Value = true;
+                }
+            }
+
+            this.Invoke((MethodInvoker)delegate { this.EnableExportMenu(true); });
         }
 
         private async void ButtonExport_Click(object sender, EventArgs e)
@@ -79,6 +91,9 @@ namespace Alturos.ImageAnnotation.Forms
 
                     packages[i] = await this._annotationPackageProvider.DownloadPackageAsync(packages[i]);
 
+                    var row = this.dataGridViewResult.Rows.Cast<DataGridViewRow>().Single(o => (o.DataBoundItem as AnnotationPackage).ExternalId == packages[i].ExternalId);
+                    row.Cells[1].Value = true;
+
                     this.downloadControl.Hide();
                 }
             }
@@ -105,7 +120,9 @@ namespace Alturos.ImageAnnotation.Forms
 
         private void ComboBoxExportProvider_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this._annotationExportProvider = this.comboBoxExportProvider.SelectedItem as IAnnotationExportProvider;
+            var obj = ((NameValueObject)this.comboBoxExportProvider.SelectedItem).Value;
+            this._annotationExportProvider = (IAnnotationExportProvider)Activator.CreateInstance((Type)obj);
+            this._annotationExportProvider?.Setup(this._config);
         }
 
         private void ExportDialog_FormClosing(object sender, FormClosingEventArgs e)

@@ -2,6 +2,7 @@
 using Alturos.ImageAnnotation.Contract.Amazon;
 using Alturos.ImageAnnotation.Forms;
 using Alturos.ImageAnnotation.Model;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +44,7 @@ namespace Alturos.ImageAnnotation
             this.annotationDrawControl.AutoplaceAnnotations = true;
             this.annotationDrawControl.SetObjectClasses(this._annotationConfig.ObjectClasses);
             this.annotationDrawControl.ShowLabels = true;
+            this.annotationDrawControl.ShowLegend(false);
 
             this.showLabelsToolStripMenuItem.Checked = true;
         }
@@ -94,16 +96,18 @@ namespace Alturos.ImageAnnotation
             var unsyncedPackages = this.annotationPackageListControl.GetAllPackages().Where(o => o.IsDirty);
             if (unsyncedPackages.Any())
             {
-                var syncConfirmationDialog = new SyncConfirmationDialog();
-                syncConfirmationDialog.Text = "Confirm closing";
-                syncConfirmationDialog.SetDescriptions("The following packages still have unsaved changes", "Do you want to close and discard these changes?");
-                syncConfirmationDialog.SetUnsyncedPackages(unsyncedPackages.ToList());
-
-                var dialogResult = syncConfirmationDialog.ShowDialog();
-
-                if (dialogResult == DialogResult.Cancel)
+                using (var syncConfirmationDialog = new SyncConfirmationDialog())
                 {
-                    return false;
+                    syncConfirmationDialog.Text = "Confirm closing";
+                    syncConfirmationDialog.SetDescriptions("The following packages still have unsaved changes", "Do you want to close and discard these changes?");
+                    syncConfirmationDialog.SetUnsyncedPackages(unsyncedPackages.ToList());
+
+                    var dialogResult = syncConfirmationDialog.ShowDialog();
+
+                    if (dialogResult == DialogResult.Cancel)
+                    {
+                        return false;
+                    }
                 }
             }
 
@@ -166,12 +170,14 @@ namespace Alturos.ImageAnnotation
                 var dialogResult = syncConfirmationDialog.ShowDialog();
                 if (dialogResult == DialogResult.OK)
                 {
-                    var syncForm = new SyncProgressDialog(this._annotationPackageProvider);
-                    syncForm.Show();
+                    using (var syncDialog = new SyncProgressDialog(this._annotationPackageProvider))
+                    {
+                        syncDialog.Show();
 
-                    _ = Task.Run(() => syncForm.Sync(packages));
+                        _ = Task.Run(() => syncDialog.Sync(packages));
 
-                    this.annotationPackageListControl.RefreshData();
+                        this.annotationPackageListControl.RefreshData();
+                    }
                 }
             }
             else
@@ -182,30 +188,34 @@ namespace Alturos.ImageAnnotation
 
         private void ExportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //var images = this.annotationPackageListControl.GetAllImages();
-
             using (var exportDialog = new ExportDialog(this._annotationPackageProvider))
             {
-                //exportDialog.CreateImages(images.ToList());
-                //exportDialog.SetObjectClasses(this._objectClasses);
                 exportDialog.ShowDialog();
             }
         }
 
         private void AddPackageStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var openFileDialog = new OpenFileDialog
+            using (var openFileDialog = new CommonOpenFileDialog()
             {
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                Filter = "ZIP files (*.zip)|*.zip"
+                IsFolderPicker = true,
+                Multiselect = true
             })
+            using (var tagDialog = new TagSelectionDialog())
             {
-
                 var dialogResult = openFileDialog.ShowDialog();
-                if (dialogResult == DialogResult.OK)
+                if (dialogResult == CommonFileDialogResult.Ok)
                 {
-                    var file = openFileDialog.FileName;
-                    this._annotationPackageProvider.UploadPackageAsync(file);
+                    tagDialog.Setup(this._annotationConfig);
+                    var tagDialogResult = tagDialog.ShowDialog();
+                    if (tagDialogResult == DialogResult.OK)
+                    {
+                        var uploadDialog = new UploadProgressDialog(this._annotationPackageProvider);
+                        uploadDialog.Show();
+
+                        _ = Task.Run(() => uploadDialog.Upload(openFileDialog.FileNames.ToList(), tagDialog.SelectedTags));
+                    }
                 }
             }
         }
@@ -220,6 +230,12 @@ namespace Alturos.ImageAnnotation
         {
             this.showLabelsToolStripMenuItem.Checked = !this.showLabelsToolStripMenuItem.Checked;
             this.annotationDrawControl.ShowLabels = this.showLabelsToolStripMenuItem.Checked;
+        }
+
+        private void ShowLegendToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.showLegendToolStripMenuItem.Checked = !this.showLegendToolStripMenuItem.Checked;
+            this.annotationDrawControl.ShowLegend(this.showLegendToolStripMenuItem.Checked);
         }
 
         private async void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -254,7 +270,6 @@ namespace Alturos.ImageAnnotation
 
             this.annotationImageListControl.Hide();
             this.downloadControl.Hide();
-            this.tagListControl.Hide();
 
             this.annotationImageListControl.Reset();
             this.annotationDrawControl.Reset();
@@ -269,8 +284,6 @@ namespace Alturos.ImageAnnotation
                     this.annotationImageListControl.Show();
 
                     this.annotationPackageListControl.RefreshData();
-
-                    this.tagListControl.Show();
                 }
                 else
                 {

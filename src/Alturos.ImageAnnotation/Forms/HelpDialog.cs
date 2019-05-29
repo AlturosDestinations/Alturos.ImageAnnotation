@@ -8,5 +8,10 @@ namespace Alturos.ImageAnnotation.Forms
         {
             this.InitializeComponent();
         }
+
+        private void ButtonOk_Click(object sender, System.EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

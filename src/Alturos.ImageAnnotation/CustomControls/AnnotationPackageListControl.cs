@@ -56,6 +56,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                     this.groupBox1.Text = $"Packages";
                 });
 
+                this.textBoxSearchbar.Invoke((MethodInvoker)delegate { this.textBoxSearchbar.Visible = false; });
                 this.dataGridView1.Invoke((MethodInvoker)delegate { this.dataGridView1.Visible = false; });
 
                 this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = true; });
@@ -64,6 +65,8 @@ namespace Alturos.ImageAnnotation.CustomControls
 
                 if (packages?.Length > 0)
                 {
+                    this.textBoxSearchbar.Invoke((MethodInvoker)delegate { this.textBoxSearchbar.Visible = true; });
+
                     this.dataGridView1.Invoke((MethodInvoker)delegate
                     {
                         this.dataGridView1.Visible = true;
@@ -82,7 +85,7 @@ namespace Alturos.ImageAnnotation.CustomControls
             }
         }
 
-        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             var package = this.dataGridView1.CurrentRow.DataBoundItem as AnnotationPackage;
             this.PackageSelected?.Invoke(package);
@@ -126,11 +129,13 @@ namespace Alturos.ImageAnnotation.CustomControls
             package.Downloading = true;
             package.DownloadProgress = 0;
 
-            this.PackageSelected?.Invoke(package);
+            // Reset UI for this package
+            this.Invoke((MethodInvoker)delegate { this.PackageSelected?.Invoke(package); });
 
-            var downloadedPackage = await this._annotationPackageProvider.RefreshPackageAsync(package);
+            var downloadedPackage = await this._annotationPackageProvider.DownloadPackageAsync(package);
 
-            this.PackageSelected?.Invoke(downloadedPackage);
+            // Refresh UI once download is complete
+            this.Invoke((MethodInvoker)delegate { this.PackageSelected?.Invoke(downloadedPackage); });
         }
 
         private void dataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)

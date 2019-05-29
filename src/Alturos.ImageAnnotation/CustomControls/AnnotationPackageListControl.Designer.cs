@@ -29,15 +29,16 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnPercentage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.downloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redownloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.labelLoading = new System.Windows.Forms.Label();
-            this.downloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.textBoxSearchbar = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -48,21 +49,23 @@
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToResizeRows = false;
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ColumnName,
             this.ColumnPercentage});
             this.dataGridView1.ContextMenuStrip = this.contextMenuStrip1;
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 16);
+            this.dataGridView1.Location = new System.Drawing.Point(3, 45);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(544, 281);
+            this.dataGridView1.Size = new System.Drawing.Size(544, 252);
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dataGridView1_RowPrePaint);
-            this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
+            this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
             // 
             // ColumnName
             // 
@@ -75,10 +78,10 @@
             // ColumnPercentage
             // 
             this.ColumnPercentage.DataPropertyName = "AnnotationPercentage";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle1.Format = "0.00";
-            dataGridViewCellStyle1.NullValue = null;
-            this.ColumnPercentage.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Format = "0.00";
+            dataGridViewCellStyle2.NullValue = null;
+            this.ColumnPercentage.DefaultCellStyle = dataGridViewCellStyle2;
             this.ColumnPercentage.HeaderText = "Progress";
             this.ColumnPercentage.Name = "ColumnPercentage";
             this.ColumnPercentage.ReadOnly = true;
@@ -90,17 +93,25 @@
             this.downloadToolStripMenuItem,
             this.redownloadToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(141, 48);
+            // 
+            // downloadToolStripMenuItem
+            // 
+            this.downloadToolStripMenuItem.Name = "downloadToolStripMenuItem";
+            this.downloadToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.downloadToolStripMenuItem.Text = "&Download";
+            this.downloadToolStripMenuItem.Click += new System.EventHandler(this.DownloadToolStripMenuItem_Click);
             // 
             // redownloadToolStripMenuItem
             // 
             this.redownloadToolStripMenuItem.Name = "redownloadToolStripMenuItem";
-            this.redownloadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.redownloadToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.redownloadToolStripMenuItem.Text = "&Redownload";
             this.redownloadToolStripMenuItem.Click += new System.EventHandler(this.RedownloadToolStripMenuItem_Click);
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.textBoxSearchbar);
             this.groupBox1.Controls.Add(this.labelLoading);
             this.groupBox1.Controls.Add(this.dataGridView1);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -114,18 +125,20 @@
             // labelLoading
             // 
             this.labelLoading.AutoSize = true;
-            this.labelLoading.Location = new System.Drawing.Point(6, 43);
+            this.labelLoading.Location = new System.Drawing.Point(6, 22);
             this.labelLoading.Name = "labelLoading";
             this.labelLoading.Size = new System.Drawing.Size(203, 13);
             this.labelLoading.TabIndex = 3;
             this.labelLoading.Text = "Loading package information, please wait";
             // 
-            // downloadToolStripMenuItem
+            // textBoxSearchbar
             // 
-            this.downloadToolStripMenuItem.Name = "downloadToolStripMenuItem";
-            this.downloadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.downloadToolStripMenuItem.Text = "&Download";
-            this.downloadToolStripMenuItem.Click += new System.EventHandler(this.DownloadToolStripMenuItem_Click);
+            this.textBoxSearchbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxSearchbar.Location = new System.Drawing.Point(3, 19);
+            this.textBoxSearchbar.Name = "textBoxSearchbar";
+            this.textBoxSearchbar.Size = new System.Drawing.Size(544, 20);
+            this.textBoxSearchbar.TabIndex = 4;
             // 
             // AnnotationPackageListControl
             // 
@@ -152,5 +165,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnPercentage;
         private System.Windows.Forms.ToolStripMenuItem downloadToolStripMenuItem;
+        private System.Windows.Forms.TextBox textBoxSearchbar;
     }
 }

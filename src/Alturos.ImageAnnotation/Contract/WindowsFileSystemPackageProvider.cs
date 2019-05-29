@@ -49,11 +49,6 @@
 //            }
 //        }
 
-//        public Task<AnnotationPackage> RefreshPackageAsync(AnnotationPackage package)
-//        {
-//            return Task.FromResult(package);
-//        }
-
 //        public Task<AnnotationPackage> DownloadPackageAsync(AnnotationPackage package)
 //        {
 //            return Task.FromResult(package);

@@ -9,6 +9,7 @@ using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -16,9 +17,11 @@ using System.Threading.Tasks;
 
 namespace Alturos.ImageAnnotation.Contract.Amazon
 {
+    [Description("Amazon")]
     public class AmazonAnnotationPackageProvider : IAnnotationPackageProvider
     {
         public bool IsSyncing { get; set; }
+        public bool IsUploading { get; set; }
 
         private readonly IAmazonS3 _client;
         private readonly IAmazonDynamoDB _dynamoDbClient;
@@ -29,6 +32,8 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
         private int _packagesToSync;
         private int _syncedPackages;
+        private int _uploadedFiles;
+        private double _filesToUpload;
 
         public AmazonAnnotationPackageProvider()
         {
@@ -164,18 +169,13 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                     //TODO: Put that thing in its own table...
                     packages.RemoveAll(o => o.PackageName == "AnnotationConfiguration");
 
-                    return packages.ToArray();
+                    return packages.OrderBy(o => o.ExternalId).ToArray();
                 }
                 catch (Exception exception)
                 {
                     throw exception;
                 }
             }
-        }
-
-        public async Task<AnnotationPackage> RefreshPackageAsync(AnnotationPackage package)
-        {
-            return await this.DownloadPackageAsync(package).ConfigureAwait(false);
         }
 
         public async Task<AnnotationPackage> DownloadPackageAsync(AnnotationPackage package)
@@ -227,21 +227,58 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             item.DownloadProgress = (e.TransferredBytes / (double)e.TotalBytes) * 100;
         }
 
-        public async Task UploadPackageAsync(string packagePath)
+        public async Task UploadPackagesAsync(List<string> packagePaths, List<string> tags)
         {
-            var fileTransferUtility = new TransferUtility(this._client);
-            var uploadRequest = new TransferUtilityUploadRequest
+            this.IsUploading = true;
+
+            this._uploadedFiles = 0;
+
+            var tasks = new List<Task>();
+            foreach (var packagePath in packagePaths)
             {
-                FilePath = packagePath,
-                BucketName = this._bucketName
-            };
-            uploadRequest.UploadProgressEvent += this.UploadProgress;
-            await fileTransferUtility.UploadAsync(uploadRequest).ConfigureAwait(false);
+                this._filesToUpload += Directory.GetFiles(packagePath).Count();
+                tasks.Add(Task.Run(() => UploadPackageAsync(packagePath, tags)));
+            }
+
+            await Task.WhenAll(tasks);
+
+            this.IsUploading = false;
         }
 
-        private void UploadProgress(object sender, UploadProgressArgs e)
+        private async Task UploadPackageAsync(string packagePath, List<string> tags)
         {
-            //TODO: Show upload progress
+            var packageName = Path.GetFileName(packagePath);
+            await this.SyncPackagesAsync(new AnnotationPackage[]
+            {
+                new AnnotationPackage
+                {
+                    ExternalId = packageName,
+                    PackageName = packageName,
+                    IsAnnotated = false,
+                    AnnotationPercentage = 0,
+                    Images = new List<AnnotationImage>(),
+                    Tags = tags
+                }
+            });
+
+            var files = Directory.GetFiles(packagePath);
+            var tasks = new List<Task>();
+
+            foreach (var file in files)
+            {
+                tasks.Add(this.UploadFileAsync(file));
+            }
+
+            await Task.WhenAll(tasks);
+        }
+
+        private async Task UploadFileAsync(string filePath)
+        {
+            var fileTransferUtility = new TransferUtility(this._client);
+            var keyName = $"{Directory.GetParent(filePath).Name}/{Path.GetFileName(filePath)}";
+            await fileTransferUtility.UploadAsync(filePath, "alturos.imageannotation", keyName);
+
+            this._uploadedFiles++;
         }
 
         public async Task SyncPackagesAsync(AnnotationPackage[] packages)
@@ -273,13 +310,16 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             };
 
             info.Images = new List<AnnotationImageDto>();
-            foreach (var image in package.Images.Where(o => o.BoundingBoxes != null))
+            if (package.Images != null)
             {
-                info.Images.Add(new AnnotationImageDto
+                foreach (var image in package.Images.Where(o => o.BoundingBoxes != null))
                 {
-                    ImageName = image.ImageName,
-                    BoundingBoxes = image.BoundingBoxes
-                });
+                    info.Images.Add(new AnnotationImageDto
+                    {
+                        ImageName = image.ImageName,
+                        BoundingBoxes = image.BoundingBoxes
+                    });
+                }
             }
 
             try
@@ -295,6 +335,16 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
             this._syncedPackages++;
             return true;
+        }
+
+        public double GetUploadProgress()
+        {
+            if (!this.IsUploading)
+            {
+                return 0;
+            }
+
+            return this._uploadedFiles / (double)this._filesToUpload * 100;
         }
 
         public double GetSyncProgress()
