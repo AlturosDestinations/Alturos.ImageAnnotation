@@ -33,7 +33,6 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.dataGridView = new System.Windows.Forms.DataGridView();
             this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.labelLowerDescription = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -50,25 +49,25 @@
             // buttonOK
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOK.BackColor = System.Drawing.Color.Red;
-            this.buttonOK.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonOK.ForeColor = System.Drawing.Color.White;
-            this.buttonOK.Location = new System.Drawing.Point(431, 257);
+            this.buttonOK.BackColor = System.Drawing.Color.Transparent;
+            this.buttonOK.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonOK.ForeColor = System.Drawing.Color.Black;
+            this.buttonOK.Location = new System.Drawing.Point(431, 229);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Padding = new System.Windows.Forms.Padding(5);
             this.buttonOK.Size = new System.Drawing.Size(84, 30);
             this.buttonOK.TabIndex = 1;
-            this.buttonOK.Text = "Discard";
+            this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = false;
             this.buttonOK.Click += new System.EventHandler(this.ButtonOK_Click);
             // 
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCancel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.buttonCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonCancel.ForeColor = System.Drawing.Color.White;
-            this.buttonCancel.Location = new System.Drawing.Point(341, 257);
+            this.buttonCancel.BackColor = System.Drawing.Color.Transparent;
+            this.buttonCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonCancel.ForeColor = System.Drawing.Color.Black;
+            this.buttonCancel.Location = new System.Drawing.Point(341, 229);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Padding = new System.Windows.Forms.Padding(5);
             this.buttonCancel.Size = new System.Drawing.Size(84, 30);
@@ -93,7 +92,7 @@
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.ReadOnly = true;
             this.dataGridView.RowHeadersVisible = false;
-            this.dataGridView.Size = new System.Drawing.Size(499, 192);
+            this.dataGridView.Size = new System.Drawing.Size(499, 185);
             this.dataGridView.TabIndex = 3;
             // 
             // ColumnName
@@ -103,21 +102,11 @@
             this.ColumnName.Name = "ColumnName";
             this.ColumnName.ReadOnly = true;
             // 
-            // labelLowerDescription
-            // 
-            this.labelLowerDescription.AutoSize = true;
-            this.labelLowerDescription.Location = new System.Drawing.Point(13, 244);
-            this.labelLowerDescription.Name = "labelLowerDescription";
-            this.labelLowerDescription.Size = new System.Drawing.Size(148, 13);
-            this.labelLowerDescription.TabIndex = 4;
-            this.labelLowerDescription.Text = "Unsaved changes will be lost.";
-            // 
             // SyncConfirmationDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(527, 299);
-            this.Controls.Add(this.labelLowerDescription);
+            this.ClientSize = new System.Drawing.Size(527, 271);
             this.Controls.Add(this.dataGridView);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOK);
@@ -140,7 +129,6 @@
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.DataGridView dataGridView;
-        private System.Windows.Forms.Label labelLowerDescription;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
     }
 }

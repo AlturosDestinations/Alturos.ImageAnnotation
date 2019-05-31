@@ -104,6 +104,12 @@
     <Compile Include="Forms\HelpDialog.Designer.cs">
       <DependentUpon>HelpDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\CloseConfirmationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CloseConfirmationDialog.Designer.cs">
+      <DependentUpon>CloseConfirmationDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\SyncConfirmationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -215,6 +221,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\HelpDialog.resx">
       <DependentUpon>HelpDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CloseConfirmationDialog.resx">
+      <DependentUpon>CloseConfirmationDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SyncConfirmationDialog.resx">
       <DependentUpon>SyncConfirmationDialog.cs</DependentUpon>

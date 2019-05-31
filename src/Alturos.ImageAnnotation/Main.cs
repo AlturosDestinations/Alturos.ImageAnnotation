@@ -113,13 +113,9 @@ namespace Alturos.ImageAnnotation
             var unsyncedPackages = this.annotationPackageListControl.GetAllPackages().Where(o => o.IsDirty);
             if (unsyncedPackages.Any())
             {
-                using (var dialog = new SyncConfirmationDialog())
+                using (var dialog = new CloseConfirmationDialog())
                 {
                     dialog.StartPosition = FormStartPosition.CenterParent;
-                    dialog.Text = "Unsaved changes";
-                    dialog.SetDescriptions("Are you sure you want to close without sync?", string.Empty);
-                    dialog.SetButtonName("Discard");
-                    dialog.SetUnsyncedPackages(unsyncedPackages.ToList());
 
                     var dialogResult = dialog.ShowDialog(this);
                     if (dialogResult == DialogResult.Cancel)
@@ -168,9 +164,6 @@ namespace Alturos.ImageAnnotation
                 // Proceed with syncing
                 var dialog = new SyncConfirmationDialog();
                 dialog.StartPosition = FormStartPosition.CenterParent;
-                dialog.Text = "Confirm syncing";
-                dialog.SetDescriptions("Do you want to sync the following packages?", string.Empty);
-                dialog.SetButtonName("Ok");
                 dialog.SetUnsyncedPackages(packages.ToList());
 
                 var dialogResult = dialog.ShowDialog(this);
@@ -336,11 +329,11 @@ namespace Alturos.ImageAnnotation
 
             this.annotationDrawControl.ApplyCachedBoundingBox();
 
-            if (image.BoundingBoxes == null)
-            {
-                image.BoundingBoxes = new List<AnnotationBoundingBox>();
-                this.ImageEdited(image);
-            }
+            //if (image.BoundingBoxes == null)
+            //{
+            //    image.BoundingBoxes = new List<AnnotationBoundingBox>();
+            //    this.ImageEdited(image);
+            //}
         }
 
         private void ImageEdited(AnnotationImage annotationImage)

@@ -102,7 +102,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 packages.Add(row.DataBoundItem as AnnotationPackage);
             }
 
-            packages.ForEach(o => Task.Run(() => this.DownloadPackage(o, false)));
+            packages.ForEach(o => Task.Run(() => this.DownloadPackage(o)));
         }
 
         private void RedownloadToolStripMenuItem_Click(object sender, EventArgs e)
@@ -113,17 +113,21 @@ namespace Alturos.ImageAnnotation.CustomControls
                 packages.Add(row.DataBoundItem as AnnotationPackage);
             }
 
-            packages.ForEach(o => Task.Run(() => this.DownloadPackage(o, true)));
+            foreach (var package in packages)
+            {
+                package.AvailableLocally = false;
+                Task.Run(() => this.DownloadPackage(package));
+            }
         }
 
-        private async Task DownloadPackage(AnnotationPackage package, bool redownload)
+        private async Task DownloadPackage(AnnotationPackage package)
         {
             if (package.Downloading)
             {
                 return;
             }
 
-            if (package.AvailableLocally && !redownload)
+            if (package.AvailableLocally)
             {
                 return;
             }

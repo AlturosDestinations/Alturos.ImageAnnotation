@@ -26,13 +26,14 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
         private readonly IAmazonDynamoDB _dynamoDbClient;
         private readonly string _bucketName;
         private readonly string _extractionFolder;
-        private readonly List<AnnotationPackage> _currentlyDownloadedPackages;
+        private readonly Queue<AnnotationPackage> _packagesToDownload;
         private readonly string _configHashKey = "AnnotationConfiguration";
 
         private int _packagesToSync;
         private int _syncedPackages;
         private int _uploadedFiles;
         private double _filesToUpload;
+        private AnnotationPackage _downloadedPackage;
 
         public AmazonAnnotationPackageProvider()
         {
@@ -60,7 +61,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             this._client = new AmazonS3Client(accessKeyId, secretAccessKey, RegionEndpoint.EUWest1);
             this._dynamoDbClient = new AmazonDynamoDBClient(accessKeyId, secretAccessKey, RegionEndpoint.EUWest1);
 
-            this._currentlyDownloadedPackages = new List<AnnotationPackage>();
+            this._packagesToDownload = new Queue<AnnotationPackage>();
         }
 
         public async Task SetAnnotationConfigAsync(AnnotationConfig config)
@@ -179,6 +180,15 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
         public async Task<AnnotationPackage> DownloadPackageAsync(AnnotationPackage package)
         {
+            this._packagesToDownload.Enqueue(package);
+
+            while (this._packagesToDownload.Peek() != package)
+            {
+                await Task.Delay(1000);
+            }
+
+            this._downloadedPackage = package;
+
             if (!Directory.Exists(this._extractionFolder))
             {
                 Directory.CreateDirectory(this._extractionFolder);
@@ -195,13 +205,11 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             request.S3Directory = package.PackageName;
             request.LocalDirectory = Path.Combine(this._extractionFolder, package.PackageName);
 
-            this._currentlyDownloadedPackages.Add(package);
             request.DownloadedDirectoryProgressEvent += this.DownloadedDirectoryProgressEvent;
 
             var fileTransferUtility = new TransferUtility(this._client);
             await fileTransferUtility.DownloadDirectoryAsync(request);
 
-            this._currentlyDownloadedPackages.Remove(package);
             request.DownloadedDirectoryProgressEvent -= this.DownloadedDirectoryProgressEvent;
 
             package.Downloading = false;
@@ -210,20 +218,21 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             var path = Path.Combine(this._extractionFolder, package.PackageName);
             package.PrepareImages(path);
 
-            return await Task.FromResult(package);
+            this._packagesToDownload.Dequeue();
+
+            return package;
         }
 
         private void DownloadedDirectoryProgressEvent(object sender, DownloadDirectoryProgressArgs e)
         {
-            var item = this._currentlyDownloadedPackages.FirstOrDefault(o => o.PackageName == ((TransferUtilityDownloadDirectoryRequest)sender).S3Directory);
-            if (item == null)
+            if (this._downloadedPackage == null)
             {
                 return;
             }
 
-            item.TotalBytes = e.TotalBytes;
-            item.TransferredBytes = e.TransferredBytes;
-            item.DownloadProgress = (e.TransferredBytes / (double)e.TotalBytes) * 100;
+            this._downloadedPackage.TotalBytes = e.TotalBytes;
+            this._downloadedPackage.TransferredBytes = e.TransferredBytes;
+            this._downloadedPackage.DownloadProgress = (e.TransferredBytes / (double)e.TotalBytes) * 100;
         }
 
         public async Task UploadPackagesAsync(List<string> packagePaths, List<string> tags)
