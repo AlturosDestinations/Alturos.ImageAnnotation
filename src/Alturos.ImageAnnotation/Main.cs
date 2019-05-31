@@ -2,12 +2,12 @@
 using Alturos.ImageAnnotation.Contract.Amazon;
 using Alturos.ImageAnnotation.Forms;
 using Alturos.ImageAnnotation.Model;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WK.Libraries.BetterFolderBrowserNS;
 
 namespace Alturos.ImageAnnotation
 {
@@ -39,13 +39,13 @@ namespace Alturos.ImageAnnotation
             this.downloadControl.Dock = DockStyle.Fill;
 
             this.annotationPackageListControl.Setup(this._annotationPackageProvider);
+            this.annotationImageListControl.Setup(this._annotationPackageProvider);
 
             this.autoplaceAnnotationsToolStripMenuItem.Checked = true;
 
             this.annotationDrawControl.AutoplaceAnnotations = true;
             this.annotationDrawControl.SetObjectClasses(this._annotationConfig.ObjectClasses);
-            this.annotationDrawControl.ShowLabels = true;
-            this.annotationDrawControl.ShowLegend(false);
+            this.annotationDrawControl.SetLabelsVisible(true);
 
             this.showLabelsToolStripMenuItem.Checked = true;
         }
@@ -113,13 +113,9 @@ namespace Alturos.ImageAnnotation
             var unsyncedPackages = this.annotationPackageListControl.GetAllPackages().Where(o => o.IsDirty);
             if (unsyncedPackages.Any())
             {
-                using (var dialog = new SyncConfirmationDialog())
+                using (var dialog = new CloseConfirmationDialog())
                 {
                     dialog.StartPosition = FormStartPosition.CenterParent;
-                    dialog.Text = "Unsaved changes";
-                    dialog.SetDescriptions("Are you sure you want to close without sync?", string.Empty);
-                    dialog.SetButtonName("Discard");
-                    dialog.SetUnsyncedPackages(unsyncedPackages.ToList());
 
                     var dialogResult = dialog.ShowDialog(this);
                     if (dialogResult == DialogResult.Cancel)
@@ -168,9 +164,6 @@ namespace Alturos.ImageAnnotation
                 // Proceed with syncing
                 var dialog = new SyncConfirmationDialog();
                 dialog.StartPosition = FormStartPosition.CenterParent;
-                dialog.Text = "Confirm syncing";
-                dialog.SetDescriptions("Do you want to sync the following packages?", string.Empty);
-                dialog.SetButtonName("Ok");
                 dialog.SetUnsyncedPackages(packages.ToList());
 
                 var dialogResult = dialog.ShowDialog(this);
@@ -206,33 +199,32 @@ namespace Alturos.ImageAnnotation
 
         private void AddPackageStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var openFileDialog = new CommonOpenFileDialog()
-            {
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                IsFolderPicker = true,
-                Multiselect = true
-            })
-            using (var tagSelectionDialog = new TagSelectionDialog())
-            {
-                tagSelectionDialog.StartPosition = FormStartPosition.CenterParent;
-                var dialogResult = openFileDialog.ShowDialog();
-                if (dialogResult == CommonFileDialogResult.Ok)
-                {
-                    tagSelectionDialog.Setup(this._annotationConfig);
-                    var tagDialogResult = tagSelectionDialog.ShowDialog(this);
-                    if (tagDialogResult == DialogResult.OK)
-                    {
-                        var uploadDialog = new UploadProgressDialog(this._annotationPackageProvider);
-                        uploadDialog.StartPosition = FormStartPosition.CenterParent;
-                        uploadDialog.Show(this);
+            //using (var folderDialog = new BetterFolderBrowser()
+            //{
+            //    RootFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            //    Multiselect = true
+            //})
+            //using (var tagSelectionDialog = new TagSelectionDialog())
+            //{
+            //    tagSelectionDialog.StartPosition = FormStartPosition.CenterParent;
+            //    var dialogResult = folderDialog.ShowDialog();
+            //    if (dialogResult == DialogResult.OK)
+            //    {
+            //        tagSelectionDialog.Setup(this._annotationConfig);
+            //        var tagDialogResult = tagSelectionDialog.ShowDialog(this);
+            //        if (tagDialogResult == DialogResult.OK)
+            //        {
+            //            var uploadDialog = new UploadDialog(this._annotationPackageProvider);
+            //            uploadDialog.StartPosition = FormStartPosition.CenterParent;
+            //            uploadDialog.Show(this);
 
-                        _ = Task.Run(() => uploadDialog.Upload(openFileDialog.FileNames.ToList(), tagSelectionDialog.SelectedTags)).ContinueWith(o=>
-                        {
-                            uploadDialog.Dispose();
-                        });
-                    }
-                }
-            }
+            //            _ = Task.Run(() => uploadDialog.Upload(folderDialog.SelectedFolders.ToList(), tagSelectionDialog.SelectedTags)).ContinueWith(o=>
+            //            {
+            //                uploadDialog.Dispose();
+            //            });
+            //        }
+            //    }
+            //}
         }
 
         private void AutoplaceAnnotationsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -244,13 +236,7 @@ namespace Alturos.ImageAnnotation
         private void ShowLabelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.showLabelsToolStripMenuItem.Checked = !this.showLabelsToolStripMenuItem.Checked;
-            this.annotationDrawControl.ShowLabels = this.showLabelsToolStripMenuItem.Checked;
-        }
-
-        private void ShowLegendToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.showLegendToolStripMenuItem.Checked = !this.showLegendToolStripMenuItem.Checked;
-            this.annotationDrawControl.ShowLegend(this.showLegendToolStripMenuItem.Checked);
+            this.annotationDrawControl.SetLabelsVisible(this.showLabelsToolStripMenuItem.Checked);
         }
 
         private async void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -336,11 +322,11 @@ namespace Alturos.ImageAnnotation
 
             this.annotationDrawControl.ApplyCachedBoundingBox();
 
-            if (image.BoundingBoxes == null)
-            {
-                image.BoundingBoxes = new List<AnnotationBoundingBox>();
-                this.ImageEdited(image);
-            }
+            //if (image.BoundingBoxes == null)
+            //{
+            //    image.BoundingBoxes = new List<AnnotationBoundingBox>();
+            //    this.ImageEdited(image);
+            //}
         }
 
         private void ImageEdited(AnnotationImage annotationImage)
@@ -366,11 +352,12 @@ namespace Alturos.ImageAnnotation
 
         private List<string> TagsRequested()
         {
-            var form = new TagSelectionDialog();
-            form.Setup(this._annotationConfig);
-            form.ShowDialog();
+            //var form = new TagSelectionDialog();
+            //form.Setup(this._annotationConfig);
+            //form.ShowDialog();
 
-            return form.SelectedTags;
+            //return form.SelectedTags;
+            return null;
         }
 
         #endregion

@@ -1,20 +1,24 @@
-﻿using Alturos.ImageAnnotation.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using Alturos.ImageAnnotation.Model;
 
-namespace Alturos.ImageAnnotation.Forms
+namespace Alturos.ImageAnnotation.CustomControls
 {
-    public partial class TagSelectionDialog : Form
+    public partial class TagSelectionControl : UserControl
     {
-        public List<string> SelectedTags;
+        public List<string> SelectedTags { get; private set; }
         private AnnotationConfig _config;
 
-        public TagSelectionDialog()
+        public TagSelectionControl()
         {
             this.InitializeComponent();
-            this.SelectedTags = new List<string>();
         }
 
         public void Setup(AnnotationConfig config)
@@ -33,9 +37,6 @@ namespace Alturos.ImageAnnotation.Forms
                 var tag = row.DataBoundItem as AnnotationPackageTag;
                 this.SelectedTags.Add(tag.Value);
             }
-
-            this.DialogResult = DialogResult.OK;
-            this.Close();
         }
 
         private void TextBoxFilter_TextChanged(object sender, EventArgs e)

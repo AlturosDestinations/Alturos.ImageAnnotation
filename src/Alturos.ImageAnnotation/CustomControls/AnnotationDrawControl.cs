@@ -15,7 +15,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         public event Action<AnnotationImage> ImageEdited;
 
         public bool AutoplaceAnnotations { get; set; }
-        public bool ShowLabels { get; set; }
+        public bool ShowLabels { get; private set; }
 
         private readonly int _mouseDragElementSize = 10;
 
@@ -56,9 +56,12 @@ namespace Alturos.ImageAnnotation.CustomControls
             }
         }
 
-        public void ShowLegend(bool show)
+        public void SetLabelsVisible(bool showLabels)
         {
-            this.legendsChart.Visible = show;
+            this.ShowLabels = showLabels;
+            this.legendsChart.Visible = !showLabels;
+
+            this.pictureBox1.Invalidate();
         }
 
         private void CacheLastBoundingBoxes()
@@ -108,7 +111,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 return;
             }
 
-            if (this._cachedBoundingBoxes != null)
+            if (this._cachedBoundingBoxes != null && _cachedBoundingBoxes.Length > 0)
             {
                 if (this._annotationImage.BoundingBoxes == null)
                 {
@@ -352,7 +355,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         {
             if (this._dragPoint?.Type == DragPointType.Delete)
             {
-                this._annotationImage?.BoundingBoxes.Remove(this._selectedBoundingBox);
+                this._annotationImage?.BoundingBoxes?.Remove(this._selectedBoundingBox);
             }
 
             this._selectedBoundingBox = null;

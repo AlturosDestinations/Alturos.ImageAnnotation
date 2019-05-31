@@ -42,17 +42,11 @@
     <Reference Include="AWSSDK.S3, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
       <HintPath>..\packages\AWSSDK.S3.3.3.102.5\lib\net45\AWSSDK.S3.dll</HintPath>
     </Reference>
+    <Reference Include="BetterFolderBrowser, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BetterFolderBrowser.1.0.0\lib\BetterFolderBrowser.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Core.1.1.0.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -76,6 +70,12 @@
     <Compile Include="Contract\Amazon\AnnotationTagDto.cs" />
     <Compile Include="Contract\IAnnotationExportProvider.cs" />
     <Compile Include="Contract\YoloAnnotationExportProvider.cs" />
+    <Compile Include="CustomControls\TagSelectionControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\TagSelectionControl.Designer.cs">
+      <DependentUpon>TagSelectionControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\ConfigurationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -104,17 +104,23 @@
     <Compile Include="Forms\HelpDialog.Designer.cs">
       <DependentUpon>HelpDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\CloseConfirmationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CloseConfirmationDialog.Designer.cs">
+      <DependentUpon>CloseConfirmationDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\SyncConfirmationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\SyncConfirmationDialog.Designer.cs">
       <DependentUpon>SyncConfirmationDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\UploadProgressDialog.cs">
+    <Compile Include="Forms\UploadDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\UploadProgressDialog.Designer.cs">
-      <DependentUpon>UploadProgressDialog.cs</DependentUpon>
+    <Compile Include="Forms\UploadDialog.Designer.cs">
+      <DependentUpon>UploadDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Helper\InterfaceHelper.cs" />
     <Compile Include="Helper\DrawHelper.cs" />
@@ -183,12 +189,9 @@
     <Compile Include="Forms\SyncProgressDialog.Designer.cs">
       <DependentUpon>SyncProgressDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\TagSelectionDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TagSelectionDialog.Designer.cs">
-      <DependentUpon>TagSelectionDialog.cs</DependentUpon>
-    </Compile>
+    <EmbeddedResource Include="CustomControls\TagSelectionControl.resx">
+      <DependentUpon>TagSelectionControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ConfigurationDialog.resx">
       <DependentUpon>ConfigurationDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -216,14 +219,14 @@
     <EmbeddedResource Include="Forms\HelpDialog.resx">
       <DependentUpon>HelpDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CloseConfirmationDialog.resx">
+      <DependentUpon>CloseConfirmationDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\SyncConfirmationDialog.resx">
       <DependentUpon>SyncConfirmationDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\UploadProgressDialog.resx">
-      <DependentUpon>UploadProgressDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TagSelectionDialog.resx">
-      <DependentUpon>TagSelectionDialog.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\UploadDialog.resx">
+      <DependentUpon>UploadDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
@@ -254,6 +257,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\yolov3.cfg" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
