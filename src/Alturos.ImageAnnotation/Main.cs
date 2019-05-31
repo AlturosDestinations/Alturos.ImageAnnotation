@@ -39,6 +39,7 @@ namespace Alturos.ImageAnnotation
             this.downloadControl.Dock = DockStyle.Fill;
 
             this.annotationPackageListControl.Setup(this._annotationPackageProvider);
+            this.annotationImageListControl.Setup(this._annotationPackageProvider);
 
             this.autoplaceAnnotationsToolStripMenuItem.Checked = true;
 

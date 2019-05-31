@@ -4,6 +4,7 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.S3;
+using Amazon.S3.IO;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using System;
@@ -336,13 +337,81 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 {
                     await context.SaveAsync(info).ConfigureAwait(false);
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
 
             }
 
             this._syncedPackages++;
             return true;
+        }
+
+        public async Task<bool> DeletePackageAsync(AnnotationPackage package)
+        {
+            try
+            {
+                var successful = true;
+
+                // Delete images on S3
+                foreach (var image in package.Images)
+                {
+                    if (!await this.DeleteImageAsync(image))
+                    {
+                        successful = false;
+                    }
+                }
+
+                // Delete package from DynamoDB
+                using (var context = new DynamoDBContext(this._dynamoDbClient))
+                {
+                    await context.DeleteAsync(new AnnotationPackageDto
+                    {
+                        Id = package.ExternalId
+                    }).ConfigureAwait(false);
+                }
+
+                // Delete local folder
+                Directory.Delete(Path.Combine(this._extractionFolder, package.PackageName), true);
+
+                return successful;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteImageAsync(AnnotationImage image)
+        {
+            try
+            {
+                // Delete image from S3
+                var deleteObjectRequest = new DeleteObjectRequest
+                {
+                    BucketName = this._bucketName,
+                    Key = $"{image.Package.PackageName}/{image.ImageName}"
+                };
+
+                var response = await this._client.DeleteObjectAsync(deleteObjectRequest);
+
+                // Delete image from DynamoDB
+                using (var context = new DynamoDBContext(this._dynamoDbClient))
+                {
+                    var package = await context.LoadAsync<AnnotationPackageDto>(image.Package.ExternalId);
+                    package.Images.RemoveAll(o => o.ImageName == image.ImageName);
+                    await context.SaveAsync(package);
+                }
+
+                // Delete local image
+                File.Delete(Path.Combine(this._extractionFolder, image.Package.PackageName, image.ImageName));
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
 
         public double GetUploadProgress()

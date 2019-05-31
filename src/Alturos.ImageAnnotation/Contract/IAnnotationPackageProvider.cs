@@ -19,6 +19,9 @@ namespace Alturos.ImageAnnotation.Contract
         Task UploadPackagesAsync(List<string> packagePath, List<string> tags);
         Task SyncPackagesAsync(AnnotationPackage[] packages);
 
+        Task<bool> DeletePackageAsync(AnnotationPackage package);
+        Task<bool> DeleteImageAsync(AnnotationImage image);
+
         double GetUploadProgress();
         double GetSyncProgress();
     }

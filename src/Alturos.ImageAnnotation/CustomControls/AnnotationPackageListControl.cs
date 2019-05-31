@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -14,7 +15,7 @@ namespace Alturos.ImageAnnotation.CustomControls
     {
         private static ILog Log = LogManager.GetLogger(typeof(AnnotationPackageListControl));
         private IAnnotationPackageProvider _annotationPackageProvider;
-        private AnnotationPackage[] _annotationPackages;
+        private List<AnnotationPackage> _annotationPackages;
         private List<AnnotationPackage> _selectedPackages;
 
         public event Action<AnnotationPackage> PackageSelected;
@@ -64,10 +65,10 @@ namespace Alturos.ImageAnnotation.CustomControls
                 this.dataGridView1.Invoke((MethodInvoker)delegate { this.dataGridView1.Visible = false; });
 
                 this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = true; });
-                this._annotationPackages = await this._annotationPackageProvider.GetPackagesAsync(false);
+                this._annotationPackages = (await this._annotationPackageProvider.GetPackagesAsync(false)).ToList();
                 this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = false; });
 
-                if (this._annotationPackages?.Length > 0)
+                if (this._annotationPackages?.Count > 0)
                 {
                     this.textBoxSearch.Invoke((MethodInvoker)delegate { this.textBoxSearch.Visible = true; });
 
@@ -79,7 +80,7 @@ namespace Alturos.ImageAnnotation.CustomControls
 
                     this.groupBox1.Invoke((MethodInvoker)delegate
                     {
-                        this.groupBox1.Text = $"{groupBoxName} ({this._annotationPackages.Length:n0})";
+                        this.groupBox1.Text = $"{groupBoxName} ({this._annotationPackages.Count:n0})";
                     });
                 }
             }
@@ -146,6 +147,8 @@ namespace Alturos.ImageAnnotation.CustomControls
                     {
                         markAsDirty = true;
                         image.BoundingBoxes = null;
+
+                        package.UpdateAnnotationStatus(image);
                     }
                 }
 
@@ -153,6 +156,34 @@ namespace Alturos.ImageAnnotation.CustomControls
                 {
                     package.IsDirty = true;
                 }
+            }
+
+            this.dataGridView1.Refresh();
+        }
+
+        private async void DeleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var successful = true;
+            var failedPackages = new List<AnnotationPackage>();
+
+            foreach (var package in this._selectedPackages)
+            {
+                if (!await this._annotationPackageProvider.DeletePackageAsync(package))
+                {
+                    successful = false;
+                    failedPackages.Add(package);
+
+                    continue;
+                }
+
+                this._annotationPackages.Remove(package);
+            }
+
+            if (!successful)
+            {
+                var sb = new StringBuilder();
+                failedPackages.ForEach(o => sb.AppendLine(o.PackageName));
+                MessageBox.Show("Couldn't delete the following packages:\n\n" + sb.ToString(), "Deletion failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             this.dataGridView1.Refresh();

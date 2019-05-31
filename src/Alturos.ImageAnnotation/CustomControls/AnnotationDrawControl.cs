@@ -355,7 +355,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         {
             if (this._dragPoint?.Type == DragPointType.Delete)
             {
-                this._annotationImage?.BoundingBoxes.Remove(this._selectedBoundingBox);
+                this._annotationImage?.BoundingBoxes?.Remove(this._selectedBoundingBox);
             }
 
             this._selectedBoundingBox = null;
