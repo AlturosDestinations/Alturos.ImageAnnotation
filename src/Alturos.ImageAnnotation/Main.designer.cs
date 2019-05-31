@@ -47,7 +47,6 @@
             this.tagListControl = new Alturos.ImageAnnotation.CustomControls.TagListControl();
             this.annotationPackageListControl = new Alturos.ImageAnnotation.CustomControls.AnnotationPackageListControl();
             this.annotationDrawControl = new Alturos.ImageAnnotation.CustomControls.AnnotationDrawControl();
-            this.showLegendToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripMain.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panelImageList.SuspendLayout();
@@ -91,7 +90,6 @@
             this.configurationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.autoplaceAnnotationsToolStripMenuItem,
             this.showLabelsToolStripMenuItem,
-            this.showLegendToolStripMenuItem,
             this.toolStripSeparator1,
             this.settingsToolStripMenuItem});
             this.configurationToolStripMenuItem.Name = "configurationToolStripMenuItem";
@@ -101,26 +99,26 @@
             // autoplaceAnnotationsToolStripMenuItem
             // 
             this.autoplaceAnnotationsToolStripMenuItem.Name = "autoplaceAnnotationsToolStripMenuItem";
-            this.autoplaceAnnotationsToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.autoplaceAnnotationsToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
             this.autoplaceAnnotationsToolStripMenuItem.Text = "Autoplace Annotations";
             this.autoplaceAnnotationsToolStripMenuItem.Click += new System.EventHandler(this.AutoplaceAnnotationsToolStripMenuItem_Click);
             // 
             // showLabelsToolStripMenuItem
             // 
             this.showLabelsToolStripMenuItem.Name = "showLabelsToolStripMenuItem";
-            this.showLabelsToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
-            this.showLabelsToolStripMenuItem.Text = "Show Labels";
+            this.showLabelsToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.showLabelsToolStripMenuItem.Text = "Show Object Labels in Image";
             this.showLabelsToolStripMenuItem.Click += new System.EventHandler(this.ShowLabelsToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(193, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(223, 6);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.SettingsToolStripMenuItem_Click);
             // 
@@ -236,16 +234,8 @@
             this.annotationDrawControl.AutoplaceAnnotations = false;
             this.annotationDrawControl.Location = new System.Drawing.Point(453, 3);
             this.annotationDrawControl.Name = "annotationDrawControl";
-            this.annotationDrawControl.ShowLabels = false;
             this.annotationDrawControl.Size = new System.Drawing.Size(878, 524);
             this.annotationDrawControl.TabIndex = 2;
-            // 
-            // showLegendToolStripMenuItem
-            // 
-            this.showLegendToolStripMenuItem.Name = "showLegendToolStripMenuItem";
-            this.showLegendToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
-            this.showLegendToolStripMenuItem.Text = "Show Legend";
-            this.showLegendToolStripMenuItem.Click += new System.EventHandler(this.ShowLegendToolStripMenuItem_Click);
             // 
             // Main
             // 
@@ -294,7 +284,6 @@
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem showLegendToolStripMenuItem;
     }
 }
 

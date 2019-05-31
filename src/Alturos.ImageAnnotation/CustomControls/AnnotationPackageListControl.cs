@@ -15,6 +15,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         private static ILog Log = LogManager.GetLogger(typeof(AnnotationPackageListControl));
         private IAnnotationPackageProvider _annotationPackageProvider;
         private AnnotationPackage[] _annotationPackages;
+        private List<AnnotationPackage> _selectedPackages;
 
         public event Action<AnnotationPackage> PackageSelected;
 
@@ -96,24 +97,12 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private void DownloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var packages = new List<AnnotationPackage>();
-            foreach (DataGridViewRow row in this.dataGridView1.SelectedRows)
-            {
-                packages.Add(row.DataBoundItem as AnnotationPackage);
-            }
-
-            packages.ForEach(o => Task.Run(() => this.DownloadPackage(o)));
+            this._selectedPackages.ForEach(o => Task.Run(() => this.DownloadPackage(o)));
         }
 
         private void RedownloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var packages = new List<AnnotationPackage>();
-            foreach (DataGridViewRow row in this.dataGridView1.SelectedRows)
-            {
-                packages.Add(row.DataBoundItem as AnnotationPackage);
-            }
-
-            foreach (var package in packages)
+            foreach (var package in this._selectedPackages)
             {
                 package.AvailableLocally = false;
                 Task.Run(() => this.DownloadPackage(package));
@@ -145,7 +134,31 @@ namespace Alturos.ImageAnnotation.CustomControls
             this.Invoke((MethodInvoker)delegate { this.PackageSelected?.Invoke(downloadedPackage); });
         }
 
-        private void dataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        private void ClearAnnotationsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (var package in this._selectedPackages)
+            {
+                var markAsDirty = false;
+
+                foreach (var image in package.Images)
+                {
+                    if (image.BoundingBoxes != null)
+                    {
+                        markAsDirty = true;
+                        image.BoundingBoxes = null;
+                    }
+                }
+
+                if (markAsDirty)
+                {
+                    package.IsDirty = true;
+                }
+            }
+
+            this.dataGridView1.Refresh();
+        }
+
+        private void DataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
             var item = this.dataGridView1.Rows[e.RowIndex].DataBoundItem as AnnotationPackage;
 
@@ -164,7 +177,7 @@ namespace Alturos.ImageAnnotation.CustomControls
             this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
         }
 
-        private void textBoxSearch_TextChanged(object sender, EventArgs e)
+        private void TextBoxSearch_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(this.textBoxSearch.Text))
             {
@@ -174,6 +187,35 @@ namespace Alturos.ImageAnnotation.CustomControls
 
             var packages = this._annotationPackages.Where(o => o.PackageName.Contains(this.textBoxSearch.Text)).ToArray();
             this.dataGridView1.DataSource = packages;
+        }
+
+        private void ContextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var packages = new List<AnnotationPackage>();
+            foreach (DataGridViewRow row in this.dataGridView1.SelectedRows)
+            {
+                packages.Add(row.DataBoundItem as AnnotationPackage);
+            }
+
+            if (packages.All(o => o.AvailableLocally))
+            {
+                this.contextMenuStrip1.Items[0].Visible = false;
+            }
+            else
+            {
+                this.contextMenuStrip1.Items[0].Visible = true;
+            }
+
+            if (!packages.Any(o => o.AvailableLocally))
+            {
+                this.contextMenuStrip1.Items[1].Visible = false;
+            }
+            else
+            {
+                this.contextMenuStrip1.Items[1].Visible = true;
+            }
+
+            this._selectedPackages = packages;
         }
     }
 }

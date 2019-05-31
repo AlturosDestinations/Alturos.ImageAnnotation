@@ -7,12 +7,12 @@ using System.Windows.Forms;
 
 namespace Alturos.ImageAnnotation.Forms
 {
-    public partial class UploadProgressDialog : Form
+    public partial class UploadDialog : Form
     {
         private IAnnotationPackageProvider _annotationPackageProvider;
         private bool _uploading;
 
-        public UploadProgressDialog(IAnnotationPackageProvider annotationPackageProvider)
+        public UploadDialog(IAnnotationPackageProvider annotationPackageProvider)
         {
             this._annotationPackageProvider = annotationPackageProvider;
 

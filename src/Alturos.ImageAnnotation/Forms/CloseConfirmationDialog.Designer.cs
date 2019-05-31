@@ -54,7 +54,7 @@
             this.buttonDiscard.Name = "buttonDiscard";
             this.buttonDiscard.Padding = new System.Windows.Forms.Padding(5);
             this.buttonDiscard.Size = new System.Drawing.Size(137, 30);
-            this.buttonDiscard.TabIndex = 1;
+            this.buttonDiscard.TabIndex = 2;
             this.buttonDiscard.Text = "Discard Changes";
             this.buttonDiscard.UseVisualStyleBackColor = false;
             this.buttonDiscard.Click += new System.EventHandler(this.ButtonDiscard_Click);
@@ -69,7 +69,7 @@
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Padding = new System.Windows.Forms.Padding(5);
             this.buttonCancel.Size = new System.Drawing.Size(136, 30);
-            this.buttonCancel.TabIndex = 2;
+            this.buttonCancel.TabIndex = 1;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = false;
             this.buttonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);

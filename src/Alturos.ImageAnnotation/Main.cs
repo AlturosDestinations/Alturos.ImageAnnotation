@@ -2,12 +2,12 @@
 using Alturos.ImageAnnotation.Contract.Amazon;
 using Alturos.ImageAnnotation.Forms;
 using Alturos.ImageAnnotation.Model;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WK.Libraries.BetterFolderBrowserNS;
 
 namespace Alturos.ImageAnnotation
 {
@@ -44,8 +44,7 @@ namespace Alturos.ImageAnnotation
 
             this.annotationDrawControl.AutoplaceAnnotations = true;
             this.annotationDrawControl.SetObjectClasses(this._annotationConfig.ObjectClasses);
-            this.annotationDrawControl.ShowLabels = true;
-            this.annotationDrawControl.ShowLegend(false);
+            this.annotationDrawControl.SetLabelsVisible(true);
 
             this.showLabelsToolStripMenuItem.Checked = true;
         }
@@ -199,33 +198,32 @@ namespace Alturos.ImageAnnotation
 
         private void AddPackageStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var openFileDialog = new CommonOpenFileDialog()
-            {
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                IsFolderPicker = true,
-                Multiselect = true
-            })
-            using (var tagSelectionDialog = new TagSelectionDialog())
-            {
-                tagSelectionDialog.StartPosition = FormStartPosition.CenterParent;
-                var dialogResult = openFileDialog.ShowDialog();
-                if (dialogResult == CommonFileDialogResult.Ok)
-                {
-                    tagSelectionDialog.Setup(this._annotationConfig);
-                    var tagDialogResult = tagSelectionDialog.ShowDialog(this);
-                    if (tagDialogResult == DialogResult.OK)
-                    {
-                        var uploadDialog = new UploadProgressDialog(this._annotationPackageProvider);
-                        uploadDialog.StartPosition = FormStartPosition.CenterParent;
-                        uploadDialog.Show(this);
+            //using (var folderDialog = new BetterFolderBrowser()
+            //{
+            //    RootFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            //    Multiselect = true
+            //})
+            //using (var tagSelectionDialog = new TagSelectionDialog())
+            //{
+            //    tagSelectionDialog.StartPosition = FormStartPosition.CenterParent;
+            //    var dialogResult = folderDialog.ShowDialog();
+            //    if (dialogResult == DialogResult.OK)
+            //    {
+            //        tagSelectionDialog.Setup(this._annotationConfig);
+            //        var tagDialogResult = tagSelectionDialog.ShowDialog(this);
+            //        if (tagDialogResult == DialogResult.OK)
+            //        {
+            //            var uploadDialog = new UploadDialog(this._annotationPackageProvider);
+            //            uploadDialog.StartPosition = FormStartPosition.CenterParent;
+            //            uploadDialog.Show(this);
 
-                        _ = Task.Run(() => uploadDialog.Upload(openFileDialog.FileNames.ToList(), tagSelectionDialog.SelectedTags)).ContinueWith(o=>
-                        {
-                            uploadDialog.Dispose();
-                        });
-                    }
-                }
-            }
+            //            _ = Task.Run(() => uploadDialog.Upload(folderDialog.SelectedFolders.ToList(), tagSelectionDialog.SelectedTags)).ContinueWith(o=>
+            //            {
+            //                uploadDialog.Dispose();
+            //            });
+            //        }
+            //    }
+            //}
         }
 
         private void AutoplaceAnnotationsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -237,13 +235,7 @@ namespace Alturos.ImageAnnotation
         private void ShowLabelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.showLabelsToolStripMenuItem.Checked = !this.showLabelsToolStripMenuItem.Checked;
-            this.annotationDrawControl.ShowLabels = this.showLabelsToolStripMenuItem.Checked;
-        }
-
-        private void ShowLegendToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.showLegendToolStripMenuItem.Checked = !this.showLegendToolStripMenuItem.Checked;
-            this.annotationDrawControl.ShowLegend(this.showLegendToolStripMenuItem.Checked);
+            this.annotationDrawControl.SetLabelsVisible(this.showLabelsToolStripMenuItem.Checked);
         }
 
         private async void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -359,11 +351,12 @@ namespace Alturos.ImageAnnotation
 
         private List<string> TagsRequested()
         {
-            var form = new TagSelectionDialog();
-            form.Setup(this._annotationConfig);
-            form.ShowDialog();
+            //var form = new TagSelectionDialog();
+            //form.Setup(this._annotationConfig);
+            //form.ShowDialog();
 
-            return form.SelectedTags;
+            //return form.SelectedTags;
+            return null;
         }
 
         #endregion

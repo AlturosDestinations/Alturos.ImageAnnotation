@@ -15,7 +15,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         public event Action<AnnotationImage> ImageEdited;
 
         public bool AutoplaceAnnotations { get; set; }
-        public bool ShowLabels { get; set; }
+        public bool ShowLabels { get; private set; }
 
         private readonly int _mouseDragElementSize = 10;
 
@@ -56,9 +56,12 @@ namespace Alturos.ImageAnnotation.CustomControls
             }
         }
 
-        public void ShowLegend(bool show)
+        public void SetLabelsVisible(bool showLabels)
         {
-            this.legendsChart.Visible = show;
+            this.ShowLabels = showLabels;
+            this.legendsChart.Visible = !showLabels;
+
+            this.pictureBox1.Invalidate();
         }
 
         private void CacheLastBoundingBoxes()
