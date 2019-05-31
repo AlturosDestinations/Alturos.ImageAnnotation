@@ -9,10 +9,6 @@ For every AnnotationPackage we have some Metadata, Weather, Color, ... this info
 
 ![object detection result](/doc/AlturosImageAnnotation.png)
 
-## Requirements
-
- - [Amazon AWS Account](https://aws.amazon.com/) (S3, DynamoDB)
- 
 ## Features
 
  - Image annotation together
