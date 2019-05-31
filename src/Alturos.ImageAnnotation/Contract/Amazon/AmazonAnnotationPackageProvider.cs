@@ -17,10 +17,10 @@ using System.Threading.Tasks;
 namespace Alturos.ImageAnnotation.Contract.Amazon
 {
     [Description("Amazon")]
-    public class AmazonAnnotationPackageProvider : IAnnotationPackageProvider
+    public class AmazonAnnotationPackageProvider : IAnnotationPackageProvider, IDisposable
     {
-        public bool IsSyncing { get; set; }
-        public bool IsUploading { get; set; }
+        public bool IsSyncing { get; private set; }
+        public bool IsUploading { get; private set; }
 
         private readonly IAmazonS3 _client;
         private readonly IAmazonDynamoDB _dynamoDbClient;
@@ -62,6 +62,12 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             this._dynamoDbClient = new AmazonDynamoDBClient(accessKeyId, secretAccessKey, RegionEndpoint.EUWest1);
 
             this._packagesToDownload = new Queue<AnnotationPackage>();
+        }
+
+        public void Dispose()
+        {
+            this._client?.Dispose();
+            this._dynamoDbClient?.Dispose();
         }
 
         public async Task SetAnnotationConfigAsync(AnnotationConfig config)
@@ -135,7 +141,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 try
                 {
                     var packageInfos = context.ScanAsync<AnnotationPackageDto>(scanConditions);
-                    
+
                     // Create packages
                     var retrievedPackages = await packageInfos.GetNextSetAsync().ConfigureAwait(false);
 
@@ -184,7 +190,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
             while (this._packagesToDownload.Peek() != package)
             {
-                await Task.Delay(1000);
+                await Task.Delay(1000).ConfigureAwait(false);
             }
 
             this._downloadedPackage = package;
@@ -200,15 +206,19 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 Prefix = package.PackageName
             });
 
-            var request = new TransferUtilityDownloadDirectoryRequest();
-            request.BucketName = this._bucketName;
-            request.S3Directory = package.PackageName;
-            request.LocalDirectory = Path.Combine(this._extractionFolder, package.PackageName);
+            var request = new TransferUtilityDownloadDirectoryRequest
+            {
+                BucketName = this._bucketName,
+                S3Directory = package.PackageName,
+                LocalDirectory = Path.Combine(this._extractionFolder, package.PackageName)
+            };
 
             request.DownloadedDirectoryProgressEvent += this.DownloadedDirectoryProgressEvent;
 
-            var fileTransferUtility = new TransferUtility(this._client);
-            await fileTransferUtility.DownloadDirectoryAsync(request);
+            using (var fileTransferUtility = new TransferUtility(this._client))
+            {
+                await fileTransferUtility.DownloadDirectoryAsync(request).ConfigureAwait(false);
+            }
 
             request.DownloadedDirectoryProgressEvent -= this.DownloadedDirectoryProgressEvent;
 
@@ -248,7 +258,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 tasks.Add(Task.Run(() => UploadPackageAsync(packagePath, tags)));
             }
 
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
 
             this.IsUploading = false;
         }
@@ -267,24 +277,26 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                     Images = new List<AnnotationImage>(),
                     Tags = tags
                 }
-            });
+            }).ConfigureAwait(false);
 
-            var files = Directory.GetFiles(packagePath);
             var tasks = new List<Task>();
 
+            var files = Directory.GetFiles(packagePath);
             foreach (var file in files)
             {
                 tasks.Add(this.UploadFileAsync(file));
             }
 
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
         private async Task UploadFileAsync(string filePath)
         {
-            var fileTransferUtility = new TransferUtility(this._client);
-            var keyName = $"{Directory.GetParent(filePath).Name}/{Path.GetFileName(filePath)}";
-            await fileTransferUtility.UploadAsync(filePath, "alturos.imageannotation", keyName);
+            using (var fileTransferUtility = new TransferUtility(this._client))
+            {
+                var keyName = $"{Directory.GetParent(filePath).Name}/{Path.GetFileName(filePath)}";
+                await fileTransferUtility.UploadAsync(filePath, "alturos.imageannotation", keyName).ConfigureAwait(false);
+            }
 
             this._uploadedFiles++;
         }
@@ -355,7 +367,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 // Delete images on S3
                 foreach (var image in package.Images)
                 {
-                    if (!await this.DeleteImageAsync(image))
+                    if (!await this.DeleteImageAsync(image).ConfigureAwait(false))
                     {
                         successful = false;
                     }
@@ -392,18 +404,22 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                     Key = $"{image.Package.PackageName}/{image.ImageName}"
                 };
 
-                var response = await this._client.DeleteObjectAsync(deleteObjectRequest);
+                var response = await this._client.DeleteObjectAsync(deleteObjectRequest).ConfigureAwait(false);
 
                 // Delete image from DynamoDB
                 using (var context = new DynamoDBContext(this._dynamoDbClient))
                 {
-                    var package = await context.LoadAsync<AnnotationPackageDto>(image.Package.ExternalId);
+                    var package = await context.LoadAsync<AnnotationPackageDto>(image.Package.ExternalId).ConfigureAwait(false);
                     package.Images.RemoveAll(o => o.ImageName == image.ImageName);
-                    await context.SaveAsync(package);
+                    await context.SaveAsync(package).ConfigureAwait(false);
                 }
 
                 // Delete local image
-                File.Delete(Path.Combine(this._extractionFolder, image.Package.PackageName, image.ImageName));
+                var localImagePath = Path.Combine(this._extractionFolder, image.Package.PackageName, image.ImageName);
+                if (File.Exists(localImagePath))
+                {
+                    File.Delete(localImagePath);
+                }
 
                 return true;
             }

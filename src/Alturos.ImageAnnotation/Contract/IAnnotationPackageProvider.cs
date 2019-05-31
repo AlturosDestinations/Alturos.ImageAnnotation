@@ -6,8 +6,8 @@ namespace Alturos.ImageAnnotation.Contract
 {
     public interface IAnnotationPackageProvider
     {
-        bool IsSyncing { get; set; }
-        bool IsUploading { get; set; }
+        bool IsSyncing { get; }
+        bool IsUploading { get; }
 
         Task SetAnnotationConfigAsync(AnnotationConfig config);
         Task<AnnotationConfig> GetAnnotationConfigAsync();
