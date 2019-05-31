@@ -111,7 +111,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 return;
             }
 
-            if (this._cachedBoundingBoxes != null)
+            if (this._cachedBoundingBoxes != null && _cachedBoundingBoxes.Length > 0)
             {
                 if (this._annotationImage.BoundingBoxes == null)
                 {
