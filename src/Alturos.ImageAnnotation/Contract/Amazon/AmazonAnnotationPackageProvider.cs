@@ -4,7 +4,6 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.S3;
-using Amazon.S3.IO;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using System;
