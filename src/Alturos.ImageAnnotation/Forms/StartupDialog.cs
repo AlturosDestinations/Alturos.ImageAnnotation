@@ -1,5 +1,4 @@
 ﻿using Alturos.ImageAnnotation.Contract;
-using Alturos.ImageAnnotation.Contract.Amazon;
 using Alturos.ImageAnnotation.Helper;
 using Alturos.ImageAnnotation.Model;
 using System;

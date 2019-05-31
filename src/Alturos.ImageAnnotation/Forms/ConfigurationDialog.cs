@@ -1,5 +1,4 @@
-﻿using Alturos.ImageAnnotation.Contract;
-using Alturos.ImageAnnotation.Model;
+﻿using Alturos.ImageAnnotation.Model;
 using System;
 using System.Linq;
 using System.Windows.Forms;
