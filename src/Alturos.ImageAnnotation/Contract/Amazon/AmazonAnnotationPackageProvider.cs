@@ -410,7 +410,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 using (var context = new DynamoDBContext(this._dynamoDbClient))
                 {
                     var package = await context.LoadAsync<AnnotationPackageDto>(image.Package.ExternalId).ConfigureAwait(false);
-                    package.Images.RemoveAll(o => o.ImageName == image.ImageName);
+                    package.Images?.RemoveAll(o => o.ImageName.Equals(image.ImageName));
                     await context.SaveAsync(package).ConfigureAwait(false);
                 }
 

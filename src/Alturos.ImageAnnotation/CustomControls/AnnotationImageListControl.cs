@@ -3,6 +3,7 @@ using Alturos.ImageAnnotation.Model;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -10,7 +11,9 @@ namespace Alturos.ImageAnnotation.CustomControls
 {
     public partial class AnnotationImageListControl : UserControl
     {
-        private List<AnnotationImage> _selectedImages;
+        private List<AnnotationImage> _annotationImages;
+        private BindingSource _bindingSource;
+
         private IAnnotationPackageProvider _annotationPackageProvider;
 
         public event Action<AnnotationImage> ImageSelected;
@@ -19,6 +22,8 @@ namespace Alturos.ImageAnnotation.CustomControls
         {
             this.InitializeComponent();
             this.dataGridView1.AutoGenerateColumns = false;
+            this._bindingSource = new BindingSource();
+            this.dataGridView1.DataSource = this._bindingSource;
         }
 
         public void Setup(IAnnotationPackageProvider annotationPackageProvider)
@@ -34,19 +39,20 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         public void Reset()
         {
-            this.dataGridView1.DataSource = null;
-            this.dataGridView1.Refresh();
+            this._annotationImages = null;
+            this._bindingSource.ResetBindings(false);
         }
 
         public void SetPackage(AnnotationPackage package)
         {
-            this.dataGridView1.DataSource = package.Images;
-            this.dataGridView1.Refresh();
+            this._annotationImages = package.Images;
+            this._bindingSource.DataSource = this._annotationImages;
+            this._bindingSource.ResetBindings(false);
         }
 
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            var image = this.dataGridView1.CurrentRow.DataBoundItem as AnnotationImage;
+            var image = this.dataGridView1.CurrentRow?.DataBoundItem as AnnotationImage;
             if (image == null)
             {
                 return;
@@ -57,19 +63,25 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private void DataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
-            var item = this.dataGridView1.Rows[e.RowIndex].DataBoundItem as AnnotationImage;
-            if (item == null)
+            try
             {
-                return;
-            }
+                var item = this.dataGridView1.Rows[e.RowIndex].DataBoundItem as AnnotationImage;
+                if (item == null)
+                {
+                    return;
+                }
 
-            if (item.BoundingBoxes != null)
+                if (item.BoundingBoxes != null)
+                {
+                    this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.GreenYellow;
+                    return;
+                }
+
+                this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
+            }
+            catch
             {
-                this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.GreenYellow;
-                return;
             }
-
-            this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
         }
 
         private async void DeleteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -77,7 +89,10 @@ namespace Alturos.ImageAnnotation.CustomControls
             var successful = true;
             var failedImages = new List<AnnotationImage>();
 
-            foreach (var image in this._selectedImages)
+            var deleteImages = this.dataGridView1.SelectedRows.Cast<DataGridViewRow>().Select(o => o.DataBoundItem as AnnotationImage).ToList();
+            this.dataGridView1.ClearSelection();
+
+            foreach (var image in deleteImages)
             {
                 if (!await this._annotationPackageProvider.DeleteImageAsync(image))
                 {
@@ -97,18 +112,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 MessageBox.Show("Couldn't delete the following images:\n\n" + sb.ToString(), "Deletion failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            this.dataGridView1.Refresh();
-        }
-
-        private void ContextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            var images = new List<AnnotationImage>();
-            foreach (DataGridViewRow row in this.dataGridView1.SelectedRows)
-            {
-                images.Add(row.DataBoundItem as AnnotationImage);
-            }
-
-            this._selectedImages = images;
+            this._bindingSource.ResetBindings(false);
         }
     }
 }
