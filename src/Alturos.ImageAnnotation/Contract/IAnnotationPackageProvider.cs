@@ -1,5 +1,6 @@
 ﻿using Alturos.ImageAnnotation.Model;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Alturos.ImageAnnotation.Contract
@@ -16,9 +17,8 @@ namespace Alturos.ImageAnnotation.Contract
         Task<AnnotationPackage[]> GetPackagesAsync(AnnotationPackageTag[] tags);
 
         Task<AnnotationPackage> DownloadPackageAsync(AnnotationPackage package);
-        Task UploadPackagesAsync(List<string> packagePath, List<string> tags);
-        Task SyncPackagesAsync(AnnotationPackage[] packages);
-
+        Task UploadPackagesAsync(List<string> packagePaths, List<string> tags, CancellationToken token = default);
+        Task SyncPackagesAsync(AnnotationPackage[] packages, CancellationToken token = default);
         Task<bool> DeletePackageAsync(AnnotationPackage package);
         Task<bool> DeleteImageAsync(AnnotationImage image);
 

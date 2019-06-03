@@ -63,25 +63,24 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private void DataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
-            try
+            if (this.dataGridView1.Rows.Count <= e.RowIndex)
             {
-                var item = this.dataGridView1.Rows[e.RowIndex].DataBoundItem as AnnotationImage;
-                if (item == null)
-                {
-                    return;
-                }
-
-                if (item.BoundingBoxes != null)
-                {
-                    this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.GreenYellow;
-                    return;
-                }
-
-                this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
+                return;
             }
-            catch
+
+            var item = this.dataGridView1.Rows[e.RowIndex].DataBoundItem as AnnotationImage;
+            if (item == null)
             {
+                return;
             }
+
+            if (item.BoundingBoxes != null)
+            {
+                this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.GreenYellow;
+                return;
+            }
+
+            this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
         }
 
         private async void DeleteToolStripMenuItem_Click(object sender, EventArgs e)

@@ -198,32 +198,14 @@ namespace Alturos.ImageAnnotation
 
         private void AddPackageStripMenuItem_Click(object sender, EventArgs e)
         {
-            //using (var folderDialog = new BetterFolderBrowser()
-            //{
-            //    RootFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-            //    Multiselect = true
-            //})
-            //using (var tagSelectionDialog = new TagSelectionDialog())
-            //{
-            //    tagSelectionDialog.StartPosition = FormStartPosition.CenterParent;
-            //    var dialogResult = folderDialog.ShowDialog();
-            //    if (dialogResult == DialogResult.OK)
-            //    {
-            //        tagSelectionDialog.Setup(this._annotationConfig);
-            //        var tagDialogResult = tagSelectionDialog.ShowDialog(this);
-            //        if (tagDialogResult == DialogResult.OK)
-            //        {
-            //            var uploadDialog = new UploadDialog(this._annotationPackageProvider);
-            //            uploadDialog.StartPosition = FormStartPosition.CenterParent;
-            //            uploadDialog.Show(this);
+            var uploadDialog = new UploadDialog(this._annotationPackageProvider);
+            uploadDialog.StartPosition = FormStartPosition.CenterParent;
 
-            //            _ = Task.Run(() => uploadDialog.Upload(folderDialog.SelectedFolders.ToList(), tagSelectionDialog.SelectedTags)).ContinueWith(o=>
-            //            {
-            //                uploadDialog.Dispose();
-            //            });
-            //        }
-            //    }
-            //}
+            var dialogResult = uploadDialog.ShowDialog();
+            if (dialogResult == DialogResult.OK)
+            {
+                this.annotationPackageListControl.RefreshData();
+            }
         }
 
         private void AutoplaceAnnotationsToolStripMenuItem_Click(object sender, EventArgs e)

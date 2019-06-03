@@ -192,6 +192,11 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private void DataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
+            if (this.dataGridView1.Rows.Count <= e.RowIndex)
+            {
+                return;
+            }
+
             var item = this.dataGridView1.Rows[e.RowIndex].DataBoundItem as AnnotationPackage;
 
             if (item.IsAnnotated)
