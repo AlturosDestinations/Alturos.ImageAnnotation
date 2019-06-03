@@ -246,7 +246,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             this._downloadedPackage.DownloadProgress = (e.TransferredBytes / (double)e.TotalBytes) * 100;
         }
 
-        public async Task UploadPackagesAsync(List<string> packagePaths, List<string> tags, CancellationToken token = default)
+        public async Task UploadPackagesAsync(List<string> packagePaths, List<string> tags, CancellationToken token = default(CancellationToken))
         {
             this.IsUploading = true;
 
@@ -302,7 +302,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             this._uploadedFiles++;
         }
 
-        public async Task SyncPackagesAsync(AnnotationPackage[] packages, CancellationToken token = default)
+        public async Task SyncPackagesAsync(AnnotationPackage[] packages, CancellationToken token = default(CancellationToken))
         {
             this.IsSyncing = true;
 
