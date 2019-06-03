@@ -21,15 +21,11 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private bool _mouseOver;
         private Point _mousePosition = new Point(0, 0);
-        private RectangleF _selectedObjectRect;
         private AnnotationBoundingBox[] _cachedBoundingBoxes;
         private AnnotationBoundingBox _selectedBoundingBox;
         private DragPoint _dragPoint;
         private AnnotationImage _annotationImage;
         private List<ObjectClass> _objectClasses;
-        private double _grabOffsetX;
-        private double _grabOffsetY;
-        private PointF _cachedCenter;
 
         public AnnotationDrawControl()
         {
@@ -168,26 +164,19 @@ namespace Alturos.ImageAnnotation.CustomControls
             return (float)Math.Sqrt(dx * dx + dy * dy);
         }
 
-        private bool PointInRectangle(PointF pt, Rectangle rect, double tolerance = 0)
-        {
-            return pt.X >= rect.X - tolerance && pt.X <= rect.X + rect.Width + tolerance && pt.Y >= rect.Y - tolerance && pt.Y <= rect.Y + rect.Height + tolerance;
-        }
-
         private DragPoint[] GetDragPoints(Rectangle rectangle, int drawOffset)
         {
             var p1 = new Point(rectangle.X - drawOffset, rectangle.Y - drawOffset);
             var p2 = new Point(p1.X + rectangle.Width, p1.Y);
             var p3 = new Point(p1.X, p1.Y + rectangle.Height);
             var p4 = new Point(p1.X + rectangle.Width, p1.Y + rectangle.Height);
-            var p5 = new Point(p1.X + rectangle.Width - 10, p1.Y + 10);
 
             return new DragPoint[]
             {
-                new DragPoint(p1, DragPointType.Resize),
-                new DragPoint(p2, DragPointType.Resize),
-                new DragPoint(p3, DragPointType.Resize),
-                new DragPoint(p4, DragPointType.Resize),
-                new DragPoint(p5, DragPointType.Delete)
+                new DragPoint(p1, DragPointPosition.TopLeft, DragPointType.Default),
+                new DragPoint(p2, DragPointPosition.TopRight, DragPointType.Delete),
+                new DragPoint(p3, DragPointPosition.BottomLeft, DragPointType.Default),
+                new DragPoint(p4, DragPointPosition.BottomRight, DragPointType.Resize)
             };
         }
 
@@ -201,31 +190,6 @@ namespace Alturos.ImageAnnotation.CustomControls
             var y = (boundingBox.CenterY * canvasInfo.ScaledHeight) - (height / 2) + canvasInfo.OffsetY;
 
             return new Rectangle((int)x, (int)y, (int)width, (int)height);
-        }
-
-        private PointF GetOppositeAnchor(RectangleF rect, PointF center, PointF anchor)
-        {
-            float x;
-            if (rect.X + anchor.X > center.X)
-            {
-                x = rect.X;
-            }
-            else
-            {
-                x = rect.X + rect.Width;
-            }
-
-            float y;
-            if (rect.Y + anchor.Y > center.Y)
-            {
-                y = rect.Y;
-            }
-            else
-            {
-                y = rect.Y + rect.Height;
-            }
-
-            return new PointF(x, y);
         }
 
         private void PictureBox1_Paint(object sender, PaintEventArgs e)
@@ -351,9 +315,6 @@ namespace Alturos.ImageAnnotation.CustomControls
 
             foreach (var boundingBox in boundingBoxes)
             {
-                this._selectedBoundingBox = null;
-                this._dragPoint = null;
-
                 var width = boundingBox.Width * canvasInfo.ScaledWidth;
                 var height = (boundingBox.Height * canvasInfo.ScaledHeight);
                 var x = (boundingBox.CenterX * canvasInfo.ScaledWidth) - (width / 2) + canvasInfo.OffsetX;
@@ -362,13 +323,6 @@ namespace Alturos.ImageAnnotation.CustomControls
                 var rectangle = new Rectangle((int)x, (int)y, (int)width, (int)height);
 
                 var startDrag = false;
-                if (this.PointInRectangle(this._mousePosition, rectangle, 15))
-                {
-                    startDrag = true;
-
-                    this._grabOffsetX = (this._mousePosition.X - rectangle.X) / canvasInfo.ScaledWidth;
-                    this._grabOffsetY = (this._mousePosition.Y - rectangle.Y) / canvasInfo.ScaledHeight;
-                }
 
                 var dragPoints = this.GetDragPoints(rectangle, drawOffset);
                 foreach (var dragPoint in dragPoints)
@@ -376,18 +330,20 @@ namespace Alturos.ImageAnnotation.CustomControls
                     if (this.PointDistance(this._mousePosition, new Point(dragPoint.Point.X, dragPoint.Point.Y)) < 15)
                     {
                         this._dragPoint = dragPoint;
+                        startDrag = true;
                         break;
                     }
                 }
 
                 if (startDrag)
                 {
-                    this._cachedCenter = Point.Empty;
-
                     this._selectedBoundingBox = boundingBox;
-                    this._selectedObjectRect = new RectangleF(rectangle.X / (float)canvasInfo.ScaledWidth, rectangle.Y / (float)canvasInfo.ScaledHeight,
-                        rectangle.Width / (float)canvasInfo.ScaledWidth, rectangle.Height / (float)canvasInfo.ScaledHeight);
                     break;
+                }
+                else
+                {
+                    this._dragPoint = null;
+                    this._selectedBoundingBox = null;
                 }
             }
 
@@ -415,33 +371,43 @@ namespace Alturos.ImageAnnotation.CustomControls
             if (this._selectedBoundingBox != null)
             {
                 var canvasInfo = this.GetCanvasInformation();
+                var centerX = 0.0;
+                var centerY = 0.0;
 
                 var x = (e.X - canvasInfo.OffsetX) / canvasInfo.ScaledWidth;
                 var y = (e.Y - canvasInfo.OffsetY) / canvasInfo.ScaledHeight;
 
-                var centerX = x + (this._selectedBoundingBox.Width / 2) - this._grabOffsetX;
-                var centerY = y + (this._selectedBoundingBox.Height / 2) - this._grabOffsetY;
+                if (this._dragPoint.Position == DragPointPosition.TopLeft)
+                {
+                    centerX = x + (this._selectedBoundingBox.Width / 2);
+                    centerY = y + (this._selectedBoundingBox.Height / 2);
+                }
+
+                if (this._dragPoint.Position == DragPointPosition.TopRight)
+                {
+                    centerX = x - (this._selectedBoundingBox.Width / 2);
+                    centerY = y + (this._selectedBoundingBox.Height / 2);
+                }
+
+                if (this._dragPoint.Position == DragPointPosition.BottomLeft)
+                {
+                    centerX = x + (this._selectedBoundingBox.Width / 2);
+                    centerY = y - (this._selectedBoundingBox.Height / 2);
+                }
 
                 centerX = centerX.Clamp(this._selectedBoundingBox.Width / 2, 1 - this._selectedBoundingBox.Width / 2);
                 centerY = centerY.Clamp(this._selectedBoundingBox.Height / 2, 1 - this._selectedBoundingBox.Height / 2);
 
-                if (this._cachedCenter == Point.Empty)
+                if (this._dragPoint.Position == DragPointPosition.BottomRight)
                 {
-                    this._cachedCenter = new PointF((float)centerX, (float)centerY);
-                }
+                    var topLeftX = this._selectedBoundingBox.CenterX - (this._selectedBoundingBox.Width / 2);
+                    var topLeftY = this._selectedBoundingBox.CenterY - (this._selectedBoundingBox.Height / 2);
 
-                if (this._dragPoint != null)
-                {
-                    var anchor = this.GetOppositeAnchor(
-                        this._selectedObjectRect,
-                        new PointF((float)this._cachedCenter.X, (float)this._cachedCenter.Y),
-                        new PointF((float)this._grabOffsetX, (float)this._grabOffsetY));
+                    var width = Math.Max(0.02, x - topLeftX);
+                    var height = Math.Max(0.02, y - topLeftY);
 
-                    var width = Math.Max(0.02, Math.Abs(x - anchor.X));
-                    var height = Math.Max(0.02, Math.Abs(y - anchor.Y));
-
-                    centerX = this._cachedCenter.X + (width - _selectedObjectRect.Width) / 2 * Math.Sign((this._selectedObjectRect.X + this._grabOffsetX) - anchor.X);
-                    centerY = this._cachedCenter.Y + (height - _selectedObjectRect.Height) / 2 * Math.Sign((this._selectedObjectRect.Y + this._grabOffsetY) - anchor.Y);
+                    centerX = topLeftX + (width / 2);
+                    centerY = topLeftY + (height / 2);
 
                     this._selectedBoundingBox.Width = (float)width;
                     this._selectedBoundingBox.Height = (float)height;
