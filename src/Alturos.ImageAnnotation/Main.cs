@@ -196,7 +196,7 @@ namespace Alturos.ImageAnnotation
             }
         }
 
-        private void AddPackageStripMenuItem_Click(object sender, EventArgs e)
+        private async void AddPackageStripMenuItem_Click(object sender, EventArgs e)
         {
             var uploadDialog = new UploadDialog(this._annotationPackageProvider);
             uploadDialog.StartPosition = FormStartPosition.CenterParent;
@@ -204,7 +204,7 @@ namespace Alturos.ImageAnnotation
             var dialogResult = uploadDialog.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
-                this.annotationPackageListControl.RefreshData();
+                await this.LoadPackagesAsync();
             }
         }
 
