@@ -1,4 +1,5 @@
 ﻿using Alturos.ImageAnnotation.Contract;
+using Alturos.ImageAnnotation.Helper;
 using Alturos.ImageAnnotation.Model;
 using log4net;
 using System;
@@ -13,18 +14,23 @@ namespace Alturos.ImageAnnotation.CustomControls
 {
     public partial class AnnotationPackageListControl : UserControl
     {
+        public event Action<AnnotationPackage> PackageSelected;
+
         private static ILog Log = LogManager.GetLogger(typeof(AnnotationPackageListControl));
+
         private IAnnotationPackageProvider _annotationPackageProvider;
         private List<AnnotationPackage> _annotationPackages;
         private List<AnnotationPackage> _selectedPackages;
-
-        public event Action<AnnotationPackage> PackageSelected;
+        private BindingSource _bindingSource;
 
         public AnnotationPackageListControl()
         {
             this.InitializeComponent();
             this.dataGridView1.AutoGenerateColumns = false;
             this.labelLoading.Location = new Point(5, 20);
+
+            this._bindingSource = new BindingSource();
+            this.dataGridView1.DataSource = this._bindingSource;
         }
 
         public void Setup(IAnnotationPackageProvider annotationPackageProvider)
@@ -75,7 +81,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                     this.dataGridView1.Invoke((MethodInvoker)delegate
                     {
                         this.dataGridView1.Visible = true;
-                        this.dataGridView1.DataSource = this._annotationPackages;
+                        this._bindingSource.DataSource = this._annotationPackages;
                     });
 
                     this.groupBox1.Invoke((MethodInvoker)delegate
@@ -158,7 +164,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 }
             }
 
-            this.dataGridView1.Refresh();
+            this.RefreshData();
         }
 
         private async void DeleteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -186,11 +192,16 @@ namespace Alturos.ImageAnnotation.CustomControls
                 MessageBox.Show("Couldn't delete the following packages:\n\n" + sb.ToString(), "Deletion failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            this.dataGridView1.Refresh();
+            this.RefreshData();
         }
 
         private void DataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
+            if (this.dataGridView1.Rows.Count <= e.RowIndex)
+            {
+                return;
+            }
+
             var item = this.dataGridView1.Rows[e.RowIndex].DataBoundItem as AnnotationPackage;
 
             if (item.IsAnnotated)
@@ -210,14 +221,19 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private void TextBoxSearch_TextChanged(object sender, EventArgs e)
         {
+            this.dataGridView1.SelectionChanged -= DataGridView1_SelectionChanged;
+
             if (string.IsNullOrEmpty(this.textBoxSearch.Text))
             {
-                this.dataGridView1.DataSource = this._annotationPackages;
-                return;
+                this._bindingSource.DataSource = this._annotationPackages;
+            }
+            else
+            {
+                var packages = this._annotationPackages.Where(o => o.PackageName.Contains(this.textBoxSearch.Text, StringComparison.OrdinalIgnoreCase)).ToArray();
+                this._bindingSource.DataSource = packages;
             }
 
-            var packages = this._annotationPackages.Where(o => o.PackageName.Contains(this.textBoxSearch.Text)).ToArray();
-            this.dataGridView1.DataSource = packages;
+            this.dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
         }
 
         private void ContextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)

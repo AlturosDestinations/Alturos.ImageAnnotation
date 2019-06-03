@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace Alturos.ImageAnnotation.Helper
 {
@@ -14,6 +15,11 @@ namespace Alturos.ImageAnnotation.Helper
             int.TryParse(tempNumber, out var number);
 
             return number;
+        }
+
+        public static bool Contains(this string str, string value, StringComparison comp)
+        {
+            return str?.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0;
         }
     }
 }

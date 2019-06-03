@@ -11,17 +11,17 @@ namespace Alturos.ImageAnnotation.CustomControls
 {
     public partial class AnnotationImageListControl : UserControl
     {
-        private List<AnnotationImage> _annotationImages;
-        private BindingSource _bindingSource;
+        public event Action<AnnotationImage> ImageSelected;
 
         private IAnnotationPackageProvider _annotationPackageProvider;
-
-        public event Action<AnnotationImage> ImageSelected;
+        private List<AnnotationImage> _annotationImages;
+        private BindingSource _bindingSource;
 
         public AnnotationImageListControl()
         {
             this.InitializeComponent();
             this.dataGridView1.AutoGenerateColumns = false;
+
             this._bindingSource = new BindingSource();
             this.dataGridView1.DataSource = this._bindingSource;
         }
@@ -63,25 +63,24 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private void DataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
-            try
+            if (this.dataGridView1.Rows.Count <= e.RowIndex)
             {
-                var item = this.dataGridView1.Rows[e.RowIndex].DataBoundItem as AnnotationImage;
-                if (item == null)
-                {
-                    return;
-                }
-
-                if (item.BoundingBoxes != null)
-                {
-                    this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.GreenYellow;
-                    return;
-                }
-
-                this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
+                return;
             }
-            catch
+
+            var item = this.dataGridView1.Rows[e.RowIndex].DataBoundItem as AnnotationImage;
+            if (item == null)
             {
+                return;
             }
+
+            if (item.BoundingBoxes != null)
+            {
+                this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.GreenYellow;
+                return;
+            }
+
+            this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
         }
 
         private async void DeleteToolStripMenuItem_Click(object sender, EventArgs e)

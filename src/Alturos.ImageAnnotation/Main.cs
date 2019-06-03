@@ -196,34 +196,16 @@ namespace Alturos.ImageAnnotation
             }
         }
 
-        private void AddPackageStripMenuItem_Click(object sender, EventArgs e)
+        private async void AddPackageStripMenuItem_Click(object sender, EventArgs e)
         {
-            //using (var folderDialog = new BetterFolderBrowser()
-            //{
-            //    RootFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-            //    Multiselect = true
-            //})
-            //using (var tagSelectionDialog = new TagSelectionDialog())
-            //{
-            //    tagSelectionDialog.StartPosition = FormStartPosition.CenterParent;
-            //    var dialogResult = folderDialog.ShowDialog();
-            //    if (dialogResult == DialogResult.OK)
-            //    {
-            //        tagSelectionDialog.Setup(this._annotationConfig);
-            //        var tagDialogResult = tagSelectionDialog.ShowDialog(this);
-            //        if (tagDialogResult == DialogResult.OK)
-            //        {
-            //            var uploadDialog = new UploadDialog(this._annotationPackageProvider);
-            //            uploadDialog.StartPosition = FormStartPosition.CenterParent;
-            //            uploadDialog.Show(this);
+            var uploadDialog = new UploadDialog(this._annotationPackageProvider);
+            uploadDialog.StartPosition = FormStartPosition.CenterParent;
 
-            //            _ = Task.Run(() => uploadDialog.Upload(folderDialog.SelectedFolders.ToList(), tagSelectionDialog.SelectedTags)).ContinueWith(o=>
-            //            {
-            //                uploadDialog.Dispose();
-            //            });
-            //        }
-            //    }
-            //}
+            var dialogResult = uploadDialog.ShowDialog();
+            if (dialogResult == DialogResult.OK)
+            {
+                await this.LoadPackagesAsync();
+            }
         }
 
         private void AutoplaceAnnotationsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -343,10 +325,7 @@ namespace Alturos.ImageAnnotation
 
         private async Task DownloadRequestedAsync(AnnotationPackage package)
         {
-            var downloadedPackage = await this._annotationPackageProvider.DownloadPackageAsync(package);
-
-            // Select folder to apply the images after extraction
-            this.PackageSelected(downloadedPackage);
+            await this._annotationPackageProvider.DownloadPackageAsync(package);
         }
 
         private List<string> TagsRequested()

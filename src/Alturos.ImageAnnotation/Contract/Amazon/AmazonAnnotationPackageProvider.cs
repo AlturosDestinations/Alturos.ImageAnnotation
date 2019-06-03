@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Alturos.ImageAnnotation.Contract.Amazon
@@ -245,7 +246,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             this._downloadedPackage.DownloadProgress = (e.TransferredBytes / (double)e.TotalBytes) * 100;
         }
 
-        public async Task UploadPackagesAsync(List<string> packagePaths, List<string> tags)
+        public async Task UploadPackagesAsync(List<string> packagePaths, List<string> tags, CancellationToken token = default)
         {
             this.IsUploading = true;
 
@@ -255,7 +256,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             foreach (var packagePath in packagePaths)
             {
                 this._filesToUpload += Directory.GetFiles(packagePath).Count();
-                tasks.Add(Task.Run(() => UploadPackageAsync(packagePath, tags)));
+                tasks.Add(Task.Run(() => UploadPackageAsync(packagePath, tags, token)));
             }
 
             await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -263,7 +264,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             this.IsUploading = false;
         }
 
-        private async Task UploadPackageAsync(string packagePath, List<string> tags)
+        private async Task UploadPackageAsync(string packagePath, List<string> tags, CancellationToken token)
         {
             var packageName = Path.GetFileName(packagePath);
             await this.SyncPackagesAsync(new AnnotationPackage[]
@@ -277,31 +278,31 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                     Images = new List<AnnotationImage>(),
                     Tags = tags
                 }
-            }).ConfigureAwait(false);
+            }, token).ConfigureAwait(false);
 
             var tasks = new List<Task>();
 
             var files = Directory.GetFiles(packagePath);
             foreach (var file in files)
             {
-                tasks.Add(this.UploadFileAsync(file));
+                tasks.Add(this.UploadFileAsync(file, token));
             }
 
             await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
-        private async Task UploadFileAsync(string filePath)
+        private async Task UploadFileAsync(string filePath, CancellationToken token)
         {
             using (var fileTransferUtility = new TransferUtility(this._client))
             {
                 var keyName = $"{Directory.GetParent(filePath).Name}/{Path.GetFileName(filePath)}";
-                await fileTransferUtility.UploadAsync(filePath, "alturos.imageannotation", keyName).ConfigureAwait(false);
+                await fileTransferUtility.UploadAsync(filePath, "alturos.imageannotation", keyName, token).ConfigureAwait(false);
             }
 
             this._uploadedFiles++;
         }
 
-        public async Task SyncPackagesAsync(AnnotationPackage[] packages)
+        public async Task SyncPackagesAsync(AnnotationPackage[] packages, CancellationToken token = default)
         {
             this.IsSyncing = true;
 
@@ -311,7 +312,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             var tasks = new List<Task>();
             foreach (var package in packages)
             {
-                tasks.Add(Task.Run(() => this.SyncPackageAsync(package).ConfigureAwait(false)));
+                tasks.Add(Task.Run(() => this.SyncPackageAsync(package, token).ConfigureAwait(false)));
             }
 
             await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -319,7 +320,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             this.IsSyncing = false;
         }
 
-        private async Task<bool> SyncPackageAsync(AnnotationPackage package)
+        private async Task<bool> SyncPackageAsync(AnnotationPackage package, CancellationToken token)
         {
             var info = new AnnotationPackageDto
             {
@@ -346,7 +347,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             {
                 using (var context = new DynamoDBContext(this._dynamoDbClient))
                 {
-                    await context.SaveAsync(info).ConfigureAwait(false);
+                    await context.SaveAsync(info, token).ConfigureAwait(false);
                 }
             }
             catch (Exception e)
@@ -383,7 +384,10 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 }
 
                 // Delete local folder
-                Directory.Delete(Path.Combine(this._extractionFolder, package.PackageName), true);
+                var path = Path.Combine(this._extractionFolder, package.PackageName);
+                if (Directory.Exists(path)) {
+                    Directory.Delete(path, true);
+                }
 
                 return successful;
             }
