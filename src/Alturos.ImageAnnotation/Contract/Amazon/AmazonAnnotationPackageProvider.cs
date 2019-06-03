@@ -384,7 +384,10 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 }
 
                 // Delete local folder
-                Directory.Delete(Path.Combine(this._extractionFolder, package.PackageName), true);
+                var path = Path.Combine(this._extractionFolder, package.PackageName);
+                if (Directory.Exists(path)) {
+                    Directory.Delete(path, true);
+                }
 
                 return successful;
             }

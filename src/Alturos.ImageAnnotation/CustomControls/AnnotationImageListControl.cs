@@ -11,17 +11,17 @@ namespace Alturos.ImageAnnotation.CustomControls
 {
     public partial class AnnotationImageListControl : UserControl
     {
-        private List<AnnotationImage> _annotationImages;
-        private BindingSource _bindingSource;
+        public event Action<AnnotationImage> ImageSelected;
 
         private IAnnotationPackageProvider _annotationPackageProvider;
-
-        public event Action<AnnotationImage> ImageSelected;
+        private List<AnnotationImage> _annotationImages;
+        private BindingSource _bindingSource;
 
         public AnnotationImageListControl()
         {
             this.InitializeComponent();
             this.dataGridView1.AutoGenerateColumns = false;
+
             this._bindingSource = new BindingSource();
             this.dataGridView1.DataSource = this._bindingSource;
         }

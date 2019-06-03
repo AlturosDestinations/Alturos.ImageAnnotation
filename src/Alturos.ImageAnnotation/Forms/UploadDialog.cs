@@ -23,7 +23,7 @@ namespace Alturos.ImageAnnotation.Forms
 
             this.InitializeComponent();
 
-            this.labelSyncing.Enabled = false;
+            this.labelSyncing.Visible = false;
         }
 
         private void UploadDialog_Load(object sender, EventArgs e)
@@ -34,12 +34,17 @@ namespace Alturos.ImageAnnotation.Forms
 
         private async Task UpdateProgressBar()
         {
+            this.labelSyncing.Invoke((MethodInvoker)delegate
+            {
+                this.labelSyncing.Visible = true;
+            });
+
             while (this._uploading)
             {
                 var progress = this._annotationPackageProvider.GetUploadProgress();
                 if (!double.IsNaN(progress))
                 {
-                    this.labelSyncing.Invoke((MethodInvoker)delegate { this.labelSyncing.Text = $"Uploading... Please wait... ({Math.Round(progress, 2)}%)"; });
+                    this.labelSyncing.Invoke((MethodInvoker)delegate { this.labelSyncing.Text = $"Uploading... Please wait... ({(int)progress}%)"; });
                     this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)progress; });
                 }
 
