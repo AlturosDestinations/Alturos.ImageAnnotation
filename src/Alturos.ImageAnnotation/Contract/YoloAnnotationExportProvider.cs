@@ -12,9 +12,10 @@ namespace Alturos.ImageAnnotation.Contract
     [Description("Yolo")]
     public class YoloAnnotationExportProvider : IAnnotationExportProvider
     {
-        private const double _trainingPercentage = 70;
-        private const string _dataFolderName = "data";
-        private const string _imageFolderName = "obj";
+        private const double TrainingPercentage = 70;
+        private const string DataFolderName = "data";
+        private const string ImageFolderName = "obj";
+        private const string YoloConfigPath = @"Resources\yolov3.cfg";
 
         private AnnotationConfig _config;
 
@@ -26,13 +27,13 @@ namespace Alturos.ImageAnnotation.Contract
         public void Export(string path, AnnotationPackage[] packages)
         {
             // Create folders
-            var dataPath = Path.Combine(path, _dataFolderName);
+            var dataPath = Path.Combine(path, DataFolderName);
             if (!Directory.Exists(dataPath))
             {
                 Directory.CreateDirectory(dataPath);
             }
 
-            var imagePath = Path.Combine(dataPath, _imageFolderName);
+            var imagePath = Path.Combine(dataPath, ImageFolderName);
             if (!Directory.Exists(imagePath))
             {
                 Directory.CreateDirectory(imagePath);
@@ -46,12 +47,13 @@ namespace Alturos.ImageAnnotation.Contract
             var rng = new Random();
             var shuffledImages = images.OrderBy(o => rng.Next()).ToList();
 
-            var count = (int)(shuffledImages.Count * (_trainingPercentage / 100));
+            var count = (int)(shuffledImages.Count * (TrainingPercentage / 100));
             var trainingImages = shuffledImages.Take(count);
             var testingImages = shuffledImages.Skip(count);
 
             this.CreateFiles(dataPath, imagePath, images.ToArray());
             this.CreateMetaData(dataPath, trainingImages.ToArray(), testingImages.ToArray());
+            this.CreateYoloConfig(dataPath, YoloConfigPath);
         }
 
         private void CreateFiles(string dataPath, string imagePath, AnnotationImage[] images)
@@ -135,9 +137,9 @@ namespace Alturos.ImageAnnotation.Contract
             // Create obj.data
             sb.Clear();
             sb.AppendLine($"classes = {objectNames.Length}");
-            sb.AppendLine($"train = {_dataFolderName}/{trainFile}");
-            sb.AppendLine($"valid = {_dataFolderName}/{testFile}");
-            sb.AppendLine($"names = {_dataFolderName}/{namesFile}");
+            sb.AppendLine($"train = {DataFolderName}/{trainFile}");
+            sb.AppendLine($"valid = {DataFolderName}/{testFile}");
+            sb.AppendLine($"names = {DataFolderName}/{namesFile}");
             sb.AppendLine("backup = backup/");
             File.WriteAllText(Path.Combine(dataPath, $"{dataFile}"), sb.ToString());
 
@@ -145,7 +147,7 @@ namespace Alturos.ImageAnnotation.Contract
             sb.Clear();
             foreach (var image in trainingImages)
             {
-                sb.AppendLine($"{_dataFolderName}/{_imageFolderName}/{image.ImageName}");
+                sb.AppendLine($"{DataFolderName}/{ImageFolderName}/{image.ImageName}");
             }
             File.WriteAllText(Path.Combine(dataPath, $"{trainFile}"), sb.ToString());
 
@@ -153,9 +155,16 @@ namespace Alturos.ImageAnnotation.Contract
             sb.Clear();
             foreach (var image in testingImages)
             {
-                sb.AppendLine($"{_dataFolderName}/{_imageFolderName}/{image.ImageName}");
+                sb.AppendLine($"{DataFolderName}/{ImageFolderName}/{image.ImageName}");
             }
             File.WriteAllText(Path.Combine(dataPath, $"{testFile}"), sb.ToString());
+        }
+
+        private void CreateYoloConfig(string dataPath, string yoloConfigPath)
+        {
+            //TODO: https://github.com/AlexeyAB/darknet#how-to-train-pascal-voc-data
+            var lines = File.ReadAllLines(yoloConfigPath);
+            var batchLine = lines.FirstOrDefault(o => o.StartsWith("batch="));
         }
     }
 }

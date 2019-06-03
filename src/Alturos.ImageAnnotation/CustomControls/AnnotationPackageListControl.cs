@@ -1,4 +1,5 @@
 ﻿using Alturos.ImageAnnotation.Contract;
+using Alturos.ImageAnnotation.Helper;
 using Alturos.ImageAnnotation.Model;
 using log4net;
 using System;
@@ -210,14 +211,19 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private void TextBoxSearch_TextChanged(object sender, EventArgs e)
         {
+            this.dataGridView1.SelectionChanged -= DataGridView1_SelectionChanged;
+
             if (string.IsNullOrEmpty(this.textBoxSearch.Text))
             {
                 this.dataGridView1.DataSource = this._annotationPackages;
-                return;
+            }
+            else
+            {
+                var packages = this._annotationPackages.Where(o => o.PackageName.Contains(this.textBoxSearch.Text, StringComparison.OrdinalIgnoreCase)).ToArray();
+                this.dataGridView1.DataSource = packages;
             }
 
-            var packages = this._annotationPackages.Where(o => o.PackageName.Contains(this.textBoxSearch.Text)).ToArray();
-            this.dataGridView1.DataSource = packages;
+            this.dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
         }
 
         private void ContextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)

@@ -343,10 +343,7 @@ namespace Alturos.ImageAnnotation
 
         private async Task DownloadRequestedAsync(AnnotationPackage package)
         {
-            var downloadedPackage = await this._annotationPackageProvider.DownloadPackageAsync(package);
-
-            // Select folder to apply the images after extraction
-            this.PackageSelected(downloadedPackage);
+            await this._annotationPackageProvider.DownloadPackageAsync(package);
         }
 
         private List<string> TagsRequested()
