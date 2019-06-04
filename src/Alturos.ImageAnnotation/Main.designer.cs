@@ -47,6 +47,7 @@
             this.tagListControl = new Alturos.ImageAnnotation.CustomControls.TagListControl();
             this.annotationPackageListControl = new Alturos.ImageAnnotation.CustomControls.AnnotationPackageListControl();
             this.annotationDrawControl = new Alturos.ImageAnnotation.CustomControls.AnnotationDrawControl();
+            this.showAnnotatedPackagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripMain.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panelImageList.SuspendLayout();
@@ -90,6 +91,7 @@
             this.configurationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.autoplaceAnnotationsToolStripMenuItem,
             this.showLabelsToolStripMenuItem,
+            this.showAnnotatedPackagesToolStripMenuItem,
             this.toolStripSeparator1,
             this.settingsToolStripMenuItem});
             this.configurationToolStripMenuItem.Name = "configurationToolStripMenuItem";
@@ -237,6 +239,13 @@
             this.annotationDrawControl.Size = new System.Drawing.Size(878, 524);
             this.annotationDrawControl.TabIndex = 2;
             // 
+            // showAnnotatedPackagesToolStripMenuItem
+            // 
+            this.showAnnotatedPackagesToolStripMenuItem.Name = "showAnnotatedPackagesToolStripMenuItem";
+            this.showAnnotatedPackagesToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.showAnnotatedPackagesToolStripMenuItem.Text = "Show Annotated Packages";
+            this.showAnnotatedPackagesToolStripMenuItem.Click += new System.EventHandler(this.ShowAnnotatedPackagesToolStripMenuItem_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -284,6 +293,7 @@
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showAnnotatedPackagesToolStripMenuItem;
     }
 }
 

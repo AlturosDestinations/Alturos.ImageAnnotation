@@ -56,7 +56,7 @@ namespace Alturos.ImageAnnotation.CustomControls
             return items.ToArray();
         }
 
-        public async Task LoadPackagesAsync()
+        public async Task LoadPackagesAsync(bool annotated)
         {
             var groupBoxName = "Packages";
 
@@ -71,7 +71,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 this.dataGridView1.Invoke((MethodInvoker)delegate { this.dataGridView1.Visible = false; });
 
                 this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = true; });
-                this._annotationPackages = (await this._annotationPackageProvider.GetPackagesAsync(false)).ToList();
+                this._annotationPackages = (await this._annotationPackageProvider.GetPackagesAsync(annotated)).ToList();
                 this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = false; });
 
                 if (this._annotationPackages?.Count > 0)
@@ -197,26 +197,33 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private void DataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
-            if (this.dataGridView1.Rows.Count <= e.RowIndex)
+            try
             {
-                return;
+                if (this.dataGridView1.Rows.Count <= e.RowIndex)
+                {
+                    return;
+                }
+
+                var item = this.dataGridView1.Rows[e.RowIndex].DataBoundItem as AnnotationPackage;
+
+                if (item.IsAnnotated)
+                {
+                    this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.GreenYellow;
+                    return;
+                }
+
+                if (item.AvailableLocally)
+                {
+                    this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightBlue;
+                    return;
+                }
+
+                this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
             }
-
-            var item = this.dataGridView1.Rows[e.RowIndex].DataBoundItem as AnnotationPackage;
-
-            if (item.IsAnnotated)
+            catch (Exception exception)
             {
-                this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.GreenYellow;
-                return;
-            }
 
-            if (item.AvailableLocally)
-            {
-                this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightBlue;
-                return;
             }
-
-            this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
         }
 
         private void TextBoxSearch_TextChanged(object sender, EventArgs e)
@@ -263,6 +270,11 @@ namespace Alturos.ImageAnnotation.CustomControls
             }
 
             this._selectedPackages = packages;
+        }
+
+        private void DataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            e.Cancel = true;
         }
     }
 }
