@@ -34,6 +34,7 @@
             this.configurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoplaceAnnotationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showLabelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showAnnotatedPackagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addPackageStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,7 +48,6 @@
             this.tagListControl = new Alturos.ImageAnnotation.CustomControls.TagListControl();
             this.annotationPackageListControl = new Alturos.ImageAnnotation.CustomControls.AnnotationPackageListControl();
             this.annotationDrawControl = new Alturos.ImageAnnotation.CustomControls.AnnotationDrawControl();
-            this.showAnnotatedPackagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripMain.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panelImageList.SuspendLayout();
@@ -111,6 +111,13 @@
             this.showLabelsToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
             this.showLabelsToolStripMenuItem.Text = "Show Object Labels in Image";
             this.showLabelsToolStripMenuItem.Click += new System.EventHandler(this.ShowLabelsToolStripMenuItem_Click);
+            // 
+            // showAnnotatedPackagesToolStripMenuItem
+            // 
+            this.showAnnotatedPackagesToolStripMenuItem.Name = "showAnnotatedPackagesToolStripMenuItem";
+            this.showAnnotatedPackagesToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.showAnnotatedPackagesToolStripMenuItem.Text = "Show Annotated Packages";
+            this.showAnnotatedPackagesToolStripMenuItem.Click += new System.EventHandler(this.ShowAnnotatedPackagesToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
@@ -238,13 +245,6 @@
             this.annotationDrawControl.Name = "annotationDrawControl";
             this.annotationDrawControl.Size = new System.Drawing.Size(878, 524);
             this.annotationDrawControl.TabIndex = 2;
-            // 
-            // showAnnotatedPackagesToolStripMenuItem
-            // 
-            this.showAnnotatedPackagesToolStripMenuItem.Name = "showAnnotatedPackagesToolStripMenuItem";
-            this.showAnnotatedPackagesToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
-            this.showAnnotatedPackagesToolStripMenuItem.Text = "Show Annotated Packages";
-            this.showAnnotatedPackagesToolStripMenuItem.Click += new System.EventHandler(this.ShowAnnotatedPackagesToolStripMenuItem_Click);
             // 
             // Main
             // 
