@@ -325,13 +325,13 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
             foreach (var package in packages)
             {
-                await this.SyncPackageAsync(package, token).ConfigureAwait(false);
+                await this.UpdatePackageAsync(package, token).ConfigureAwait(false);
             }
 
             this.IsSyncing = false;
         }
 
-        private async Task<bool> SyncPackageAsync(AnnotationPackage package, CancellationToken token)
+        private async Task<bool> UpdatePackageAsync(AnnotationPackage package, CancellationToken token)
         {
             using (var context = new DynamoDBContext(this._dynamoDbClient))
             {

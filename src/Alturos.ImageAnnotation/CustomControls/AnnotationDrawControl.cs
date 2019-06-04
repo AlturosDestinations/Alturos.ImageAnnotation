@@ -179,7 +179,7 @@ namespace Alturos.ImageAnnotation.CustomControls
             var p2 = new Point(p1.X + rectangle.Width, p1.Y);
             var p3 = new Point(p1.X, p1.Y + rectangle.Height);
             var p4 = new Point(p1.X + rectangle.Width, p1.Y + rectangle.Height);
-            var p5 = new Point(p1.X + rectangle.Width - 10, p1.Y + 10);
+            var p5 = new Point(p1.X + rectangle.Width - 15, p1.Y + 15);
 
             return new DragPoint[]
             {
@@ -376,6 +376,10 @@ namespace Alturos.ImageAnnotation.CustomControls
                     if (this.PointDistance(this._mousePosition, new Point(dragPoint.Point.X, dragPoint.Point.Y)) < 15)
                     {
                         this._dragPoint = dragPoint;
+
+                        this._grabOffsetX = (this._dragPoint.Point.X - rectangle.X) / canvasInfo.ScaledWidth;
+                        this._grabOffsetY = (this._dragPoint.Point.Y - rectangle.Y) / canvasInfo.ScaledHeight;
+
                         break;
                     }
                 }
