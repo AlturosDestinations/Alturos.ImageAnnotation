@@ -36,6 +36,7 @@ namespace Alturos.ImageAnnotation
             }
 
             this.InitializeComponent();
+            this.Text = $"Alturos Image Annotation {Application.ProductVersion}";
             this.downloadControl.Dock = DockStyle.Fill;
 
             this.annotationPackageListControl.Setup(this._annotationPackageProvider);

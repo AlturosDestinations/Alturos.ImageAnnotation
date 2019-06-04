@@ -256,7 +256,7 @@
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStripMain;
             this.Name = "Main";
-            this.Text = "Alturos Image Annotation";
+            this.Text = "change by code";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Main_FormClosed);
             this.Load += new System.EventHandler(this.Main_Load);
