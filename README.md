@@ -14,6 +14,7 @@ For every AnnotationPackage we have some Metadata, Weather, Color, ... this info
  - Image annotation together
  - Verify Image annotation data
  - Export for yolo (train.txt, test.txt, obj.names) with filters
+ - Does not require own server
 
 ## Articles of interest
 
