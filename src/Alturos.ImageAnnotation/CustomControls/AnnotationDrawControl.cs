@@ -18,6 +18,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         public bool ShowLabels { get; private set; }
 
         private readonly int _mouseDragElementSize = 10;
+        private readonly int _maxMouseDistanceToDragPoint = 10;
 
         private bool _mouseOver;
         private Point _mousePosition = new Point(0, 0);
@@ -275,7 +276,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                     foreach (var dragPoint in dragPoints)
                     {
                         var dragElementBrush = Brushes.LightPink;
-                        if (this.PointDistance(this._mousePosition, new Point(dragPoint.Point.X, dragPoint.Point.Y)) < 15)
+                        if (this.PointDistance(this._mousePosition, new Point(dragPoint.Point.X, dragPoint.Point.Y)) < this._maxMouseDistanceToDragPoint)
                         {
                             System.Windows.Forms.Cursor.Current = Cursors.Hand;
                             dragElementBrush = Brushes.Yellow;
@@ -373,7 +374,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 var dragPoints = this.GetDragPoints(rectangle, drawOffset);
                 foreach (var dragPoint in dragPoints)
                 {
-                    if (this.PointDistance(this._mousePosition, new Point(dragPoint.Point.X, dragPoint.Point.Y)) < 15)
+                    if (this.PointDistance(this._mousePosition, new Point(dragPoint.Point.X, dragPoint.Point.Y)) < this._maxMouseDistanceToDragPoint)
                     {
                         this._dragPoint = dragPoint;
 
@@ -391,6 +392,9 @@ namespace Alturos.ImageAnnotation.CustomControls
                     this._selectedBoundingBox = boundingBox;
                     this._selectedObjectRect = new RectangleF(rectangle.X / (float)canvasInfo.ScaledWidth, rectangle.Y / (float)canvasInfo.ScaledHeight,
                         rectangle.Width / (float)canvasInfo.ScaledWidth, rectangle.Height / (float)canvasInfo.ScaledHeight);
+
+                    this._cachedCenter = new PointF(this._selectedObjectRect.X + this._selectedObjectRect.Width / 2, this._selectedObjectRect.Y + this._selectedObjectRect.Height / 2);
+
                     break;
                 }
             }
@@ -429,23 +433,21 @@ namespace Alturos.ImageAnnotation.CustomControls
                 centerX = centerX.Clamp(this._selectedBoundingBox.Width / 2, 1 - this._selectedBoundingBox.Width / 2);
                 centerY = centerY.Clamp(this._selectedBoundingBox.Height / 2, 1 - this._selectedBoundingBox.Height / 2);
 
-                if (this._cachedCenter == Point.Empty)
-                {
-                    this._cachedCenter = new PointF((float)centerX, (float)centerY);
-                }
-
                 if (this._dragPoint != null)
                 {
                     var anchor = this.GetOppositeAnchor(
                         this._selectedObjectRect,
-                        new PointF((float)this._cachedCenter.X, (float)this._cachedCenter.Y),
+                        new PointF(this._cachedCenter.X, this._cachedCenter.Y),
                         new PointF((float)this._grabOffsetX, (float)this._grabOffsetY));
 
-                    var width = Math.Max(0.02, Math.Abs(x - anchor.X));
-                    var height = Math.Max(0.02, Math.Abs(y - anchor.Y));
+                    var xSign = Math.Sign((this._selectedObjectRect.X + this._grabOffsetX) - anchor.X);
+                    var ySign = Math.Sign((this._selectedObjectRect.Y + this._grabOffsetY) - anchor.Y);
 
-                    centerX = this._cachedCenter.X + (width - _selectedObjectRect.Width) / 2 * Math.Sign((this._selectedObjectRect.X + this._grabOffsetX) - anchor.X);
-                    centerY = this._cachedCenter.Y + (height - _selectedObjectRect.Height) / 2 * Math.Sign((this._selectedObjectRect.Y + this._grabOffsetY) - anchor.Y);
+                    var width = Math.Max(30 / canvasInfo.ScaledWidth, xSign * (x - anchor.X));
+                    var height = Math.Max(30 / canvasInfo.ScaledHeight, ySign * (y - anchor.Y));
+
+                    centerX = this._cachedCenter.X + (width - this._selectedObjectRect.Width) / 2 * xSign;
+                    centerY = this._cachedCenter.Y + (height - this._selectedObjectRect.Height) / 2 * ySign;
 
                     this._selectedBoundingBox.Width = (float)width;
                     this._selectedBoundingBox.Height = (float)height;
