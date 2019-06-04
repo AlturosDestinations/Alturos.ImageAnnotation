@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\AnnotationPackageUploadProgress.cs" />
     <Compile Include="Contract\Amazon\AnnotationTagDto.cs" />
     <Compile Include="Contract\IAnnotationExportProvider.cs" />
     <Compile Include="Contract\YoloAnnotationExportProvider.cs" />

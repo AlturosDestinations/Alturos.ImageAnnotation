@@ -16,6 +16,7 @@ namespace Alturos.ImageAnnotation
         private readonly AnnotationConfig _annotationConfig;
         private bool _changedPackage;
         private AnnotationPackage _selectedPackage;
+        private bool _showAnnotated;
 
         public Main()
         {
@@ -44,7 +45,7 @@ namespace Alturos.ImageAnnotation
 
             this.annotationDrawControl.AutoplaceAnnotations = true;
             this.annotationDrawControl.SetObjectClasses(this._annotationConfig.ObjectClasses);
-            this.annotationDrawControl.SetLabelsVisible(true);
+            this.annotationDrawControl.SetLabelsVisible(false);
 
             this.showLabelsToolStripMenuItem.Checked = true;
         }
@@ -53,7 +54,7 @@ namespace Alturos.ImageAnnotation
 
         private void Main_Load(object sender, EventArgs e)
         {
-            Task.Run(async () => await this.LoadPackagesAsync());
+            Task.Run(async () => await this.LoadPackagesAsync(this._showAnnotated));
             this.RegisterEvents();
         }
 
@@ -152,7 +153,7 @@ namespace Alturos.ImageAnnotation
 
         private async void RefreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            await this.LoadPackagesAsync();
+            await this.LoadPackagesAsync(this._showAnnotated);
         }
 
         private void SyncToolStripMenuItem_Click(object sender, EventArgs e)
@@ -202,9 +203,9 @@ namespace Alturos.ImageAnnotation
             uploadDialog.StartPosition = FormStartPosition.CenterParent;
 
             var dialogResult = uploadDialog.ShowDialog();
-            if (dialogResult == DialogResult.OK)
+            if (dialogResult == DialogResult.OK && !this._showAnnotated)
             {
-                await this.LoadPackagesAsync();
+                await this.LoadPackagesAsync(this._showAnnotated);
             }
         }
 
@@ -218,6 +219,14 @@ namespace Alturos.ImageAnnotation
         {
             this.showLabelsToolStripMenuItem.Checked = !this.showLabelsToolStripMenuItem.Checked;
             this.annotationDrawControl.SetLabelsVisible(this.showLabelsToolStripMenuItem.Checked);
+        }
+
+        private async void ShowAnnotatedPackagesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.showAnnotatedPackagesToolStripMenuItem.Checked = !this.showAnnotatedPackagesToolStripMenuItem.Checked;
+            this._showAnnotated = this.showAnnotatedPackagesToolStripMenuItem.Checked;
+
+            await this.LoadPackagesAsync(this._showAnnotated);
         }
 
         private async void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -247,10 +256,10 @@ namespace Alturos.ImageAnnotation
 
         #region Logic
 
-        private async Task LoadPackagesAsync()
+        private async Task LoadPackagesAsync(bool annotated)
         {
             this.EnableMainMenu(false);
-            await this.annotationPackageListControl.LoadPackagesAsync();
+            await this.annotationPackageListControl.LoadPackagesAsync(annotated);
             this.EnableMainMenu(true);
         }
 
@@ -326,6 +335,11 @@ namespace Alturos.ImageAnnotation
         private async Task DownloadRequestedAsync(AnnotationPackage package)
         {
             await this._annotationPackageProvider.DownloadPackageAsync(package);
+
+            if (this._selectedPackage == package)
+            {
+                this.PackageSelected(package);
+            }
         }
 
         private List<string> TagsRequested()

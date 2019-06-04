@@ -18,6 +18,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         public bool ShowLabels { get; private set; }
 
         private readonly int _mouseDragElementSize = 10;
+        private readonly int _maxMouseDistanceToDragPoint = 10;
 
         private bool _mouseOver;
         private Point _mousePosition = new Point(0, 0);
@@ -275,7 +276,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                     foreach (var dragPoint in dragPoints)
                     {
                         var dragElementBrush = Brushes.LightPink;
-                        if (this.PointDistance(this._mousePosition, new Point(dragPoint.Point.X, dragPoint.Point.Y)) < 15)
+                        if (this.PointDistance(this._mousePosition, new Point(dragPoint.Point.X, dragPoint.Point.Y)) < this._maxMouseDistanceToDragPoint)
                         {
                             System.Windows.Forms.Cursor.Current = Cursors.Hand;
                             dragElementBrush = Brushes.Yellow;
@@ -373,9 +374,15 @@ namespace Alturos.ImageAnnotation.CustomControls
                 var dragPoints = this.GetDragPoints(rectangle, drawOffset);
                 foreach (var dragPoint in dragPoints)
                 {
-                    if (this.PointDistance(this._mousePosition, new Point(dragPoint.Point.X, dragPoint.Point.Y)) < 15)
+                    if (this.PointDistance(this._mousePosition, new Point(dragPoint.Point.X, dragPoint.Point.Y)) < this._maxMouseDistanceToDragPoint)
                     {
                         this._dragPoint = dragPoint;
+
+                        this._grabOffsetX = (this._dragPoint.Point.X - rectangle.X) / canvasInfo.ScaledWidth;
+                        this._grabOffsetY = (this._dragPoint.Point.Y - rectangle.Y) / canvasInfo.ScaledHeight;
+
+                        startDrag = true;
+
                         break;
                     }
                 }
@@ -387,6 +394,8 @@ namespace Alturos.ImageAnnotation.CustomControls
                     this._selectedBoundingBox = boundingBox;
                     this._selectedObjectRect = new RectangleF(rectangle.X / (float)canvasInfo.ScaledWidth, rectangle.Y / (float)canvasInfo.ScaledHeight,
                         rectangle.Width / (float)canvasInfo.ScaledWidth, rectangle.Height / (float)canvasInfo.ScaledHeight);
+                    this._cachedCenter = new PointF(this._selectedObjectRect.X + this._selectedObjectRect.Width / 2, this._selectedObjectRect.Y + this._selectedObjectRect.Height / 2);
+
                     break;
                 }
             }

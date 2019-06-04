@@ -1,6 +1,7 @@
 ﻿using Alturos.ImageAnnotation.Contract;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -42,10 +43,13 @@ namespace Alturos.ImageAnnotation.Forms
             while (this._uploading)
             {
                 var progress = this._annotationPackageProvider.GetUploadProgress();
-                if (!double.IsNaN(progress))
+                var percentageDone = progress.GetPercentDone();
+                if (!double.IsNaN(percentageDone))
                 {
-                    this.labelSyncing.Invoke((MethodInvoker)delegate { this.labelSyncing.Text = $"Uploading... Please wait... ({(int)progress}%)"; });
-                    this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)progress; });
+                    this.labelSyncing.Invoke((MethodInvoker)delegate {
+                        this.labelSyncing.Text = $"Uploading {progress.UploadedFiles}/{progress.FileCount}... Please wait... ({(int)percentageDone}%) - {Path.GetFileName(progress.CurrentFile)}";
+                    });
+                    this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)percentageDone; });
                 }
 
                 await Task.Delay(100);
