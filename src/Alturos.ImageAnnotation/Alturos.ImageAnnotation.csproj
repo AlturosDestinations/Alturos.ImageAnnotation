@@ -51,7 +51,6 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.IO.Compression, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Web.Extensions" />
@@ -171,6 +170,7 @@
     <Compile Include="Contract\Amazon\AnnotationPackageDto.cs" />
     <Compile Include="Model\CanvasInfo.cs" />
     <Compile Include="Model\DragPoint.cs" />
+    <Compile Include="Model\DragPointPosition.cs" />
     <Compile Include="Model\DragPointType.cs" />
     <Compile Include="Model\ObjectClass.cs" />
     <Compile Include="Model\AnnotationPackageTag.cs" />
