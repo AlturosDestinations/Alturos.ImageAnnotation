@@ -177,18 +177,18 @@ namespace Alturos.ImageAnnotation.CustomControls
         private DragPoint[] GetDragPoints(Rectangle rectangle, int drawOffset)
         {
             var p1 = new Point(rectangle.X - drawOffset, rectangle.Y - drawOffset);
-            var p2 = new Point(p1.X + rectangle.Width, p1.Y);
-            var p3 = new Point(p1.X, p1.Y + rectangle.Height);
-            var p4 = new Point(p1.X + rectangle.Width, p1.Y + rectangle.Height);
-            var p5 = new Point(p1.X + rectangle.Width - 10, p1.Y + 10);
+            var p2 = new Point(rectangle.X + rectangle.Width + drawOffset, rectangle.Y - drawOffset);
+            var p3 = new Point(rectangle.X - drawOffset, rectangle.Y + rectangle.Height + drawOffset);
+            var p4 = new Point(rectangle.X + rectangle.Width + drawOffset, rectangle.Y + rectangle.Height + drawOffset);
+            var p5 = new Point(rectangle.X + rectangle.Width - 15 - drawOffset, rectangle.Y + 15 - drawOffset);
 
             return new DragPoint[]
             {
-                new DragPoint(p1, DragPointType.Resize),
-                new DragPoint(p2, DragPointType.Resize),
-                new DragPoint(p3, DragPointType.Resize),
-                new DragPoint(p4, DragPointType.Resize),
-                new DragPoint(p5, DragPointType.Delete)
+                new DragPoint(p1, DragPointType.Resize, Cursors.SizeNWSE, 315), // Top left
+                new DragPoint(p2, DragPointType.Resize, Cursors.SizeNESW, 225), // Top right
+                new DragPoint(p3, DragPointType.Resize, Cursors.SizeNESW, 45),  // Bottom left
+                new DragPoint(p4, DragPointType.Resize, Cursors.SizeNWSE, 135), // Bottom right
+                new DragPoint(p5, DragPointType.Delete, Cursors.Hand, 0)
             };
         }
 
@@ -241,8 +241,6 @@ namespace Alturos.ImageAnnotation.CustomControls
 
             var drawOffset = this._mouseDragElementSize / 2;
 
-            System.Windows.Forms.Cursor.Current = Cursors.Default;
-
             if (this._mouseOver)
             {
                 e.Graphics.DrawLine(Pens.Blue, new Point(this._mousePosition.X, this.pictureBox1.Top), new Point(this._mousePosition.X, this.pictureBox1.Bottom));
@@ -272,23 +270,32 @@ namespace Alturos.ImageAnnotation.CustomControls
                 var biggerRectangle = Rectangle.Inflate(rectangle, 20, 20);
                 if (biggerRectangle.Contains(this._mousePosition))
                 {
+                    System.Windows.Forms.Cursor.Current = Cursors.SizeAll;
+
                     var dragPoints = this.GetDragPoints(rectangle, drawOffset);
                     foreach (var dragPoint in dragPoints)
                     {
                         var dragElementBrush = Brushes.LightPink;
+
                         if (this.PointDistance(this._mousePosition, new Point(dragPoint.Point.X, dragPoint.Point.Y)) < this._maxMouseDistanceToDragPoint)
                         {
-                            System.Windows.Forms.Cursor.Current = Cursors.Hand;
+                            System.Windows.Forms.Cursor.Current = dragPoint.Cursor;
                             dragElementBrush = Brushes.Yellow;
                         }
 
                         if (dragPoint.Type == DragPointType.Resize)
                         {
-                            var points = new Point[]
+                            var points = new PointF[]
                             {
-                                new Point(dragPoint.Point.X, dragPoint.Point.Y),
-                                new Point(dragPoint.Point.X + 15 , dragPoint.Point.Y),
-                                new Point(dragPoint.Point.X, dragPoint.Point.Y + 15),
+                                new PointF(
+                                    dragPoint.Point.X + (float)Math.Cos(MathHelper.Deg2Rad * (dragPoint.Angle - 90)) * 10,
+                                    dragPoint.Point.Y - (float)Math.Sin(MathHelper.Deg2Rad * (dragPoint.Angle - 90)) * 10),
+                                new PointF(
+                                    dragPoint.Point.X + (float)Math.Cos(MathHelper.Deg2Rad * (dragPoint.Angle + 180)) * 10,
+                                    dragPoint.Point.Y - (float)Math.Sin(MathHelper.Deg2Rad * (dragPoint.Angle + 180)) * 10),
+                                new PointF(
+                                    dragPoint.Point.X + (float)Math.Cos(MathHelper.Deg2Rad * (dragPoint.Angle + 90)) * 10,
+                                    dragPoint.Point.Y - (float)Math.Sin(MathHelper.Deg2Rad * (dragPoint.Angle + 90)) * 10),
                             };
 
                             e.Graphics.FillPolygon(dragElementBrush, points);
@@ -446,11 +453,14 @@ namespace Alturos.ImageAnnotation.CustomControls
                         new PointF((float)this._cachedCenter.X, (float)this._cachedCenter.Y),
                         new PointF((float)this._grabOffsetX, (float)this._grabOffsetY));
 
-                    var width = Math.Max(0.02, Math.Abs(x - anchor.X));
-                    var height = Math.Max(0.02, Math.Abs(y - anchor.Y));
+                    var xSign = Math.Sign((this._selectedObjectRect.X + this._grabOffsetX) - anchor.X);
+                    var ySign = Math.Sign((this._selectedObjectRect.Y + this._grabOffsetY) - anchor.Y);
 
-                    centerX = this._cachedCenter.X + (width - _selectedObjectRect.Width) / 2 * Math.Sign((this._selectedObjectRect.X + this._grabOffsetX) - anchor.X);
-                    centerY = this._cachedCenter.Y + (height - _selectedObjectRect.Height) / 2 * Math.Sign((this._selectedObjectRect.Y + this._grabOffsetY) - anchor.Y);
+                    var width = Math.Max(30 / canvasInfo.ScaledWidth, xSign * ((x - anchor.X) + (canvasInfo.OffsetX / canvasInfo.ScaledWidth)));
+                    var height = Math.Max(30 / canvasInfo.ScaledHeight, ySign * ((y - anchor.Y) + (canvasInfo.OffsetY / canvasInfo.ScaledHeight)));
+
+                    centerX = -(canvasInfo.OffsetX / canvasInfo.ScaledWidth) + this._cachedCenter.X + (width - this._selectedObjectRect.Width) / 2 * xSign;
+                    centerY = -(canvasInfo.OffsetY / canvasInfo.ScaledHeight) + this._cachedCenter.Y + (height - this._selectedObjectRect.Height) / 2 * ySign;
 
                     this._selectedBoundingBox.Width = (float)width;
                     this._selectedBoundingBox.Height = (float)height;

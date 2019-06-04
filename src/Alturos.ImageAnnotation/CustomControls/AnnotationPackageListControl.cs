@@ -45,15 +45,7 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         public AnnotationPackage[] GetAllPackages()
         {
-            var items = new List<AnnotationPackage>();
-
-            foreach (DataGridViewRow row in this.dataGridView1.Rows)
-            {
-                var package = row.DataBoundItem as AnnotationPackage;
-                items.Add(package);
-            }
-
-            return items.ToArray();
+            return this._annotationPackages.ToArray();
         }
 
         public async Task LoadPackagesAsync(bool annotated)

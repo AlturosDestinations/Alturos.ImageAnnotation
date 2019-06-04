@@ -1,4 +1,6 @@
-﻿namespace Alturos.ImageAnnotation.Helper
+﻿using System;
+
+namespace Alturos.ImageAnnotation.Helper
 {
     public static class MathExtension
     {
