@@ -38,7 +38,7 @@ namespace Alturos.ImageAnnotation.Forms
         {
             while (this._syncing)
             {
-                var progress = this._annotationPackageProvider.GetSyncProgress();
+                var progress = this._annotationPackageProvider.GetSyncProgress().GetPercentDone();
                 if (!double.IsNaN(progress))
                 {
                     this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)progress; });
