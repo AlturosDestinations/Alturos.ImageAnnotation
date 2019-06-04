@@ -63,24 +63,31 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private void DataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
-            if (this.dataGridView1.Rows.Count <= e.RowIndex)
+            try
             {
-                return;
-            }
+                if (this.dataGridView1.Rows.Count <= e.RowIndex)
+                {
+                    return;
+                }
 
-            var item = this.dataGridView1.Rows[e.RowIndex].DataBoundItem as AnnotationImage;
-            if (item == null)
+                var item = this.dataGridView1.Rows[e.RowIndex].DataBoundItem as AnnotationImage;
+                if (item == null)
+                {
+                    return;
+                }
+
+                if (item.BoundingBoxes != null)
+                {
+                    this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.GreenYellow;
+                    return;
+                }
+
+                this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
+            }
+            catch (Exception exception)
             {
-                return;
-            }
 
-            if (item.BoundingBoxes != null)
-            {
-                this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.GreenYellow;
-                return;
             }
-
-            this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
         }
 
         private async void DeleteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -112,6 +119,11 @@ namespace Alturos.ImageAnnotation.CustomControls
             }
 
             this._bindingSource.ResetBindings(false);
+        }
+
+        private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            e.Cancel = true;
         }
     }
 }
