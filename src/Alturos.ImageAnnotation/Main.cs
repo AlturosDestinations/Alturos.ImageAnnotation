@@ -326,6 +326,11 @@ namespace Alturos.ImageAnnotation
         private async Task DownloadRequestedAsync(AnnotationPackage package)
         {
             await this._annotationPackageProvider.DownloadPackageAsync(package);
+
+            if (this._selectedPackage == package)
+            {
+                this.PackageSelected(package);
+            }
         }
 
         private List<string> TagsRequested()
