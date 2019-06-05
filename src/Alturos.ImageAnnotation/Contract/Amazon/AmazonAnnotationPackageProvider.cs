@@ -187,10 +187,14 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
         {
             this._packagesToDownload.Enqueue(package);
 
+            package.Enqueued = true;
+
             while (this._packagesToDownload.Peek() != package)
             {
                 await Task.Delay(1000).ConfigureAwait(false);
             }
+
+            package.Enqueued = false;
 
             this._downloadedPackage = package;
 

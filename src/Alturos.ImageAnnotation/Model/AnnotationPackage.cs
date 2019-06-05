@@ -13,6 +13,7 @@ namespace Alturos.ImageAnnotation.Model
         public long TotalBytes { get; set; }
 
         public bool Downloading { get; set; }
+        public bool Enqueued { get; set; }
         public bool AvailableLocally { get; set; }
         public double DownloadProgress { get; set; }
         public long TransferredBytes { get; set; }
