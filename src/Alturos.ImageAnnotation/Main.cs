@@ -47,8 +47,6 @@ namespace Alturos.ImageAnnotation
             this.annotationDrawControl.AutoplaceAnnotations = true;
             this.annotationDrawControl.SetObjectClasses(this._annotationConfig.ObjectClasses);
             this.annotationDrawControl.SetLabelsVisible(false);
-
-            this.showLabelsToolStripMenuItem.Checked = true;
         }
 
         #region Form Events
