@@ -4,8 +4,7 @@ using System.Collections.Generic;
 
 namespace Alturos.ImageAnnotation.Contract.Amazon
 {
-    [DynamoDBTable("ObjectDetectionImageAnnotation")]
-    internal class AnnotationConfigDto
+    public class AnnotationConfigDto
     {
         [DynamoDBHashKey]
         public string Id { get; set; }
