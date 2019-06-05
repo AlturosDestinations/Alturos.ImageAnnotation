@@ -39,6 +39,14 @@ namespace Alturos.ImageAnnotation.CustomControls
             this._availableTagsSource.DataSource = this.AvailableTags;
         }
 
+        public void SetSelectedTags(List<AnnotationPackageTag> selectedTags)
+        {
+            this.SelectedTags = selectedTags;
+            this.AvailableTags = this.AvailableTags.Where(o => !selectedTags.Select(p => p.Value).Contains(o.Value)).ToList();
+
+            this.RefreshTags();
+        }
+
         private void TextBoxFilter_TextChanged(object sender, EventArgs e)
         {
             this.UpdateAvailableTags();
