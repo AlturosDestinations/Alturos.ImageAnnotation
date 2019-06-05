@@ -155,13 +155,23 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
                 try
                 {
-                    var packageInfos = context.ScanAsync<AnnotationPackageDto>(scanConditions, dbConfig);
+                    var allRetrievedPackages = new List<AnnotationPackageDto>();
+                    var retrievedPackages = new List<AnnotationPackageDto>[scanConditions.Length];
 
-                    // Create packages
-                    var retrievedPackages = await packageInfos.GetNextSetAsync().ConfigureAwait(false);
+                    for (var i = 0; i < scanConditions.Length; i++)
+                    {
+                        var packageInfos = context.ScanAsync<AnnotationPackageDto>(new ScanCondition[] { scanConditions[i] }, dbConfig);
+                        retrievedPackages[i] = await packageInfos.GetNextSetAsync().ConfigureAwait(false);
+                    }
+
+                    allRetrievedPackages = retrievedPackages[0];
+                    for (var i = 1; i < retrievedPackages.Length; i++)
+                    {
+                        allRetrievedPackages = allRetrievedPackages.Intersect(retrievedPackages[i]).ToList();
+                    }
 
                     //var packages = retrievedPackages.Where(o => o.Id == "S-1-16142028098304285338.zip").Select(o => new AnnotationPackage
-                    var packages = retrievedPackages.Select(o => new AnnotationPackage
+                    var packages = allRetrievedPackages.Select(o => new AnnotationPackage
                     {
                         ExternalId = o.Id,
                         User = o.User,
