@@ -19,6 +19,7 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private readonly int _mouseDragElementSize = 10;
         private readonly int _maxMouseDistanceToDragPoint = 10;
+        private readonly Size _minSize = new Size(30, 30);
 
         private bool _mouseOver;
         private Point _mousePosition = new Point(0, 0);
@@ -182,7 +183,7 @@ namespace Alturos.ImageAnnotation.CustomControls
             var p2 = new Point(rectangle.X + rectangle.Width + drawOffset, rectangle.Y - drawOffset);
             var p3 = new Point(rectangle.X - drawOffset, rectangle.Y + rectangle.Height + drawOffset);
             var p4 = new Point(rectangle.X + rectangle.Width + drawOffset, rectangle.Y + rectangle.Height + drawOffset);
-            var p5 = new Point(rectangle.X + rectangle.Width - 15 - drawOffset, rectangle.Y + 15 - drawOffset);
+            var p5 = new Point(rectangle.X + rectangle.Width - 15 - drawOffset, rectangle.Y - drawOffset);
 
             return new DragPoint[]
             {
@@ -424,7 +425,10 @@ namespace Alturos.ImageAnnotation.CustomControls
             if (this._createBoundingBox)
             {
                 this._createBoundingBox = false;
-                this.CreateBoundingBox(this._creationPoint, e.Location);
+                if (Math.Abs(this._creationPoint.X - e.Location.X) > this._minSize.Width &&
+                    Math.Abs(this._creationPoint.Y - e.Location.Y) > this._minSize.Height) {
+                    this.CreateBoundingBox(this._creationPoint, e.Location);
+                }
 
                 return;
             }
@@ -472,8 +476,8 @@ namespace Alturos.ImageAnnotation.CustomControls
                     var xSign = Math.Sign((this._selectedObjectRect.X + this._grabOffsetX) - anchor.X);
                     var ySign = Math.Sign((this._selectedObjectRect.Y + this._grabOffsetY) - anchor.Y);
 
-                    var width = Math.Max(30 / canvasInfo.ScaledWidth, xSign * ((x - anchor.X) + (canvasInfo.OffsetX / canvasInfo.ScaledWidth)));
-                    var height = Math.Max(30 / canvasInfo.ScaledHeight, ySign * ((y - anchor.Y) + (canvasInfo.OffsetY / canvasInfo.ScaledHeight)));
+                    var width = Math.Max(this._minSize.Width / canvasInfo.ScaledWidth, xSign * ((x - anchor.X) + (canvasInfo.OffsetX / canvasInfo.ScaledWidth)));
+                    var height = Math.Max(this._minSize.Height / canvasInfo.ScaledHeight, ySign * ((y - anchor.Y) + (canvasInfo.OffsetY / canvasInfo.ScaledHeight)));
 
                     centerX = -(canvasInfo.OffsetX / canvasInfo.ScaledWidth) + this._cachedCenter.X + (width - this._selectedObjectRect.Width) / 2 * xSign;
                     centerY = -(canvasInfo.OffsetY / canvasInfo.ScaledHeight) + this._cachedCenter.Y + (height - this._selectedObjectRect.Height) / 2 * ySign;
