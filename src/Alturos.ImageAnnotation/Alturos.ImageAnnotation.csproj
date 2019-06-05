@@ -66,6 +66,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\TagSelectionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TagSelectionDialog.Designer.cs">
+      <DependentUpon>TagSelectionDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Helper\MathHelper.cs" />
     <Compile Include="Model\AnnotationPackageUploadProgress.cs" />
     <Compile Include="Contract\Amazon\AnnotationTagDto.cs" />
@@ -224,6 +230,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SyncConfirmationDialog.resx">
       <DependentUpon>SyncConfirmationDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TagSelectionDialog.resx">
+      <DependentUpon>TagSelectionDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\UploadDialog.resx">
       <DependentUpon>UploadDialog.cs</DependentUpon>

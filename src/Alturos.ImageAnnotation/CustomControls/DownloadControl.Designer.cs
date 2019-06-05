@@ -50,7 +50,7 @@
             this.buttonDownload.TabIndex = 3;
             this.buttonDownload.Text = "&Download";
             this.buttonDownload.UseVisualStyleBackColor = true;
-            this.buttonDownload.Click += new System.EventHandler(this.buttonDownload_Click);
+            this.buttonDownload.Click += new System.EventHandler(this.ButtonDownload_Click);
             // 
             // labelNotification
             // 

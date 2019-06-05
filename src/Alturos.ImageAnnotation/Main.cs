@@ -48,7 +48,7 @@ namespace Alturos.ImageAnnotation
             this.annotationDrawControl.SetObjectClasses(this._annotationConfig.ObjectClasses);
             this.annotationDrawControl.SetLabelsVisible(false);
 
-            this.showLabelsToolStripMenuItem.Checked = true;
+            this.tagListControl.SetConfig(this._annotationConfig);
         }
 
         #region Form Events
@@ -266,6 +266,16 @@ namespace Alturos.ImageAnnotation
 
         private void PackageSelected(AnnotationPackage package)
         {
+            if (this.annotationPackageListControl.GetSelectedPackageCount() > 1)
+            {
+                this.SetPackageEditingControlsEnabled(false);
+                return;
+            }
+            else
+            {
+                this.SetPackageEditingControlsEnabled(true);
+            }
+
             this._changedPackage = true;
             this._selectedPackage = package;
 
@@ -294,6 +304,13 @@ namespace Alturos.ImageAnnotation
             }
 
             this._changedPackage = false;
+        }
+
+        private void SetPackageEditingControlsEnabled(bool enabled)
+        {
+            this.annotationImageListControl.Visible = enabled;
+            this.tagListControl.Visible = enabled;
+            this.annotationDrawControl.Visible = enabled;
         }
 
         private void ImageSelected(AnnotationImage image)

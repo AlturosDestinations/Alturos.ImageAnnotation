@@ -92,6 +92,12 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private async void DeleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var dialogResult = MessageBox.Show("Are you sure you want to delete the selected image(s)?", "Confirm deletion", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+            if (dialogResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
             var successful = true;
             var failedImages = new List<AnnotationImage>();
 

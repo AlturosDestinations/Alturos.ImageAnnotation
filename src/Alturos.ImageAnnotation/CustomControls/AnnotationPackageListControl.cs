@@ -88,6 +88,11 @@ namespace Alturos.ImageAnnotation.CustomControls
             }
         }
 
+        public int GetSelectedPackageCount()
+        {
+            return this.dataGridView1.SelectedRows.Count;
+        }
+
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             var package = this.dataGridView1.CurrentRow.DataBoundItem as AnnotationPackage;
@@ -161,6 +166,12 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private async void DeleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var dialogResult = MessageBox.Show("Are you sure you want to delete the selected package(s)?", "Confirm deletion", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+            if (dialogResult == DialogResult.Cancel)
+            {
+                return;
+            }
+                
             var successful = true;
             var failedPackages = new List<AnnotationPackage>();
 

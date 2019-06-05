@@ -27,6 +27,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
         private readonly IAmazonDynamoDB _dynamoDbClient;
         private readonly string _bucketName;
         private readonly string _extractionFolder;
+        private readonly string _dbTableName;
         private readonly Queue<AnnotationPackage> _packagesToDownload;
         private readonly string _configHashKey = "AnnotationConfiguration";
 
@@ -41,6 +42,8 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
             this._bucketName = ConfigurationManager.AppSettings["bucketName"]?.ToLower();
             this._extractionFolder = ConfigurationManager.AppSettings["extractionFolder"];
+
+            this._dbTableName = ConfigurationManager.AppSettings["dbTableName"];
 
             if (string.IsNullOrEmpty(accessKeyId))
             {
@@ -82,7 +85,11 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
                 using (var context = new DynamoDBContext(this._dynamoDbClient))
                 {
-                    await context.SaveAsync(annotationConfig).ConfigureAwait(false);
+                    var dbConfig = new DynamoDBOperationConfig
+                    {
+                        OverrideTableName = this._dbTableName
+                    };
+                    await context.SaveAsync(annotationConfig, dbConfig).ConfigureAwait(false);
                 }
             }
             catch (Exception)
@@ -97,7 +104,11 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             {
                 using (var context = new DynamoDBContext(this._dynamoDbClient))
                 {
-                    var annotationConfig = await context.LoadAsync<AnnotationConfigDto>(this._configHashKey).ConfigureAwait(false);
+                    var dbConfig = new DynamoDBOperationConfig
+                    {
+                        OverrideTableName = this._dbTableName
+                    };
+                    var annotationConfig = await context.LoadAsync<AnnotationConfigDto>(this._configHashKey, dbConfig).ConfigureAwait(false);
                     return new AnnotationConfig
                     {
                         ObjectClasses = annotationConfig.ObjectClasses,
@@ -137,17 +148,33 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             // Retrieve unannotated metadata
             using (var context = new DynamoDBContext(this._dynamoDbClient))
             {
+                var dbConfig = new DynamoDBOperationConfig
+                {
+                    OverrideTableName = this._dbTableName
+                };
+
                 try
                 {
-                    var packageInfos = context.ScanAsync<AnnotationPackageDto>(scanConditions);
+                    var allRetrievedPackages = new List<AnnotationPackageDto>();
+                    var retrievedPackages = new List<AnnotationPackageDto>[scanConditions.Length];
 
-                    // Create packages
-                    var retrievedPackages = await packageInfos.GetNextSetAsync().ConfigureAwait(false);
+                    for (var i = 0; i < scanConditions.Length; i++)
+                    {
+                        var packageInfos = context.ScanAsync<AnnotationPackageDto>(new ScanCondition[] { scanConditions[i] }, dbConfig);
+                        retrievedPackages[i] = await packageInfos.GetNextSetAsync().ConfigureAwait(false);
+                    }
+
+                    allRetrievedPackages = retrievedPackages[0];
+                    for (var i = 1; i < retrievedPackages.Length; i++)
+                    {
+                        allRetrievedPackages = allRetrievedPackages.Intersect(retrievedPackages[i]).ToList();
+                    }
 
                     //var packages = retrievedPackages.Where(o => o.Id == "S-1-16142028098304285338.zip").Select(o => new AnnotationPackage
-                    var packages = retrievedPackages.Select(o => new AnnotationPackage
+                    var packages = allRetrievedPackages.Select(o => new AnnotationPackage
                     {
                         ExternalId = o.Id,
+                        User = o.User,
                         PackageName = Path.GetFileNameWithoutExtension(o.Id),
                         AvailableLocally = false,
                         IsAnnotated = o.IsAnnotated,
@@ -187,10 +214,14 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
         {
             this._packagesToDownload.Enqueue(package);
 
+            package.Enqueued = true;
+
             while (this._packagesToDownload.Peek() != package)
             {
                 await Task.Delay(1000).ConfigureAwait(false);
             }
+
+            package.Enqueued = false;
 
             this._downloadedPackage = package;
 
@@ -244,7 +275,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             this._downloadedPackage.DownloadProgress = (e.TransferredBytes / (double)e.TotalBytes) * 100;
         }
 
-        public async Task UploadPackagesAsync(List<string> packagePaths, List<string> tags, CancellationToken token = default(CancellationToken))
+        public async Task UploadPackagesAsync(List<string> packagePaths, List<string> tags, string user, CancellationToken token = default(CancellationToken))
         {
             this.IsUploading = true;
 
@@ -258,18 +289,19 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
             foreach (var packagePath in packagePaths)
             {
-                await this.UploadPackageAsync(packagePath, tags, token).ConfigureAwait(false);
+                await this.UploadPackageAsync(packagePath, tags, user, token).ConfigureAwait(false);
             }
 
             this.IsUploading = false;
         }
 
-        private async Task UploadPackageAsync(string packagePath, List<string> tags, CancellationToken token)
+        private async Task UploadPackageAsync(string packagePath, List<string> tags, string user, CancellationToken token)
         {
             var packageName = Path.GetFileName(packagePath);
             await this.AddPackageAsync(new AnnotationPackage
             {
                 ExternalId = packageName,
+                User = user,
                 PackageName = packageName,
                 IsAnnotated = false,
                 AnnotationPercentage = 0,
@@ -335,8 +367,13 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
         {
             using (var context = new DynamoDBContext(this._dynamoDbClient))
             {
-                var info = await context.LoadAsync<AnnotationPackageDto>(package.ExternalId, token).ConfigureAwait(false);
+                var dbConfig = new DynamoDBOperationConfig
+                {
+                    OverrideTableName = this._dbTableName
+                };
+                var info = await context.LoadAsync<AnnotationPackageDto>(package.ExternalId, dbConfig, token).ConfigureAwait(false);
 
+                info.User = package.User;
                 info.IsAnnotated = package.IsAnnotated;
                 info.AnnotationPercentage = package.AnnotationPercentage;
                 info.Tags = package.Tags;
@@ -373,6 +410,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             var info = new AnnotationPackageDto
             {
                 Id = package.ExternalId,
+                User = package.User,
                 IsAnnotated = package.IsAnnotated,
                 AnnotationPercentage = package.AnnotationPercentage,
                 Tags = package.Tags,
@@ -383,7 +421,11 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             {
                 using (var context = new DynamoDBContext(this._dynamoDbClient))
                 {
-                    await context.SaveAsync(info, token).ConfigureAwait(false);
+                    var dbConfig = new DynamoDBOperationConfig
+                    {
+                        OverrideTableName = this._dbTableName
+                    };
+                    await context.SaveAsync(info, dbConfig, token).ConfigureAwait(false);
                 }
             }
             catch (Exception e)
@@ -412,10 +454,14 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 // Delete package from DynamoDB
                 using (var context = new DynamoDBContext(this._dynamoDbClient))
                 {
+                    var dbConfig = new DynamoDBOperationConfig
+                    {
+                        OverrideTableName = this._dbTableName
+                    };
                     await context.DeleteAsync(new AnnotationPackageDto
                     {
                         Id = package.ExternalId
-                    }).ConfigureAwait(false);
+                    }, dbConfig).ConfigureAwait(false);
                 }
 
                 // Delete local folder
@@ -448,9 +494,13 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 // Delete image from DynamoDB
                 using (var context = new DynamoDBContext(this._dynamoDbClient))
                 {
-                    var package = await context.LoadAsync<AnnotationPackageDto>(image.Package.ExternalId).ConfigureAwait(false);
+                    var dbConfig = new DynamoDBOperationConfig
+                    {
+                        OverrideTableName = this._dbTableName
+                    };
+                    var package = await context.LoadAsync<AnnotationPackageDto>(image.Package.ExternalId, dbConfig).ConfigureAwait(false);
                     package.Images?.RemoveAll(o => o.ImageName.Equals(image.ImageName));
-                    await context.SaveAsync(package).ConfigureAwait(false);
+                    await context.SaveAsync(package, dbConfig).ConfigureAwait(false);
                 }
 
                 // Delete local image

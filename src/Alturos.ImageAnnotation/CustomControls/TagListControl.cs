@@ -1,4 +1,6 @@
-﻿using Alturos.ImageAnnotation.Model;
+﻿using Alturos.ImageAnnotation.Contract;
+using Alturos.ImageAnnotation.Forms;
+using Alturos.ImageAnnotation.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +12,17 @@ namespace Alturos.ImageAnnotation.CustomControls
     {
         public event Func<List<string>> TagsRequested;
 
+        private AnnotationConfig _annotationConfig;
         private AnnotationPackage _package;
 
         public TagListControl()
         {
             this.InitializeComponent();
+        }
+
+        public void SetConfig(AnnotationConfig config)
+        {
+            this._annotationConfig = config;
         }
 
         public void SetTags(AnnotationPackage package)
@@ -31,23 +39,13 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private void ButtonAdd_Click(object sender, System.EventArgs e)
         {
-            var results = this.TagsRequested?.Invoke();
+            var dialog = new TagSelectionDialog(this._annotationConfig, this.dataGridView1.DataSource as List<AnnotationPackageTag>);
 
-            if (results.Count > 0)
+            dialog.ShowDialog();
+            if (dialog.DialogResult == DialogResult.OK)
             {
-                if (this._package.Tags == null)
-                {
-                    this._package.Tags = new List<string>();
-                }
-
-                foreach (var tag in results)
-                {
-                    if (!this._package.Tags.Contains(tag))
-                    {
-                        this._package.Tags.Add(tag);
-                        this._package.IsDirty = true;
-                    }
-                }
+                this._package.Tags = dialog.Tags.Select(o => o.Value).ToList();
+                this._package.IsDirty = true;
             }
 
             this.RefreshDatagrid();

@@ -101,7 +101,7 @@ namespace Alturos.ImageAnnotation.Forms
 
             try
             {
-                await this._annotationPackageProvider.UploadPackagesAsync(this._packagePaths, tags, token);
+                await this._annotationPackageProvider.UploadPackagesAsync(this._packagePaths, tags, Environment.UserName, token);
             }
             catch (OperationCanceledException)
             {

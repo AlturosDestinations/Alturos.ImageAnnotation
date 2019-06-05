@@ -15,7 +15,7 @@ namespace Alturos.ImageAnnotation.Contract
         private const double TrainingPercentage = 70;
         private const string DataFolderName = "data";
         private const string ImageFolderName = "obj";
-        private const string YoloConfigPath = @"Resources\yolov3.cfg";
+        private const string YoloConfigPath = @"..\..\Resources\yolov3.cfg";
 
         private AnnotationConfig _config;
 
@@ -162,9 +162,50 @@ namespace Alturos.ImageAnnotation.Contract
 
         private void CreateYoloConfig(string dataPath, string yoloConfigPath)
         {
-            //TODO: https://github.com/AlexeyAB/darknet#how-to-train-pascal-voc-data
+            var fileName = "yolo-obj.cfg";
+
             var lines = File.ReadAllLines(yoloConfigPath);
-            var batchLine = lines.FirstOrDefault(o => o.StartsWith("batch="));
+
+            var batchLineIndex = Array.FindIndex(lines, o => o.StartsWith("batch"));
+            lines[batchLineIndex] = "batch=64";
+
+            var subdivisionsLineIndex = Array.FindIndex(lines, o => o.StartsWith("subdivisions"));
+            lines[subdivisionsLineIndex] = "subdivisions=8";
+
+            var maxBatches = this._config.ObjectClasses.Count * 2000;
+            var maxBatchesLineIndex = Array.FindIndex(lines, o => o.StartsWith("max_batches"));
+            lines[maxBatchesLineIndex] = $"max_batches={maxBatches}";
+
+            var steps1 = (int)(maxBatches * 0.8);
+            var steps2 = (int)(maxBatches * 0.9);
+            var stepsLineIndex = Array.FindIndex(lines, o => o.StartsWith("steps"));
+            lines[stepsLineIndex] = $"steps={steps1},{steps2}";
+
+            var classLines = lines.Where(o => o.StartsWith("classes"));
+            foreach (var classLine in classLines)
+            {
+                lines[Array.IndexOf(lines, classLine)] = $"classes={this._config.ObjectClasses.Count}";
+            }
+
+            var filterIndices = new List<int>();
+            for (var i = 0; i < lines.Length; i++)
+            {
+                if (lines[i].StartsWith("[yolo]"))
+                {
+                    var filterIndex = i;
+                    while (!lines[filterIndex].StartsWith("filters"))
+                    {
+                        filterIndex--;
+                    }
+                    filterIndices.Add(filterIndex);
+                }
+            }
+            foreach (var filterIndex in filterIndices)
+            {
+                lines[filterIndex] = $"filters={(this._config.ObjectClasses.Count + 5) * 3}";
+            }
+
+            File.WriteAllLines(Path.Combine(dataPath, fileName), lines);
         }
     }
 }
