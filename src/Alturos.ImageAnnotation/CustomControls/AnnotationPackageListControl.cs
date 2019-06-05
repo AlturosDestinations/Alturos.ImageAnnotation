@@ -88,6 +88,11 @@ namespace Alturos.ImageAnnotation.CustomControls
             }
         }
 
+        public int GetSelectedPackageCount()
+        {
+            return this.dataGridView1.SelectedRows.Count;
+        }
+
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             var package = this.dataGridView1.CurrentRow.DataBoundItem as AnnotationPackage;
