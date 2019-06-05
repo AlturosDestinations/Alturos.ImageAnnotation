@@ -8,6 +8,7 @@ namespace Alturos.ImageAnnotation.Model
     public class AnnotationPackage
     {
         public string ExternalId { get; set; }
+        public string User { get; set; }
 
         public string PackageName { get; set; }
         public long TotalBytes { get; set; }

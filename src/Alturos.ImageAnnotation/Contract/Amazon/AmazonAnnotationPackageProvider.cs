@@ -148,6 +148,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                     var packages = retrievedPackages.Select(o => new AnnotationPackage
                     {
                         ExternalId = o.Id,
+                        User = o.User,
                         PackageName = Path.GetFileNameWithoutExtension(o.Id),
                         AvailableLocally = false,
                         IsAnnotated = o.IsAnnotated,
@@ -248,7 +249,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             this._downloadedPackage.DownloadProgress = (e.TransferredBytes / (double)e.TotalBytes) * 100;
         }
 
-        public async Task UploadPackagesAsync(List<string> packagePaths, List<string> tags, CancellationToken token = default(CancellationToken))
+        public async Task UploadPackagesAsync(List<string> packagePaths, List<string> tags, string user, CancellationToken token = default(CancellationToken))
         {
             this.IsUploading = true;
 
@@ -262,18 +263,19 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
             foreach (var packagePath in packagePaths)
             {
-                await this.UploadPackageAsync(packagePath, tags, token).ConfigureAwait(false);
+                await this.UploadPackageAsync(packagePath, tags, user, token).ConfigureAwait(false);
             }
 
             this.IsUploading = false;
         }
 
-        private async Task UploadPackageAsync(string packagePath, List<string> tags, CancellationToken token)
+        private async Task UploadPackageAsync(string packagePath, List<string> tags, string user, CancellationToken token)
         {
             var packageName = Path.GetFileName(packagePath);
             await this.AddPackageAsync(new AnnotationPackage
             {
                 ExternalId = packageName,
+                User = user,
                 PackageName = packageName,
                 IsAnnotated = false,
                 AnnotationPercentage = 0,
@@ -341,6 +343,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             {
                 var info = await context.LoadAsync<AnnotationPackageDto>(package.ExternalId, token).ConfigureAwait(false);
 
+                info.User = package.User;
                 info.IsAnnotated = package.IsAnnotated;
                 info.AnnotationPercentage = package.AnnotationPercentage;
                 info.Tags = package.Tags;
@@ -377,6 +380,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             var info = new AnnotationPackageDto
             {
                 Id = package.ExternalId,
+                User = package.User,
                 IsAnnotated = package.IsAnnotated,
                 AnnotationPercentage = package.AnnotationPercentage,
                 Tags = package.Tags,

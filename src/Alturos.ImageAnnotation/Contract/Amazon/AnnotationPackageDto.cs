@@ -8,6 +8,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
     {
         [DynamoDBHashKey]
         public string Id { get; set; }
+        public string User { get; set; }
         public bool IsAnnotated { get; set; }
         public double AnnotationPercentage { get; set; }
         public List<AnnotationImageDto> Images { get; set; }

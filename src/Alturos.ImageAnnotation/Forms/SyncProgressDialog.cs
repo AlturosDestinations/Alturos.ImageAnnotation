@@ -1,5 +1,6 @@
 ﻿using Alturos.ImageAnnotation.Contract;
 using Alturos.ImageAnnotation.Model;
+using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -22,6 +23,7 @@ namespace Alturos.ImageAnnotation.Forms
             foreach (var package in packages)
             {
                 package.IsDirty = false;
+                package.User = Environment.UserName;
             }
 
             this._syncing = true;
