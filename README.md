@@ -24,10 +24,10 @@ For every AnnotationPackage we have some Metadata, Weather, Color, ... this info
 
 AWS has a free tier for the first 12 months of S3 use (up to 5GB) and DynamoDB is up to 25GB free. So it should be possible to use the tool for 12 months without cost, if you stick to the restrictions. Further information can be found here [AWS free tier](https://aws.amazon.com/de/free/)
 
-1. Create an AWS Account
-1. Create a DynamoDB Table and copy the Amazon Resource Name you found it in the overview tab, replace the arn in the following policy.
-1. Create a S3 Bucket and replace the mys3bucketname with the new bucketname.
-1. Create an own user for this tool in the IAM and add the policy to the new user.
+1. Create an [AWS Account](https://portal.aws.amazon.com/billing/signup)
+1. Create a DynamoDB Table with the name `ObjectDetectionImageAnnotation`, copy the Amazon Resource Name you found it in the overview tab and replace the arn in the following policy. `arn:aws:dynamodb:eu-west-1:XXXXXXX:table/ObjectDetectionImageAnnotation`
+1. Create a S3 Bucket and replace the `mys3bucketname` with the new bucketname.
+1. Create an own user for this tool in the IAM and add the policy below to the new user.
 1. Change the bucketName, accessKeyId and the secretAccessKey in Alturos.ImageAnnotation.exe.config
 1. Start the Application
 
