@@ -271,10 +271,8 @@ namespace Alturos.ImageAnnotation
                 this.SetPackageEditingControlsEnabled(false);
                 return;
             }
-            else
-            {
-                this.SetPackageEditingControlsEnabled(true);
-            }
+            
+            this.SetPackageEditingControlsEnabled(true);
 
             this._changedPackage = true;
             this._selectedPackage = package;
