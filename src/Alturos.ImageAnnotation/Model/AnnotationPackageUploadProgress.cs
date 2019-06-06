@@ -2,7 +2,7 @@
 
 namespace Alturos.ImageAnnotation.Model
 {
-    public class AnnotationPackageUploadProgress
+    public class AnnotationPackageTransferProgress
     {
         public string CurrentFile { get; set; }
         public int CurrentFilePercentDone { get; set; }
@@ -11,7 +11,7 @@ namespace Alturos.ImageAnnotation.Model
 
         public double GetPercentDone()
         {
-            return ((this.UploadedFiles / (double)this.FileCount) * 100 + this.CurrentFilePercentDone / this.FileCount)
+            return ((this.UploadedFiles / (double)this.FileCount) * 100 + this.CurrentFilePercentDone / (double)this.FileCount)
                 .Clamp(0, 100);
         }
     }

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.progressBar = new System.Windows.Forms.ProgressBar();
-            this.labelSyncing = new System.Windows.Forms.Label();
+            this.labelUploadProgress = new System.Windows.Forms.Label();
             this.buttonSelectFolders = new System.Windows.Forms.Button();
             this.groupBoxPackages = new System.Windows.Forms.GroupBox();
             this.dataGridViewPackages = new System.Windows.Forms.DataGridView();
@@ -37,6 +37,10 @@
             this.buttonUpload = new System.Windows.Forms.Button();
             this.groupBoxTags = new System.Windows.Forms.GroupBox();
             this.tagSelectionControl = new Alturos.ImageAnnotation.CustomControls.TagSelectionControl();
+            this.buttonCancel = new System.Windows.Forms.Button();
+            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnFileCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBoxPackages.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPackages)).BeginInit();
             this.groupBoxUpload.SuspendLayout();
@@ -50,17 +54,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar.Location = new System.Drawing.Point(6, 83);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(607, 31);
+            this.progressBar.Size = new System.Drawing.Size(517, 31);
             this.progressBar.TabIndex = 0;
             // 
-            // labelSyncing
+            // labelUploadProgress
             // 
-            this.labelSyncing.AutoSize = true;
-            this.labelSyncing.Location = new System.Drawing.Point(6, 67);
-            this.labelSyncing.Name = "labelSyncing";
-            this.labelSyncing.Size = new System.Drawing.Size(130, 13);
-            this.labelSyncing.TabIndex = 1;
-            this.labelSyncing.Text = "Uploading... Please wait...";
+            this.labelUploadProgress.AutoSize = true;
+            this.labelUploadProgress.Location = new System.Drawing.Point(6, 67);
+            this.labelUploadProgress.Name = "labelUploadProgress";
+            this.labelUploadProgress.Size = new System.Drawing.Size(130, 13);
+            this.labelUploadProgress.TabIndex = 1;
+            this.labelUploadProgress.Text = "Uploading... Please wait...";
             // 
             // buttonSelectFolders
             // 
@@ -94,8 +98,13 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewPackages.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridViewPackages.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewPackages.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.ColumnName,
+            this.ColumnFileCount,
+            this.ColumnSize});
             this.dataGridViewPackages.Location = new System.Drawing.Point(6, 49);
             this.dataGridViewPackages.Name = "dataGridViewPackages";
+            this.dataGridViewPackages.RowHeadersVisible = false;
             this.dataGridViewPackages.Size = new System.Drawing.Size(598, 124);
             this.dataGridViewPackages.TabIndex = 3;
             // 
@@ -103,8 +112,9 @@
             // 
             this.groupBoxUpload.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxUpload.Controls.Add(this.buttonCancel);
             this.groupBoxUpload.Controls.Add(this.buttonUpload);
-            this.groupBoxUpload.Controls.Add(this.labelSyncing);
+            this.groupBoxUpload.Controls.Add(this.labelUploadProgress);
             this.groupBoxUpload.Controls.Add(this.progressBar);
             this.groupBoxUpload.Location = new System.Drawing.Point(6, 418);
             this.groupBoxUpload.Name = "groupBoxUpload";
@@ -146,6 +156,39 @@
             this.tagSelectionControl.Size = new System.Drawing.Size(604, 196);
             this.tagSelectionControl.TabIndex = 5;
             // 
+            // buttonCancel
+            // 
+            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCancel.Location = new System.Drawing.Point(530, 83);
+            this.buttonCancel.Name = "buttonCancel";
+            this.buttonCancel.Size = new System.Drawing.Size(83, 31);
+            this.buttonCancel.TabIndex = 3;
+            this.buttonCancel.Text = "Cancel";
+            this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);
+            // 
+            // ColumnName
+            // 
+            this.ColumnName.DataPropertyName = "Name";
+            this.ColumnName.FillWeight = 133.2271F;
+            this.ColumnName.HeaderText = "Name";
+            this.ColumnName.Name = "ColumnName";
+            // 
+            // ColumnFileCount
+            // 
+            this.ColumnFileCount.DataPropertyName = "FileCount";
+            this.ColumnFileCount.FillWeight = 76.14214F;
+            this.ColumnFileCount.HeaderText = "File Count";
+            this.ColumnFileCount.Name = "ColumnFileCount";
+            // 
+            // ColumnSize
+            // 
+            this.ColumnSize.DataPropertyName = "Size";
+            this.ColumnSize.FillWeight = 90.63071F;
+            this.ColumnSize.HeaderText = "Size (MB)";
+            this.ColumnSize.Name = "ColumnSize";
+            // 
             // UploadDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -173,7 +216,7 @@
         #endregion
 
         private System.Windows.Forms.ProgressBar progressBar;
-        private System.Windows.Forms.Label labelSyncing;
+        private System.Windows.Forms.Label labelUploadProgress;
         private System.Windows.Forms.Button buttonSelectFolders;
         private System.Windows.Forms.GroupBox groupBoxPackages;
         private System.Windows.Forms.DataGridView dataGridViewPackages;
@@ -181,5 +224,9 @@
         private CustomControls.TagSelectionControl tagSelectionControl;
         private System.Windows.Forms.GroupBox groupBoxTags;
         private System.Windows.Forms.Button buttonUpload;
+        private System.Windows.Forms.Button buttonCancel;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFileCount;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnSize;
     }
 }

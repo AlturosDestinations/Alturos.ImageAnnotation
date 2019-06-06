@@ -32,15 +32,17 @@
             this.dataGridViewTags = new System.Windows.Forms.DataGridView();
             this.ColumnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewResult = new System.Windows.Forms.DataGridView();
-            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnExported = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.groupBoxTags = new System.Windows.Forms.GroupBox();
             this.buttonSearch = new System.Windows.Forms.Button();
             this.groupBoxResult = new System.Windows.Forms.GroupBox();
             this.labelPackageCount = new System.Windows.Forms.Label();
             this.comboBoxExportProvider = new System.Windows.Forms.ComboBox();
             this.groupBoxExportProvider = new System.Windows.Forms.GroupBox();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.labelDownloadProgress = new System.Windows.Forms.Label();
+            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnExported = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.buttonCancel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTags)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).BeginInit();
             this.groupBoxTags.SuspendLayout();
@@ -50,7 +52,8 @@
             // 
             // buttonExport
             // 
-            this.buttonExport.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.buttonExport.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonExport.Location = new System.Drawing.Point(12, 454);
             this.buttonExport.Name = "buttonExport";
             this.buttonExport.Size = new System.Drawing.Size(564, 41);
@@ -105,21 +108,6 @@
             this.dataGridViewResult.RowHeadersVisible = false;
             this.dataGridViewResult.Size = new System.Drawing.Size(555, 175);
             this.dataGridViewResult.TabIndex = 5;
-            // 
-            // ColumnName
-            // 
-            this.ColumnName.DataPropertyName = "PackageName";
-            this.ColumnName.FillWeight = 184.7716F;
-            this.ColumnName.HeaderText = "Package Path";
-            this.ColumnName.Name = "ColumnName";
-            this.ColumnName.ReadOnly = true;
-            // 
-            // ColumnExported
-            // 
-            this.ColumnExported.FillWeight = 15.22843F;
-            this.ColumnExported.HeaderText = "";
-            this.ColumnExported.Name = "ColumnExported";
-            this.ColumnExported.ReadOnly = true;
             // 
             // groupBoxTags
             // 
@@ -186,20 +174,60 @@
             this.groupBoxExportProvider.TabStop = false;
             this.groupBoxExportProvider.Text = "Export Provider";
             // 
-            // progressBar1
+            // progressBar
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 501);
-            this.progressBar1.Maximum = 1000;
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(564, 23);
-            this.progressBar1.TabIndex = 8;
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.Location = new System.Drawing.Point(12, 514);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(475, 31);
+            this.progressBar.TabIndex = 8;
+            // 
+            // labelDownloadProgress
+            // 
+            this.labelDownloadProgress.AutoSize = true;
+            this.labelDownloadProgress.Location = new System.Drawing.Point(12, 498);
+            this.labelDownloadProgress.Name = "labelDownloadProgress";
+            this.labelDownloadProgress.Size = new System.Drawing.Size(126, 13);
+            this.labelDownloadProgress.TabIndex = 9;
+            this.labelDownloadProgress.Text = "Exporting... Please wait...";
+            // 
+            // ColumnName
+            // 
+            this.ColumnName.DataPropertyName = "PackageName";
+            this.ColumnName.FillWeight = 164.467F;
+            this.ColumnName.HeaderText = "Package Name";
+            this.ColumnName.Name = "ColumnName";
+            this.ColumnName.ReadOnly = true;
+            // 
+            // ColumnExported
+            // 
+            this.ColumnExported.FillWeight = 35.533F;
+            this.ColumnExported.HeaderText = "Available Locally";
+            this.ColumnExported.Name = "ColumnExported";
+            this.ColumnExported.ReadOnly = true;
+            // 
+            // buttonCancel
+            // 
+            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCancel.Enabled = false;
+            this.buttonCancel.Location = new System.Drawing.Point(493, 514);
+            this.buttonCancel.Name = "buttonCancel";
+            this.buttonCancel.Size = new System.Drawing.Size(83, 31);
+            this.buttonCancel.TabIndex = 10;
+            this.buttonCancel.Text = "Cancel";
+            this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);
             // 
             // ExportDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(588, 535);
-            this.Controls.Add(this.progressBar1);
+            this.ClientSize = new System.Drawing.Size(588, 557);
+            this.Controls.Add(this.buttonCancel);
+            this.Controls.Add(this.labelDownloadProgress);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.groupBoxTags);
             this.Controls.Add(this.groupBoxResult);
             this.Controls.Add(this.groupBoxExportProvider);
@@ -209,7 +237,7 @@
             this.Name = "ExportDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Export";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ExportDialog_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ExportDialog_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTags)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).EndInit();
             this.groupBoxTags.ResumeLayout(false);
@@ -217,6 +245,7 @@
             this.groupBoxResult.PerformLayout();
             this.groupBoxExportProvider.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -231,8 +260,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnValue;
         private System.Windows.Forms.ComboBox comboBoxExportProvider;
         private System.Windows.Forms.GroupBox groupBoxExportProvider;
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Label labelDownloadProgress;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
         private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnExported;
-        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Button buttonCancel;
     }
 }

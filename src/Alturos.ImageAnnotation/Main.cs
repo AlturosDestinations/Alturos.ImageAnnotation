@@ -3,7 +3,6 @@ using Alturos.ImageAnnotation.Contract.Amazon;
 using Alturos.ImageAnnotation.Forms;
 using Alturos.ImageAnnotation.Model;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -31,11 +30,17 @@ namespace Alturos.ImageAnnotation
                 using (var configurationForm = new ConfigurationDialog())
                 {
                     configurationForm.Setup(this._annotationConfig);
-                    configurationForm.ShowDialog();
+                    var dialogResult = configurationForm.ShowDialog();
+
+                    if (dialogResult == DialogResult.OK)
+                    {
+                        this._annotationPackageProvider.SetAnnotationConfigAsync(this._annotationConfig);
+                    }
                 }
             }
 
             this.InitializeComponent();
+
             this.Text = $"Alturos Image Annotation {Application.ProductVersion}";
             this.downloadControl.Dock = DockStyle.Fill;
 
@@ -48,7 +53,7 @@ namespace Alturos.ImageAnnotation
             this.annotationDrawControl.SetObjectClasses(this._annotationConfig.ObjectClasses);
             this.annotationDrawControl.SetLabelsVisible(false);
 
-            this.tagListControl.SetConfig(this._annotationConfig);
+            this.tagEditControl.SetConfig(this._annotationConfig);
         }
 
         #region Form Events
@@ -86,8 +91,6 @@ namespace Alturos.ImageAnnotation
 
             this.annotationDrawControl.ImageEdited += this.ImageEdited;
 
-            this.tagListControl.TagsRequested += this.TagsRequested;
-
             this.KeyDown += this.annotationDrawControl.OnKeyDown;
         }
 
@@ -99,8 +102,6 @@ namespace Alturos.ImageAnnotation
             this.downloadControl.DownloadRequested -= this.DownloadRequestedAsync;
 
             this.annotationDrawControl.ImageEdited -= this.ImageEdited;
-
-            this.tagListControl.TagsRequested -= this.TagsRequested;
 
             this.KeyDown -= this.annotationDrawControl.OnKeyDown;
         }
@@ -137,18 +138,17 @@ namespace Alturos.ImageAnnotation
         {
             this.Invoke((MethodInvoker)delegate
             {
-                var showDownloadControl = enable;
-                if (this._selectedPackage != null)
-                {
-                    showDownloadControl = enable && !this._selectedPackage.AvailableLocally;
-                }
+                var showEditControls = enable && this._selectedPackage != null;
+                var showDownloadControl = showEditControls && !this._selectedPackage.AvailableLocally;
 
                 this.menuStripMain.Enabled = enable;
                 this.annotationPackageListControl.Enabled = enable;
-                this.annotationImageListControl.Visible = enable;
-                this.annotationDrawControl.Visible = enable;
+
+                this.annotationImageListControl.Visible = showEditControls;
+                this.annotationDrawControl.Visible = showEditControls;
+                this.tagEditControl.Visible = showEditControls;
+
                 this.downloadControl.Visible = showDownloadControl;
-                this.tagListControl.Visible = enable;
             });
         }
 
@@ -287,7 +287,7 @@ namespace Alturos.ImageAnnotation
 
             if (package != null)
             {
-                this.tagListControl.SetTags(package);
+                this.tagEditControl.SetTags(package);
 
                 if (package.AvailableLocally)
                 {
@@ -309,8 +309,9 @@ namespace Alturos.ImageAnnotation
         private void SetPackageEditingControlsEnabled(bool enabled)
         {
             this.annotationImageListControl.Visible = enabled;
-            this.tagListControl.Visible = enabled;
+            this.tagEditControl.Visible = enabled;
             this.annotationDrawControl.Visible = enabled;
+            this.downloadControl.Visible = enabled;
         }
 
         private void ImageSelected(AnnotationImage image)
@@ -358,16 +359,6 @@ namespace Alturos.ImageAnnotation
             {
                 this.PackageSelected(package);
             }
-        }
-
-        private List<string> TagsRequested()
-        {
-            //var form = new TagSelectionDialog();
-            //form.Setup(this._annotationConfig);
-            //form.ShowDialog();
-
-            //return form.SelectedTags;
-            return null;
         }
 
         #endregion

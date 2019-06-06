@@ -5,6 +5,7 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -95,7 +96,7 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            var package = this.dataGridView1.CurrentRow.DataBoundItem as AnnotationPackage;
+            var package = this.dataGridView1.CurrentRow?.DataBoundItem as AnnotationPackage;
             this.PackageSelected?.Invoke(package);
         }
 
@@ -136,6 +137,36 @@ namespace Alturos.ImageAnnotation.CustomControls
 
             // Refresh UI once download is complete
             this.Invoke((MethodInvoker)delegate { this.PackageSelected?.Invoke(downloadedPackage); });
+        }
+
+        private async void ResetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.ParentForm.Invoke((MethodInvoker)delegate
+            {
+                this.ParentForm.Enabled = false;
+            });
+
+            var remotePackages = await this._annotationPackageProvider.GetPackagesAsync(false);
+
+            foreach (var package in this._selectedPackages)
+            {
+                var remotePackage = remotePackages.FirstOrDefault(o => o.ExternalId == package.ExternalId);
+
+                package.IsDirty = false;
+                package.Images = remotePackage.Images;
+                package.User = remotePackage.User;
+                package.IsAnnotated = remotePackage.IsAnnotated;
+                package.AnnotationPercentage = remotePackage.AnnotationPercentage;
+                package.Tags = remotePackage.Tags;
+            }
+
+            this.ParentForm.Invoke((MethodInvoker)delegate
+            {
+                this.ParentForm.Enabled = true;
+            });
+
+            var selectedPackage = this.dataGridView1.CurrentRow.DataBoundItem as AnnotationPackage;
+            this.PackageSelected?.Invoke(selectedPackage);
         }
 
         private void ClearAnnotationsToolStripMenuItem_Click(object sender, EventArgs e)

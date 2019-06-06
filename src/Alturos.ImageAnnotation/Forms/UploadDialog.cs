@@ -24,36 +24,13 @@ namespace Alturos.ImageAnnotation.Forms
 
             this.InitializeComponent();
 
-            this.labelSyncing.Visible = false;
+            this.labelUploadProgress.Visible = false;
         }
 
         private void UploadDialog_Load(object sender, EventArgs e)
         {
             var config = this._annotationPackageProvider.GetAnnotationConfigAsync().GetAwaiter().GetResult();
             this.tagSelectionControl.Setup(config);
-        }
-
-        private async Task UpdateProgressBar()
-        {
-            this.labelSyncing.Invoke((MethodInvoker)delegate
-            {
-                this.labelSyncing.Visible = true;
-            });
-
-            while (this._uploading)
-            {
-                var progress = this._annotationPackageProvider.GetUploadProgress();
-                var percentageDone = progress.GetPercentDone();
-                if (!double.IsNaN(percentageDone))
-                {
-                    this.labelSyncing.Invoke((MethodInvoker)delegate {
-                        this.labelSyncing.Text = $"Upload in progress {progress.UploadedFiles}/{progress.FileCount} ({(int)percentageDone}%) - {Path.GetFileName(progress.CurrentFile)}";
-                    });
-                    this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)percentageDone; });
-                }
-
-                await Task.Delay(100);
-            }
         }
 
         private void ButtonSelectFolders_Click(object sender, System.EventArgs e)
@@ -68,19 +45,38 @@ namespace Alturos.ImageAnnotation.Forms
             if (dialogResult == DialogResult.OK)
             {
                 this._packagePaths = folderBrowser.SelectedFolders.ToList();
-                this.dataGridViewPackages.DataSource = folderBrowser.SelectedFolders.Select(o => new { Name = o }).ToList();
+                this.dataGridViewPackages.DataSource = folderBrowser.SelectedFolders.Select(o => new {
+                    Name = o,
+                    FileCount = Directory.GetFiles(o).Length,
+                    Size = this.GetDirectorySize(o)
+                }).ToList();
             }
 
             this.buttonUpload.Enabled = this._packagePaths?.Count > 0;
         }
 
+        private float GetDirectorySize(string directory)
+        {
+            long bytes = 0;
+
+            foreach (var file in Directory.GetFiles(directory))
+            {
+                var fileInfo = new FileInfo(file);
+                bytes += fileInfo.Length;
+            }
+
+            return (float)bytes / 1024 / 1024;
+        }
+
         private async void ButtonUpload_Click(object sender, EventArgs e)
         {
-            this.labelSyncing.Enabled = true;
+            this.labelUploadProgress.Enabled = true;
 
             this.buttonSelectFolders.Enabled = false;
             this.buttonUpload.Enabled = false;
             this.tagSelectionControl.Enabled = false;
+
+            this.buttonCancel.Enabled = true;
 
             await this.Upload();
 
@@ -103,12 +99,40 @@ namespace Alturos.ImageAnnotation.Forms
             {
                 await this._annotationPackageProvider.UploadPackagesAsync(this._packagePaths, tags, Environment.UserName, token);
             }
-            catch (OperationCanceledException)
+            catch (Exception)
             {
                 MessageBox.Show("The upload was cancelled.", "Upload failed", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
             this._uploading = false;
+        }
+
+        private async Task UpdateProgressBar()
+        {
+            this.labelUploadProgress.Invoke((MethodInvoker)delegate
+            {
+                this.labelUploadProgress.Visible = true;
+            });
+
+            while (this._uploading)
+            {
+                var progress = this._annotationPackageProvider.GetUploadProgress();
+                var percentageDone = progress.GetPercentDone();
+                if (!double.IsNaN(percentageDone))
+                {
+                    this.labelUploadProgress.Invoke((MethodInvoker)delegate {
+                        this.labelUploadProgress.Text = $"Upload in progress {progress.UploadedFiles}/{progress.FileCount} ({(int)percentageDone}%) - {Path.GetFileName(progress.CurrentFile)}";
+                    });
+                    this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)percentageDone; });
+                }
+
+                await Task.Delay(100);
+            }
+        }
+
+        private void ButtonCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void UploadDialog_FormClosed(object sender, FormClosedEventArgs e)
