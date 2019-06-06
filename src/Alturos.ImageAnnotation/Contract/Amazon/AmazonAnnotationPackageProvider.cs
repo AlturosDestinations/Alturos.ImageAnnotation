@@ -412,7 +412,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                     }
                 }
 
-                await context.SaveAsync(info, token).ConfigureAwait(false);
+                await context.SaveAsync(info, dbConfig, token).ConfigureAwait(false);
 
                 this._syncProgress.UploadedFiles++;
                 return true;

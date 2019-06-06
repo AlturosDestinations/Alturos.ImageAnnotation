@@ -20,16 +20,25 @@ namespace Alturos.ImageAnnotation.Forms
 
         public async Task Sync(AnnotationPackage[] packages)
         {
-            foreach (var package in packages)
-            {
-                package.IsDirty = false;
-                package.User = Environment.UserName;
-            }
-
             this._syncing = true;
 
-            _ = Task.Run(() => this.UpdateProgressBar());
-            await this._annotationPackageProvider.SyncPackagesAsync(packages);
+            try
+            {
+                _ = Task.Run(() => this.UpdateProgressBar());
+                await this._annotationPackageProvider.SyncPackagesAsync(packages);
+
+                foreach (var package in packages)
+                {
+                    package.IsDirty = false;
+                    package.User = Environment.UserName;
+                }
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show($"Syncing failed! It's likely your changes have not been saved.\n\n" +
+                    $"{exception.GetType().ToString()}\n\n" +
+                    $"{exception.Message}", "Syncing error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
             this._syncing = false;
 
