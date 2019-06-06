@@ -45,7 +45,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.downloadControl = new Alturos.ImageAnnotation.CustomControls.DownloadControl();
             this.annotationImageListControl = new Alturos.ImageAnnotation.CustomControls.AnnotationImageListControl();
-            this.tagListControl = new Alturos.ImageAnnotation.CustomControls.TagEditControl();
+            this.tagEditControl = new Alturos.ImageAnnotation.CustomControls.TagEditControl();
             this.annotationPackageListControl = new Alturos.ImageAnnotation.CustomControls.AnnotationPackageListControl();
             this.annotationDrawControl = new Alturos.ImageAnnotation.CustomControls.AnnotationDrawControl();
             this.menuStripMain.SuspendLayout();
@@ -195,7 +195,7 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.tagListControl);
+            this.splitContainer1.Panel2.Controls.Add(this.tagEditControl);
             this.splitContainer1.Size = new System.Drawing.Size(194, 524);
             this.splitContainer1.SplitterDistance = 390;
             this.splitContainer1.TabIndex = 0;
@@ -219,11 +219,11 @@
             // 
             // tagListControl
             // 
-            this.tagListControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tagListControl.Location = new System.Drawing.Point(0, 0);
-            this.tagListControl.Name = "tagListControl";
-            this.tagListControl.Size = new System.Drawing.Size(194, 130);
-            this.tagListControl.TabIndex = 0;
+            this.tagEditControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tagEditControl.Location = new System.Drawing.Point(0, 0);
+            this.tagEditControl.Name = "tagListControl";
+            this.tagEditControl.Size = new System.Drawing.Size(194, 130);
+            this.tagEditControl.TabIndex = 0;
             // 
             // annotationPackageListControl
             // 
@@ -283,7 +283,7 @@
         private CustomControls.AnnotationDrawControl annotationDrawControl;
         private System.Windows.Forms.Panel panelImageList;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private CustomControls.TagEditControl tagListControl;
+        private CustomControls.TagEditControl tagEditControl;
         private System.Windows.Forms.ToolStripMenuItem syncToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addPackageStripMenuItem;
         private CustomControls.DownloadControl downloadControl;
