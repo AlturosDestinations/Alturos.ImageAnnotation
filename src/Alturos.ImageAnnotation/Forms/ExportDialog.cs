@@ -19,11 +19,16 @@ namespace Alturos.ImageAnnotation.Forms
 
         private IAnnotationExportProvider _annotationExportProvider;
         private CancellationTokenSource _tokenSource;
+        private bool _downloading;
+        private AnnotationPackageTransferProgress _downloadProgress;
+        private AnnotationPackage _downloadedPackage;
 
         public ExportDialog(IAnnotationPackageProvider annotationPackageProvider)
         {
             this._annotationPackageProvider = annotationPackageProvider;
             this.InitializeComponent();
+
+            this.labelDownloadProgress.Visible = false;
 
             this._config = this._annotationPackageProvider.GetAnnotationConfigAsync().GetAwaiter().GetResult();
             this.dataGridViewTags.DataSource = this._config.Tags;
@@ -69,36 +74,27 @@ namespace Alturos.ImageAnnotation.Forms
         private async Task Export()
         {
             this.EnableExportMenu(false);
-            
+
+            var packages = this.dataGridViewResult.DataSource as List<AnnotationPackage>;
+
+            // Download missing packages
+            var successful = await this.DownloadMissingPackages(packages);
+            if (!successful)
+            {
+                return;
+            }
+
             // Create folders
-            var path = DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss");
+            var rootPath = "exports";
+            if (!Directory.Exists(rootPath))
+            {
+                Directory.CreateDirectory(rootPath);
+            }
+
+            var path = Path.Combine(rootPath, DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss"));
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
-            }
-
-            // Download what's missing
-            var packages = this.dataGridViewResult.DataSource as List<AnnotationPackage>;
-
-            this._tokenSource = new CancellationTokenSource();
-            var token = this._tokenSource.Token;
-
-            for (var i = 0; i < packages.Count; i++)
-            {
-                var percent = 100.0 * (i + 1) / packages.Count;
-                this.progressBar1.Value = (int)Math.Ceiling(percent * 10);
-
-                if (!packages[i].AvailableLocally)
-                {
-                    packages[i].Downloading = true;
-                    packages[i] = await this._annotationPackageProvider.DownloadPackageAsync(packages[i], token);
-
-                    var row = this.dataGridViewResult.Rows.Cast<DataGridViewRow>().SingleOrDefault(o => (o.DataBoundItem as AnnotationPackage).ExternalId == packages[i].ExternalId);
-                    if (row != null)
-                    {
-                        row.Cells[1].Value = true;
-                    }
-                }
             }
 
             // Export
@@ -108,6 +104,82 @@ namespace Alturos.ImageAnnotation.Forms
 
             // Open folder
             Process.Start(path);
+        }
+
+        private async Task<bool> DownloadMissingPackages(List<AnnotationPackage> packages)
+        {
+            var successful = true;
+
+            this._downloading = true;
+
+            this._downloadProgress = new AnnotationPackageTransferProgress
+            {
+                FileCount = packages.Count
+            };
+
+            _ = Task.Run(() => this.UpdateProgressBar());
+
+            this._tokenSource = new CancellationTokenSource();
+            var token = this._tokenSource.Token;
+
+            try
+            {
+                for (var i = 0; i < packages.Count; i++)
+                {
+                    if (!packages[i].AvailableLocally)
+                    {
+                        this._downloadedPackage = packages[i];
+                        this._downloadProgress.CurrentFile = packages[i].PackageName;
+
+                        packages[i].Downloading = true;
+                        packages[i] = await this._annotationPackageProvider.DownloadPackageAsync(packages[i], token);
+
+                        this._downloadProgress.UploadedFiles++;
+                        this._downloadProgress.CurrentFilePercentDone = 0;
+
+                        var row = this.dataGridViewResult.Rows.Cast<DataGridViewRow>().SingleOrDefault(o => (o.DataBoundItem as AnnotationPackage).ExternalId == packages[i].ExternalId);
+                        if (row != null)
+                        {
+                            row.Cells[1].Value = true;
+                        }
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                successful = false;
+                MessageBox.Show("The download was cancelled.", "Download failed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+            this._downloading = false;
+
+            return successful;
+        }
+
+        private async Task UpdateProgressBar()
+        {
+            this.labelDownloadProgress.Invoke((MethodInvoker)delegate
+            {
+                this.labelDownloadProgress.Visible = true;
+            });
+
+            while (this._downloading)
+            {
+                var progress = this._downloadProgress;
+                progress.CurrentFilePercentDone = (int)this._downloadedPackage.DownloadProgress;
+
+                var percentageDone = progress.GetPercentDone();
+
+                if (!double.IsNaN(percentageDone))
+                {
+                    this.labelDownloadProgress.Invoke((MethodInvoker)delegate {
+                        this.labelDownloadProgress.Text = $"Download in progress {progress.UploadedFiles}/{progress.FileCount} ({(int)percentageDone}%) - {this._downloadProgress.CurrentFile}";
+                    });
+                    this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)percentageDone; });
+                }
+
+                await Task.Delay(100);
+            }
         }
 
         private void EnableExportMenu(bool enable)

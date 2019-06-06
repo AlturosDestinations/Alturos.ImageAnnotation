@@ -32,8 +32,8 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
         private readonly string _configHashKey = "AnnotationConfiguration";
 
         private AnnotationPackage _downloadedPackage;
-        private AnnotationPackageUploadProgress _uploadProgress;
-        private AnnotationPackageUploadProgress _syncProgress;
+        private AnnotationPackageTransferProgress _uploadProgress;
+        private AnnotationPackageTransferProgress _syncProgress;
 
         public AmazonAnnotationPackageProvider()
         {
@@ -252,14 +252,12 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                     await fileTransferUtility.DownloadDirectoryAsync(request, token).ConfigureAwait(false);
                 }
             }
-            catch (Exception e)
+            finally
             {
-
+                request.DownloadedDirectoryProgressEvent -= this.DownloadedDirectoryProgressEvent;
+                package.Downloading = false;
             }
 
-            request.DownloadedDirectoryProgressEvent -= this.DownloadedDirectoryProgressEvent;
-
-            package.Downloading = false;
             package.AvailableLocally = true;
 
             var path = Path.Combine(this._extractionFolder, package.PackageName);
@@ -286,7 +284,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
         {
             this.IsUploading = true;
 
-            this._uploadProgress = new AnnotationPackageUploadProgress();
+            this._uploadProgress = new AnnotationPackageTransferProgress();
 
             foreach (var packagePath in packagePaths)
             {
@@ -294,12 +292,17 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 this._uploadProgress.FileCount += fileCount;
             }
 
-            foreach (var packagePath in packagePaths)
+            try
             {
-                await this.UploadPackageAsync(packagePath, tags, user, token).ConfigureAwait(false);
+                foreach (var packagePath in packagePaths)
+                {
+                    await this.UploadPackageAsync(packagePath, tags, user, token).ConfigureAwait(false);
+                }
             }
-
-            this.IsUploading = false;
+            finally
+            {
+                this.IsUploading = false;
+            }
         }
 
         private async Task UploadPackageAsync(string packagePath, List<string> tags, string user, CancellationToken token)
@@ -357,17 +360,22 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
         {
             this.IsSyncing = true;
 
-            this._syncProgress = new AnnotationPackageUploadProgress()
+            this._syncProgress = new AnnotationPackageTransferProgress()
             {
                 FileCount = packages.Length
             };
 
-            foreach (var package in packages)
+            try
             {
-                await this.UpdatePackageAsync(package, token).ConfigureAwait(false);
+                foreach (var package in packages)
+                {
+                    await this.UpdatePackageAsync(package, token).ConfigureAwait(false);
+                }
             }
-
-            this.IsSyncing = false;
+            finally
+            {
+                this.IsSyncing = false;
+            }
         }
 
         private async Task<bool> UpdatePackageAsync(AnnotationPackage package, CancellationToken token)
@@ -525,7 +533,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             }
         }
 
-        public AnnotationPackageUploadProgress GetUploadProgress()
+        public AnnotationPackageTransferProgress GetUploadProgress()
         {
             if (!this.IsUploading)
             {
@@ -535,7 +543,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             return this._uploadProgress;
         }
 
-        public AnnotationPackageUploadProgress GetSyncProgress()
+        public AnnotationPackageTransferProgress GetSyncProgress()
         {
             if (!this.IsSyncing)
             {

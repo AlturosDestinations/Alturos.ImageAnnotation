@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.progressBar = new System.Windows.Forms.ProgressBar();
-            this.labelSyncing = new System.Windows.Forms.Label();
+            this.labelUploadProgress = new System.Windows.Forms.Label();
             this.buttonSelectFolders = new System.Windows.Forms.Button();
             this.groupBoxPackages = new System.Windows.Forms.GroupBox();
             this.dataGridViewPackages = new System.Windows.Forms.DataGridView();
@@ -53,14 +53,14 @@
             this.progressBar.Size = new System.Drawing.Size(607, 31);
             this.progressBar.TabIndex = 0;
             // 
-            // labelSyncing
+            // labelUploadProgress
             // 
-            this.labelSyncing.AutoSize = true;
-            this.labelSyncing.Location = new System.Drawing.Point(6, 67);
-            this.labelSyncing.Name = "labelSyncing";
-            this.labelSyncing.Size = new System.Drawing.Size(130, 13);
-            this.labelSyncing.TabIndex = 1;
-            this.labelSyncing.Text = "Uploading... Please wait...";
+            this.labelUploadProgress.AutoSize = true;
+            this.labelUploadProgress.Location = new System.Drawing.Point(6, 67);
+            this.labelUploadProgress.Name = "labelUploadProgress";
+            this.labelUploadProgress.Size = new System.Drawing.Size(130, 13);
+            this.labelUploadProgress.TabIndex = 1;
+            this.labelUploadProgress.Text = "Uploading... Please wait...";
             // 
             // buttonSelectFolders
             // 
@@ -104,7 +104,7 @@
             this.groupBoxUpload.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxUpload.Controls.Add(this.buttonUpload);
-            this.groupBoxUpload.Controls.Add(this.labelSyncing);
+            this.groupBoxUpload.Controls.Add(this.labelUploadProgress);
             this.groupBoxUpload.Controls.Add(this.progressBar);
             this.groupBoxUpload.Location = new System.Drawing.Point(6, 418);
             this.groupBoxUpload.Name = "groupBoxUpload";
@@ -173,7 +173,7 @@
         #endregion
 
         private System.Windows.Forms.ProgressBar progressBar;
-        private System.Windows.Forms.Label labelSyncing;
+        private System.Windows.Forms.Label labelUploadProgress;
         private System.Windows.Forms.Button buttonSelectFolders;
         private System.Windows.Forms.GroupBox groupBoxPackages;
         private System.Windows.Forms.DataGridView dataGridViewPackages;

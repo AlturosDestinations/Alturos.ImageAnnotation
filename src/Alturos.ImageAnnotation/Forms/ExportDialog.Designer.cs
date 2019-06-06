@@ -40,7 +40,8 @@
             this.labelPackageCount = new System.Windows.Forms.Label();
             this.comboBoxExportProvider = new System.Windows.Forms.ComboBox();
             this.groupBoxExportProvider = new System.Windows.Forms.GroupBox();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.labelDownloadProgress = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTags)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).BeginInit();
             this.groupBoxTags.SuspendLayout();
@@ -50,7 +51,8 @@
             // 
             // buttonExport
             // 
-            this.buttonExport.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.buttonExport.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonExport.Location = new System.Drawing.Point(12, 454);
             this.buttonExport.Name = "buttonExport";
             this.buttonExport.Size = new System.Drawing.Size(564, 41);
@@ -188,18 +190,30 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 501);
-            this.progressBar1.Maximum = 1000;
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(564, 23);
-            this.progressBar1.TabIndex = 8;
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.Location = new System.Drawing.Point(12, 514);
+            this.progressBar.Maximum = 100;
+            this.progressBar.Name = "progressBar1";
+            this.progressBar.Size = new System.Drawing.Size(564, 31);
+            this.progressBar.TabIndex = 8;
+            // 
+            // labelExportProgress
+            // 
+            this.labelDownloadProgress.AutoSize = true;
+            this.labelDownloadProgress.Location = new System.Drawing.Point(12, 498);
+            this.labelDownloadProgress.Name = "labelExportProgress";
+            this.labelDownloadProgress.Size = new System.Drawing.Size(126, 13);
+            this.labelDownloadProgress.TabIndex = 9;
+            this.labelDownloadProgress.Text = "Exporting... Please wait...";
             // 
             // ExportDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(588, 535);
-            this.Controls.Add(this.progressBar1);
+            this.ClientSize = new System.Drawing.Size(588, 557);
+            this.Controls.Add(this.labelDownloadProgress);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.groupBoxTags);
             this.Controls.Add(this.groupBoxResult);
             this.Controls.Add(this.groupBoxExportProvider);
@@ -217,6 +231,7 @@
             this.groupBoxResult.PerformLayout();
             this.groupBoxExportProvider.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -233,6 +248,7 @@
         private System.Windows.Forms.GroupBox groupBoxExportProvider;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
         private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnExported;
-        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Label labelDownloadProgress;
     }
 }

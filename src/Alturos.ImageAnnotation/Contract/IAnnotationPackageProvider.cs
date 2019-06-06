@@ -22,7 +22,7 @@ namespace Alturos.ImageAnnotation.Contract
         Task<bool> DeletePackageAsync(AnnotationPackage package);
         Task<bool> DeleteImageAsync(AnnotationImage image);
 
-        AnnotationPackageUploadProgress GetUploadProgress();
-        AnnotationPackageUploadProgress GetSyncProgress();
+        AnnotationPackageTransferProgress GetUploadProgress();
+        AnnotationPackageTransferProgress GetSyncProgress();
     }
 }

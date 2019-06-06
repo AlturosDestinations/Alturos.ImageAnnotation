@@ -24,36 +24,13 @@ namespace Alturos.ImageAnnotation.Forms
 
             this.InitializeComponent();
 
-            this.labelSyncing.Visible = false;
+            this.labelUploadProgress.Visible = false;
         }
 
         private void UploadDialog_Load(object sender, EventArgs e)
         {
             var config = this._annotationPackageProvider.GetAnnotationConfigAsync().GetAwaiter().GetResult();
             this.tagSelectionControl.Setup(config);
-        }
-
-        private async Task UpdateProgressBar()
-        {
-            this.labelSyncing.Invoke((MethodInvoker)delegate
-            {
-                this.labelSyncing.Visible = true;
-            });
-
-            while (this._uploading)
-            {
-                var progress = this._annotationPackageProvider.GetUploadProgress();
-                var percentageDone = progress.GetPercentDone();
-                if (!double.IsNaN(percentageDone))
-                {
-                    this.labelSyncing.Invoke((MethodInvoker)delegate {
-                        this.labelSyncing.Text = $"Upload in progress {progress.UploadedFiles}/{progress.FileCount} ({(int)percentageDone}%) - {Path.GetFileName(progress.CurrentFile)}";
-                    });
-                    this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)percentageDone; });
-                }
-
-                await Task.Delay(100);
-            }
         }
 
         private void ButtonSelectFolders_Click(object sender, System.EventArgs e)
@@ -76,7 +53,7 @@ namespace Alturos.ImageAnnotation.Forms
 
         private async void ButtonUpload_Click(object sender, EventArgs e)
         {
-            this.labelSyncing.Enabled = true;
+            this.labelUploadProgress.Enabled = true;
 
             this.buttonSelectFolders.Enabled = false;
             this.buttonUpload.Enabled = false;
@@ -109,6 +86,29 @@ namespace Alturos.ImageAnnotation.Forms
             }
 
             this._uploading = false;
+        }
+
+        private async Task UpdateProgressBar()
+        {
+            this.labelUploadProgress.Invoke((MethodInvoker)delegate
+            {
+                this.labelUploadProgress.Visible = true;
+            });
+
+            while (this._uploading)
+            {
+                var progress = this._annotationPackageProvider.GetUploadProgress();
+                var percentageDone = progress.GetPercentDone();
+                if (!double.IsNaN(percentageDone))
+                {
+                    this.labelUploadProgress.Invoke((MethodInvoker)delegate {
+                        this.labelUploadProgress.Text = $"Upload in progress {progress.UploadedFiles}/{progress.FileCount} ({(int)percentageDone}%) - {Path.GetFileName(progress.CurrentFile)}";
+                    });
+                    this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)percentageDone; });
+                }
+
+                await Task.Delay(100);
+            }
         }
 
         private void UploadDialog_FormClosed(object sender, FormClosedEventArgs e)
