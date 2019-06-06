@@ -45,7 +45,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.downloadControl = new Alturos.ImageAnnotation.CustomControls.DownloadControl();
             this.annotationImageListControl = new Alturos.ImageAnnotation.CustomControls.AnnotationImageListControl();
-            this.tagListControl = new Alturos.ImageAnnotation.CustomControls.TagListControl();
+            this.tagListControl = new Alturos.ImageAnnotation.CustomControls.TagEditControl();
             this.annotationPackageListControl = new Alturos.ImageAnnotation.CustomControls.AnnotationPackageListControl();
             this.annotationDrawControl = new Alturos.ImageAnnotation.CustomControls.AnnotationDrawControl();
             this.menuStripMain.SuspendLayout();
@@ -160,8 +160,8 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.panelImageList, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.annotationPackageListControl, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.annotationDrawControl, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.annotationPackageListControl, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 24);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -197,7 +197,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tagListControl);
             this.splitContainer1.Size = new System.Drawing.Size(194, 524);
-            this.splitContainer1.SplitterDistance = 300;
+            this.splitContainer1.SplitterDistance = 390;
             this.splitContainer1.TabIndex = 0;
             this.splitContainer1.TabStop = false;
             // 
@@ -214,7 +214,7 @@
             this.annotationImageListControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.annotationImageListControl.Location = new System.Drawing.Point(0, 0);
             this.annotationImageListControl.Name = "annotationImageListControl";
-            this.annotationImageListControl.Size = new System.Drawing.Size(194, 300);
+            this.annotationImageListControl.Size = new System.Drawing.Size(194, 390);
             this.annotationImageListControl.TabIndex = 0;
             // 
             // tagListControl
@@ -222,7 +222,7 @@
             this.tagListControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tagListControl.Location = new System.Drawing.Point(0, 0);
             this.tagListControl.Name = "tagListControl";
-            this.tagListControl.Size = new System.Drawing.Size(194, 220);
+            this.tagListControl.Size = new System.Drawing.Size(194, 130);
             this.tagListControl.TabIndex = 0;
             // 
             // annotationPackageListControl
@@ -283,7 +283,7 @@
         private CustomControls.AnnotationDrawControl annotationDrawControl;
         private System.Windows.Forms.Panel panelImageList;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private CustomControls.TagListControl tagListControl;
+        private CustomControls.TagEditControl tagListControl;
         private System.Windows.Forms.ToolStripMenuItem syncToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addPackageStripMenuItem;
         private CustomControls.DownloadControl downloadControl;

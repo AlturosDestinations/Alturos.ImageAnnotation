@@ -66,6 +66,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomControls\TagDisplayControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\TagDisplayControl.Designer.cs">
+      <DependentUpon>TagDisplayControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\TagSelectionDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -99,11 +105,11 @@
     <Compile Include="CustomControls\DownloadControl.Designer.cs">
       <DependentUpon>DownloadControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="CustomControls\TagListControl.cs">
+    <Compile Include="CustomControls\TagEditControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CustomControls\TagListControl.Designer.cs">
-      <DependentUpon>TagListControl.cs</DependentUpon>
+    <Compile Include="CustomControls\TagEditControl.Designer.cs">
+      <DependentUpon>TagEditControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\HelpDialog.cs">
       <SubType>Form</SubType>
@@ -195,6 +201,9 @@
     <Compile Include="Forms\SyncProgressDialog.Designer.cs">
       <DependentUpon>SyncProgressDialog.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="CustomControls\TagDisplayControl.resx">
+      <DependentUpon>TagDisplayControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\TagSelectionControl.resx">
       <DependentUpon>TagSelectionControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -216,8 +225,8 @@
     <EmbeddedResource Include="CustomControls\AnnotationPackageListControl.resx">
       <DependentUpon>AnnotationPackageListControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CustomControls\TagListControl.resx">
-      <DependentUpon>TagListControl.cs</DependentUpon>
+    <EmbeddedResource Include="CustomControls\TagEditControl.resx">
+      <DependentUpon>TagEditControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ExportDialog.resx">
       <DependentUpon>ExportDialog.cs</DependentUpon>
