@@ -15,6 +15,15 @@ For every AnnotationPackage you can set own tags... this informations we are sto
  - Export for yolo (train.txt, test.txt, obj.names) with filters
  - Does not require own server
 
+## Keyboard Shortcuts
+
+Shortcut | Description | 
+--- | --- |
+<kbd>↓</kbd> | Next image |
+<kbd>↑</kbd> | Previous image |
+<kbd>→</kbd> | Next Object Class |
+<kbd>←</kbd> | Previous Object Class |
+
 ## Articles of interest
 
 - [Training YOLOv3 : Deep Learning based Custom Object Detector](https://www.learnopencv.com/training-yolov3-deep-learning-based-custom-object-detector/)
