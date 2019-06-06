@@ -286,5 +286,23 @@
     <Analyzer Include="..\packages\AWSSDK.DynamoDBv2.3.3.101.18\analyzers\dotnet\cs\AWSSDK.DynamoDBv2.CodeAnalysis.dll" />
     <Analyzer Include="..\packages\AWSSDK.S3.3.3.102.9\analyzers\dotnet\cs\AWSSDK.S3.CodeAnalysis.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\bin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\shape_handles.png" />
+    <None Include="Icons\folder_go.png" />
+    <None Include="Icons\add.png" />
+    <Content Include="Icons\arrow_down.png" />
+    <Content Include="Icons\arrow_refresh_small.png" />
+    <Content Include="Icons\arrow_undo.png" />
+    <None Include="Icons\disk.png" />
+    <None Include="Icons\asterisk_yellow.png" />
+    <Content Include="Icons\cancel.png" />
+    <Content Include="Icons\cog.png" />
+    <Content Include="Icons\cross.png" />
+    <Content Include="Icons\delete.png" />
+    <Content Include="Icons\wrench.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
