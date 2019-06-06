@@ -48,13 +48,12 @@
             // 
             // buttonEdit
             // 
-            this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonEdit.Location = new System.Drawing.Point(7, 346);
+            this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonEdit.Location = new System.Drawing.Point(573, 357);
             this.buttonEdit.Name = "buttonEdit";
-            this.buttonEdit.Size = new System.Drawing.Size(656, 35);
+            this.buttonEdit.Size = new System.Drawing.Size(90, 24);
             this.buttonEdit.TabIndex = 1;
-            this.buttonEdit.Text = "Edit Tags";
+            this.buttonEdit.Text = "Edit";
             this.buttonEdit.UseVisualStyleBackColor = true;
             this.buttonEdit.Click += new System.EventHandler(this.ButtonEdit_Click);
             // 
@@ -65,7 +64,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tagDisplayControl.Location = new System.Drawing.Point(7, 19);
             this.tagDisplayControl.Name = "tagDisplayControl";
-            this.tagDisplayControl.Size = new System.Drawing.Size(656, 321);
+            this.tagDisplayControl.Size = new System.Drawing.Size(656, 332);
             this.tagDisplayControl.TabIndex = 2;
             this.tagDisplayControl.Tags = null;
             // 

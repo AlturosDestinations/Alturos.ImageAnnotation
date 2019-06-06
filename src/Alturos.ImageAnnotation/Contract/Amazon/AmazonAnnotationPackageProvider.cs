@@ -116,7 +116,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                     };
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
                 return await Task.FromResult<AnnotationConfig>(null);
             }
