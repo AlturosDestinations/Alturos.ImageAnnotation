@@ -59,6 +59,8 @@ namespace Alturos.ImageAnnotation.Forms
             this.buttonUpload.Enabled = false;
             this.tagSelectionControl.Enabled = false;
 
+            this.buttonCancel.Enabled = true;
+
             await this.Upload();
 
             this.DialogResult = DialogResult.OK;
@@ -80,7 +82,7 @@ namespace Alturos.ImageAnnotation.Forms
             {
                 await this._annotationPackageProvider.UploadPackagesAsync(this._packagePaths, tags, Environment.UserName, token);
             }
-            catch (OperationCanceledException)
+            catch (Exception)
             {
                 MessageBox.Show("The upload was cancelled.", "Upload failed", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -109,6 +111,11 @@ namespace Alturos.ImageAnnotation.Forms
 
                 await Task.Delay(100);
             }
+        }
+
+        private void ButtonCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void UploadDialog_FormClosed(object sender, FormClosedEventArgs e)

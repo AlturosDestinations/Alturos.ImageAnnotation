@@ -230,6 +230,12 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 Directory.CreateDirectory(this._extractionFolder);
             }
 
+            var packagePath = Path.Combine(this._extractionFolder, package.PackageName);
+            if (Directory.Exists(packagePath))
+            {
+                Directory.Delete(packagePath, true);
+            }
+
             var files = await this._client.ListObjectsV2Async(new ListObjectsV2Request
             {
                 BucketName = this._bucketName,
@@ -240,7 +246,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             {
                 BucketName = this._bucketName,
                 S3Directory = package.PackageName,
-                LocalDirectory = Path.Combine(this._extractionFolder, package.PackageName)
+                LocalDirectory = packagePath
             };
 
             request.DownloadedDirectoryProgressEvent += this.DownloadedDirectoryProgressEvent;
@@ -406,14 +412,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                     }
                 }
 
-                try
-                {
-                    await context.SaveAsync(info, token).ConfigureAwait(false);
-                }
-                catch (Exception e)
-                {
-
-                }
+                await context.SaveAsync(info, token).ConfigureAwait(false);
 
                 this._syncProgress.UploadedFiles++;
                 return true;
@@ -432,20 +431,13 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 Images = new List<AnnotationImageDto>()
             };
 
-            try
+            using (var context = new DynamoDBContext(this._dynamoDbClient))
             {
-                using (var context = new DynamoDBContext(this._dynamoDbClient))
+                var dbConfig = new DynamoDBOperationConfig
                 {
-                    var dbConfig = new DynamoDBOperationConfig
-                    {
-                        OverrideTableName = this._dbTableName
-                    };
-                    await context.SaveAsync(info, dbConfig, token).ConfigureAwait(false);
-                }
-            }
-            catch (Exception e)
-            {
-
+                    OverrideTableName = this._dbTableName
+                };
+                await context.SaveAsync(info, dbConfig, token).ConfigureAwait(false);
             }
 
             return true;

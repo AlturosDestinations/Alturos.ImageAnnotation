@@ -67,6 +67,8 @@ namespace Alturos.ImageAnnotation.Forms
 
         private async void ButtonExport_Click(object sender, EventArgs e)
         {
+            this.buttonCancel.Enabled = true;
+
             await this.Export();
             this.Close();
         }
@@ -76,6 +78,10 @@ namespace Alturos.ImageAnnotation.Forms
             this.EnableExportMenu(false);
 
             var packages = this.dataGridViewResult.DataSource as List<AnnotationPackage>;
+            if (packages == null)
+            {
+                return;
+            }
 
             // Download missing packages
             var successful = await this.DownloadMissingPackages(packages);
@@ -145,7 +151,7 @@ namespace Alturos.ImageAnnotation.Forms
                     }
                 }
             }
-            catch (OperationCanceledException)
+            catch (Exception)
             {
                 successful = false;
                 MessageBox.Show("The download was cancelled.", "Download failed", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -197,6 +203,11 @@ namespace Alturos.ImageAnnotation.Forms
             var obj = ((NameValueObject)this.comboBoxExportProvider.SelectedItem).Value;
             this._annotationExportProvider = (IAnnotationExportProvider)Activator.CreateInstance((Type)obj);
             this._annotationExportProvider?.Setup(this._config);
+        }
+
+        private void ButtonCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void ExportDialog_FormClosed(object sender, FormClosedEventArgs e)

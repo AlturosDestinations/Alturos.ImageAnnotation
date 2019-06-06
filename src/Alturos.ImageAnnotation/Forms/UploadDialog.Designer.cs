@@ -37,6 +37,7 @@
             this.buttonUpload = new System.Windows.Forms.Button();
             this.groupBoxTags = new System.Windows.Forms.GroupBox();
             this.tagSelectionControl = new Alturos.ImageAnnotation.CustomControls.TagSelectionControl();
+            this.buttonCancel = new System.Windows.Forms.Button();
             this.groupBoxPackages.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPackages)).BeginInit();
             this.groupBoxUpload.SuspendLayout();
@@ -50,7 +51,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar.Location = new System.Drawing.Point(6, 83);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(607, 31);
+            this.progressBar.Size = new System.Drawing.Size(517, 31);
             this.progressBar.TabIndex = 0;
             // 
             // labelUploadProgress
@@ -103,6 +104,7 @@
             // 
             this.groupBoxUpload.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxUpload.Controls.Add(this.buttonCancel);
             this.groupBoxUpload.Controls.Add(this.buttonUpload);
             this.groupBoxUpload.Controls.Add(this.labelUploadProgress);
             this.groupBoxUpload.Controls.Add(this.progressBar);
@@ -146,6 +148,18 @@
             this.tagSelectionControl.Size = new System.Drawing.Size(604, 196);
             this.tagSelectionControl.TabIndex = 5;
             // 
+            // buttonCancel
+            // 
+            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCancel.Location = new System.Drawing.Point(530, 83);
+            this.buttonCancel.Name = "buttonCancel";
+            this.buttonCancel.Size = new System.Drawing.Size(83, 31);
+            this.buttonCancel.TabIndex = 3;
+            this.buttonCancel.Text = "Cancel";
+            this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);
+            // 
             // UploadDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -181,5 +195,6 @@
         private CustomControls.TagSelectionControl tagSelectionControl;
         private System.Windows.Forms.GroupBox groupBoxTags;
         private System.Windows.Forms.Button buttonUpload;
+        private System.Windows.Forms.Button buttonCancel;
     }
 }

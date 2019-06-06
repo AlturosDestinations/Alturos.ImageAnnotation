@@ -42,6 +42,7 @@
             this.labelDownloadProgress = new System.Windows.Forms.Label();
             this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnExported = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.buttonCancel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTags)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).BeginInit();
             this.groupBoxTags.SuspendLayout();
@@ -179,7 +180,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar.Location = new System.Drawing.Point(12, 514);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(564, 31);
+            this.progressBar.Size = new System.Drawing.Size(475, 31);
             this.progressBar.TabIndex = 8;
             // 
             // labelDownloadProgress
@@ -206,11 +207,25 @@
             this.ColumnExported.Name = "ColumnExported";
             this.ColumnExported.ReadOnly = true;
             // 
+            // buttonCancel
+            // 
+            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCancel.Enabled = false;
+            this.buttonCancel.Location = new System.Drawing.Point(493, 514);
+            this.buttonCancel.Name = "buttonCancel";
+            this.buttonCancel.Size = new System.Drawing.Size(83, 31);
+            this.buttonCancel.TabIndex = 10;
+            this.buttonCancel.Text = "Cancel";
+            this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);
+            // 
             // ExportDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(588, 557);
+            this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.labelDownloadProgress);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.groupBoxTags);
@@ -249,5 +264,6 @@
         private System.Windows.Forms.Label labelDownloadProgress;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
         private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnExported;
+        private System.Windows.Forms.Button buttonCancel;
     }
 }
