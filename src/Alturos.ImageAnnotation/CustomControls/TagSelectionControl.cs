@@ -1,4 +1,5 @@
-﻿using Alturos.ImageAnnotation.Model;
+﻿using Alturos.ImageAnnotation.Helper;
+using Alturos.ImageAnnotation.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -66,7 +67,7 @@ namespace Alturos.ImageAnnotation.CustomControls
             var filter = this.textBoxFilter.Text;
             if (!string.IsNullOrEmpty(filter))
             {
-                this._availableTagsSource.DataSource = this.AvailableTags.Where(o => o.Value.Contains(filter)).ToList();
+                this._availableTagsSource.DataSource = this.AvailableTags.Where(o => o.Value.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToList();
             }
             else
             {
