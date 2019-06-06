@@ -10,8 +10,6 @@ namespace Alturos.ImageAnnotation.CustomControls
 {
     public partial class TagListControl : UserControl
     {
-        public event Func<List<string>> TagsRequested;
-
         private AnnotationConfig _annotationConfig;
         private AnnotationPackage _package;
 

@@ -210,7 +210,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             }
         }
 
-        public async Task<AnnotationPackage> DownloadPackageAsync(AnnotationPackage package)
+        public async Task<AnnotationPackage> DownloadPackageAsync(AnnotationPackage package, CancellationToken token = default(CancellationToken))
         {
             this._packagesToDownload.Enqueue(package);
 
@@ -245,9 +245,16 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
             request.DownloadedDirectoryProgressEvent += this.DownloadedDirectoryProgressEvent;
 
-            using (var fileTransferUtility = new TransferUtility(this._client))
+            try
             {
-                await fileTransferUtility.DownloadDirectoryAsync(request).ConfigureAwait(false);
+                using (var fileTransferUtility = new TransferUtility(this._client))
+                {
+                    await fileTransferUtility.DownloadDirectoryAsync(request, token).ConfigureAwait(false);
+                }
+            }
+            catch (Exception e)
+            {
+
             }
 
             request.DownloadedDirectoryProgressEvent -= this.DownloadedDirectoryProgressEvent;

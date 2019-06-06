@@ -86,8 +86,6 @@ namespace Alturos.ImageAnnotation
 
             this.annotationDrawControl.ImageEdited += this.ImageEdited;
 
-            this.tagListControl.TagsRequested += this.TagsRequested;
-
             this.KeyDown += this.annotationDrawControl.OnKeyDown;
         }
 
@@ -99,8 +97,6 @@ namespace Alturos.ImageAnnotation
             this.downloadControl.DownloadRequested -= this.DownloadRequestedAsync;
 
             this.annotationDrawControl.ImageEdited -= this.ImageEdited;
-
-            this.tagListControl.TagsRequested -= this.TagsRequested;
 
             this.KeyDown -= this.annotationDrawControl.OnKeyDown;
         }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,7 +18,7 @@ namespace Alturos.ImageAnnotation.Forms
         private readonly AnnotationConfig _config;
 
         private IAnnotationExportProvider _annotationExportProvider;
-        private bool _exporting;
+        private CancellationTokenSource _tokenSource;
 
         public ExportDialog(IAnnotationPackageProvider annotationPackageProvider)
         {
@@ -68,7 +69,6 @@ namespace Alturos.ImageAnnotation.Forms
         private async Task Export()
         {
             this.EnableExportMenu(false);
-            this._exporting = true;
             
             // Create folders
             var path = DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss");
@@ -80,6 +80,9 @@ namespace Alturos.ImageAnnotation.Forms
             // Download what's missing
             var packages = this.dataGridViewResult.DataSource as List<AnnotationPackage>;
 
+            this._tokenSource = new CancellationTokenSource();
+            var token = this._tokenSource.Token;
+
             for (var i = 0; i < packages.Count; i++)
             {
                 var percent = 100.0 * (i + 1) / packages.Count;
@@ -88,10 +91,13 @@ namespace Alturos.ImageAnnotation.Forms
                 if (!packages[i].AvailableLocally)
                 {
                     packages[i].Downloading = true;
-                    packages[i] = await this._annotationPackageProvider.DownloadPackageAsync(packages[i]);
+                    packages[i] = await this._annotationPackageProvider.DownloadPackageAsync(packages[i], token);
 
-                    var row = this.dataGridViewResult.Rows.Cast<DataGridViewRow>().Single(o => (o.DataBoundItem as AnnotationPackage).ExternalId == packages[i].ExternalId);
-                    row.Cells[1].Value = true;
+                    var row = this.dataGridViewResult.Rows.Cast<DataGridViewRow>().SingleOrDefault(o => (o.DataBoundItem as AnnotationPackage).ExternalId == packages[i].ExternalId);
+                    if (row != null)
+                    {
+                        row.Cells[1].Value = true;
+                    }
                 }
             }
 
@@ -99,7 +105,6 @@ namespace Alturos.ImageAnnotation.Forms
             this._annotationExportProvider.Export(path, packages.ToArray());
 
             this.EnableExportMenu(true);
-            this._exporting = false;
 
             // Open folder
             Process.Start(path);
@@ -122,12 +127,9 @@ namespace Alturos.ImageAnnotation.Forms
             this._annotationExportProvider?.Setup(this._config);
         }
 
-        private void ExportDialog_FormClosing(object sender, FormClosingEventArgs e)
+        private void ExportDialog_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (this._exporting)
-            {
-                e.Cancel = true;
-            }
+            this._tokenSource?.Cancel();
         }
     }
 }
