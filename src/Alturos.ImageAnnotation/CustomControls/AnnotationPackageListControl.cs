@@ -5,7 +5,6 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,8 +62,10 @@ namespace Alturos.ImageAnnotation.CustomControls
                 this.textBoxSearch.Invoke((MethodInvoker)delegate { this.textBoxSearch.Visible = false; });
                 this.dataGridView1.Invoke((MethodInvoker)delegate { this.dataGridView1.Visible = false; });
 
+                var packages = await this._annotationPackageProvider.GetPackagesAsync(annotated);
+
                 this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = true; });
-                this._annotationPackages = (await this._annotationPackageProvider.GetPackagesAsync(annotated)).ToList();
+                this._annotationPackages = packages.ToList();
                 this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = false; });
 
                 if (this._annotationPackages?.Count > 0)
@@ -73,8 +74,8 @@ namespace Alturos.ImageAnnotation.CustomControls
 
                     this.dataGridView1.Invoke((MethodInvoker)delegate
                     {
+                        this.RefreshGridData();
                         this.dataGridView1.Visible = true;
-                        this._bindingSource.DataSource = this._annotationPackages;
                     });
 
                     this.groupBox1.Invoke((MethodInvoker)delegate
@@ -94,10 +95,58 @@ namespace Alturos.ImageAnnotation.CustomControls
             return this.dataGridView1.SelectedRows.Count;
         }
 
+        private void RefreshGridData()
+        {
+            if (string.IsNullOrEmpty(this.textBoxSearch.Text))
+            {
+                this._bindingSource.DataSource = this._annotationPackages;
+                return;
+            }
+            
+            var packages = this._annotationPackages.Where(o => o.PackageName.Contains(this.textBoxSearch.Text, StringComparison.OrdinalIgnoreCase)).ToArray();
+            this._bindingSource.DataSource = packages;
+        }
+
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             var package = this.dataGridView1.CurrentRow?.DataBoundItem as AnnotationPackage;
             this.PackageSelected?.Invoke(package);
+        }
+
+        private void DataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            try
+            {
+                if (this.dataGridView1.Rows.Count <= e.RowIndex)
+                {
+                    return;
+                }
+
+                var item = this.dataGridView1.Rows[e.RowIndex].DataBoundItem as AnnotationPackage;
+
+                if (item.IsAnnotated)
+                {
+                    this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.GreenYellow;
+                    return;
+                }
+
+                if (item.AvailableLocally)
+                {
+                    this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightBlue;
+                    return;
+                }
+
+                this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
+            }
+            catch (Exception exception)
+            {
+
+            }
+        }
+
+        private void DataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            e.Cancel = true;
         }
 
         private void DownloadToolStripMenuItem_Click(object sender, EventArgs e)
@@ -165,7 +214,12 @@ namespace Alturos.ImageAnnotation.CustomControls
                 this.ParentForm.Enabled = true;
             });
 
-            var selectedPackage = this.dataGridView1.CurrentRow.DataBoundItem as AnnotationPackage;
+            var selectedPackage = this.dataGridView1.CurrentRow?.DataBoundItem as AnnotationPackage;
+            if (selectedPackage == null)
+            {
+                return;
+            }
+
             this.PackageSelected?.Invoke(selectedPackage);
         }
 
@@ -229,86 +283,44 @@ namespace Alturos.ImageAnnotation.CustomControls
             this.RefreshData();
         }
 
-        private void DataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
-        {
-            try
-            {
-                if (this.dataGridView1.Rows.Count <= e.RowIndex)
-                {
-                    return;
-                }
-
-                var item = this.dataGridView1.Rows[e.RowIndex].DataBoundItem as AnnotationPackage;
-
-                if (item.IsAnnotated)
-                {
-                    this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.GreenYellow;
-                    return;
-                }
-
-                if (item.AvailableLocally)
-                {
-                    this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightBlue;
-                    return;
-                }
-
-                this.dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
-            }
-            catch (Exception exception)
-            {
-
-            }
-        }
-
         private void TextBoxSearch_TextChanged(object sender, EventArgs e)
         {
             this.dataGridView1.SelectionChanged -= DataGridView1_SelectionChanged;
-
-            if (string.IsNullOrEmpty(this.textBoxSearch.Text))
-            {
-                this._bindingSource.DataSource = this._annotationPackages;
-            }
-            else
-            {
-                var packages = this._annotationPackages.Where(o => o.PackageName.Contains(this.textBoxSearch.Text, StringComparison.OrdinalIgnoreCase)).ToArray();
-                this._bindingSource.DataSource = packages;
-            }
-
+            this.RefreshGridData();
             this.dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
         }
 
         private void ContextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            var packages = new List<AnnotationPackage>();
-            foreach (DataGridViewRow row in this.dataGridView1.SelectedRows)
-            {
-                packages.Add(row.DataBoundItem as AnnotationPackage);
-            }
+            var packages = this.dataGridView1.SelectedRows.Cast<DataGridViewRow>().Select(o => o.DataBoundItem as AnnotationPackage);
+
+            #region Show Download Button
 
             if (packages.All(o => o.AvailableLocally))
             {
-                this.contextMenuStrip1.Items[0].Visible = false;
+                this.downloadToolStripMenuItem.Visible = false;
             }
             else
             {
-                this.contextMenuStrip1.Items[0].Visible = true;
+                this.downloadToolStripMenuItem.Visible = true;
             }
+
+            #endregion
+
+            #region Show Redownload Button
 
             if (!packages.Any(o => o.AvailableLocally))
             {
-                this.contextMenuStrip1.Items[1].Visible = false;
+                this.redownloadToolStripMenuItem.Visible = false;
             }
             else
             {
-                this.contextMenuStrip1.Items[1].Visible = true;
+                this.redownloadToolStripMenuItem.Visible = true;
             }
 
-            this._selectedPackages = packages;
-        }
+            #endregion
 
-        private void DataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {
-            e.Cancel = true;
+            this._selectedPackages = packages.ToList();
         }
     }
 }
