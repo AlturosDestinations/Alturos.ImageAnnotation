@@ -65,13 +65,14 @@
             this.contextMenuStripPicture.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.clearAnnotationsToolStripMenuItem});
             this.contextMenuStripPicture.Name = "contextMenuStripPicture";
-            this.contextMenuStripPicture.Size = new System.Drawing.Size(170, 26);
+            this.contextMenuStripPicture.Size = new System.Drawing.Size(181, 48);
             // 
             // clearAnnotationsToolStripMenuItem
             // 
+            this.clearAnnotationsToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.asterisk_yellow;
             this.clearAnnotationsToolStripMenuItem.Name = "clearAnnotationsToolStripMenuItem";
-            this.clearAnnotationsToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
-            this.clearAnnotationsToolStripMenuItem.Text = "Clear Annotations";
+            this.clearAnnotationsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.clearAnnotationsToolStripMenuItem.Text = "&Clear Annotations";
             this.clearAnnotationsToolStripMenuItem.Click += new System.EventHandler(this.ClearAnnotationsToolStripMenuItem_Click);
             // 
             // legendsChart
