@@ -32,8 +32,6 @@
             this.dataGridViewTags = new System.Windows.Forms.DataGridView();
             this.ColumnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewResult = new System.Windows.Forms.DataGridView();
-            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnExported = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.groupBoxTags = new System.Windows.Forms.GroupBox();
             this.buttonSearch = new System.Windows.Forms.Button();
             this.groupBoxResult = new System.Windows.Forms.GroupBox();
@@ -42,6 +40,8 @@
             this.groupBoxExportProvider = new System.Windows.Forms.GroupBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.labelDownloadProgress = new System.Windows.Forms.Label();
+            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnExported = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTags)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).BeginInit();
             this.groupBoxTags.SuspendLayout();
@@ -108,21 +108,6 @@
             this.dataGridViewResult.Size = new System.Drawing.Size(555, 175);
             this.dataGridViewResult.TabIndex = 5;
             // 
-            // ColumnName
-            // 
-            this.ColumnName.DataPropertyName = "PackageName";
-            this.ColumnName.FillWeight = 184.7716F;
-            this.ColumnName.HeaderText = "Package Path";
-            this.ColumnName.Name = "ColumnName";
-            this.ColumnName.ReadOnly = true;
-            // 
-            // ColumnExported
-            // 
-            this.ColumnExported.FillWeight = 15.22843F;
-            this.ColumnExported.HeaderText = "";
-            this.ColumnExported.Name = "ColumnExported";
-            this.ColumnExported.ReadOnly = true;
-            // 
             // groupBoxTags
             // 
             this.groupBoxTags.Controls.Add(this.buttonSearch);
@@ -188,24 +173,38 @@
             this.groupBoxExportProvider.TabStop = false;
             this.groupBoxExportProvider.Text = "Export Provider";
             // 
-            // progressBar1
+            // progressBar
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar.Location = new System.Drawing.Point(12, 514);
-            this.progressBar.Maximum = 100;
-            this.progressBar.Name = "progressBar1";
+            this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(564, 31);
             this.progressBar.TabIndex = 8;
             // 
-            // labelExportProgress
+            // labelDownloadProgress
             // 
             this.labelDownloadProgress.AutoSize = true;
             this.labelDownloadProgress.Location = new System.Drawing.Point(12, 498);
-            this.labelDownloadProgress.Name = "labelExportProgress";
+            this.labelDownloadProgress.Name = "labelDownloadProgress";
             this.labelDownloadProgress.Size = new System.Drawing.Size(126, 13);
             this.labelDownloadProgress.TabIndex = 9;
             this.labelDownloadProgress.Text = "Exporting... Please wait...";
+            // 
+            // ColumnName
+            // 
+            this.ColumnName.DataPropertyName = "PackageName";
+            this.ColumnName.FillWeight = 164.467F;
+            this.ColumnName.HeaderText = "Package Name";
+            this.ColumnName.Name = "ColumnName";
+            this.ColumnName.ReadOnly = true;
+            // 
+            // ColumnExported
+            // 
+            this.ColumnExported.FillWeight = 35.533F;
+            this.ColumnExported.HeaderText = "Available Locally";
+            this.ColumnExported.Name = "ColumnExported";
+            this.ColumnExported.ReadOnly = true;
             // 
             // ExportDialog
             // 
@@ -246,9 +245,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnValue;
         private System.Windows.Forms.ComboBox comboBoxExportProvider;
         private System.Windows.Forms.GroupBox groupBoxExportProvider;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnExported;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Label labelDownloadProgress;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnExported;
     }
 }
