@@ -24,6 +24,11 @@ Shortcut | Description |
 <kbd>→</kbd> | Next Object Class |
 <kbd>←</kbd> | Previous Object Class |
 
+## Data preperation
+
+If you have a video file and need the frames you can use [ffmpeg](https://ffmpeg.org) to extract the images. This command export every 10th frame in the video.
+`ffmpeg -i input.mp4 -vf "select=not(mod(n\,10))" -vsync vfr 1_every_10/img_%03d.jpg`
+
 ## Articles of interest
 
 - [Training YOLOv3 : Deep Learning based Custom Object Detector](https://www.learnopencv.com/training-yolov3-deep-learning-based-custom-object-detector/)
