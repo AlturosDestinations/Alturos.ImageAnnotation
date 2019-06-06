@@ -48,7 +48,8 @@ AWS has a free tier for the first 12 months of S3 use (up to 5GB) and DynamoDB i
             "Effect": "Allow",
             "Action": [
                 "s3:PutObject",
-                "s3:GetObject"
+                "s3:GetObject",
+                "s3:DeleteObject"
             ],
             "Resource": [
                 "arn:aws:s3:::mys3bucketname/*"
