@@ -38,6 +38,9 @@
             this.groupBoxTags = new System.Windows.Forms.GroupBox();
             this.tagSelectionControl = new Alturos.ImageAnnotation.CustomControls.TagSelectionControl();
             this.buttonCancel = new System.Windows.Forms.Button();
+            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnFileCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBoxPackages.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPackages)).BeginInit();
             this.groupBoxUpload.SuspendLayout();
@@ -95,8 +98,13 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewPackages.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridViewPackages.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewPackages.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.ColumnName,
+            this.ColumnFileCount,
+            this.ColumnSize});
             this.dataGridViewPackages.Location = new System.Drawing.Point(6, 49);
             this.dataGridViewPackages.Name = "dataGridViewPackages";
+            this.dataGridViewPackages.RowHeadersVisible = false;
             this.dataGridViewPackages.Size = new System.Drawing.Size(598, 124);
             this.dataGridViewPackages.TabIndex = 3;
             // 
@@ -160,6 +168,27 @@
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);
             // 
+            // ColumnName
+            // 
+            this.ColumnName.DataPropertyName = "Name";
+            this.ColumnName.FillWeight = 133.2271F;
+            this.ColumnName.HeaderText = "Name";
+            this.ColumnName.Name = "ColumnName";
+            // 
+            // ColumnFileCount
+            // 
+            this.ColumnFileCount.DataPropertyName = "FileCount";
+            this.ColumnFileCount.FillWeight = 76.14214F;
+            this.ColumnFileCount.HeaderText = "File Count";
+            this.ColumnFileCount.Name = "ColumnFileCount";
+            // 
+            // ColumnSize
+            // 
+            this.ColumnSize.DataPropertyName = "Size";
+            this.ColumnSize.FillWeight = 90.63071F;
+            this.ColumnSize.HeaderText = "Size (MB)";
+            this.ColumnSize.Name = "ColumnSize";
+            // 
             // UploadDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -196,5 +225,8 @@
         private System.Windows.Forms.GroupBox groupBoxTags;
         private System.Windows.Forms.Button buttonUpload;
         private System.Windows.Forms.Button buttonCancel;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFileCount;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnSize;
     }
 }

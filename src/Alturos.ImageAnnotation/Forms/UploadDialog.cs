@@ -45,10 +45,27 @@ namespace Alturos.ImageAnnotation.Forms
             if (dialogResult == DialogResult.OK)
             {
                 this._packagePaths = folderBrowser.SelectedFolders.ToList();
-                this.dataGridViewPackages.DataSource = folderBrowser.SelectedFolders.Select(o => new { Name = o }).ToList();
+                this.dataGridViewPackages.DataSource = folderBrowser.SelectedFolders.Select(o => new {
+                    Name = o,
+                    FileCount = Directory.GetFiles(o).Length,
+                    Size = this.GetDirectorySize(o)
+                }).ToList();
             }
 
             this.buttonUpload.Enabled = this._packagePaths?.Count > 0;
+        }
+
+        private float GetDirectorySize(string directory)
+        {
+            long bytes = 0;
+
+            foreach (var file in Directory.GetFiles(directory))
+            {
+                var fileInfo = new FileInfo(file);
+                bytes += fileInfo.Length;
+            }
+
+            return (float)bytes / 1024 / 1024;
         }
 
         private async void ButtonUpload_Click(object sender, EventArgs e)
