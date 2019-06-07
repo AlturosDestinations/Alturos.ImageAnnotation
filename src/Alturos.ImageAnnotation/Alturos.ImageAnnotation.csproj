@@ -79,6 +79,7 @@
       <DependentUpon>TagSelectionDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Helper\MathHelper.cs" />
+    <Compile Include="Helper\PackageHelper.cs" />
     <Compile Include="Model\AnnotationPackageUploadProgress.cs" />
     <Compile Include="Contract\Amazon\AnnotationTagDto.cs" />
     <Compile Include="Contract\IAnnotationExportProvider.cs" />
@@ -129,11 +130,11 @@
     <Compile Include="Forms\SyncConfirmationDialog.Designer.cs">
       <DependentUpon>SyncConfirmationDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\UploadDialog.cs">
+    <Compile Include="Forms\AddPackageDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\UploadDialog.Designer.cs">
-      <DependentUpon>UploadDialog.cs</DependentUpon>
+    <Compile Include="Forms\AddPackageDialog.Designer.cs">
+      <DependentUpon>AddPackageDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Helper\InterfaceHelper.cs" />
     <Compile Include="Helper\DrawHelper.cs" />
@@ -243,8 +244,8 @@
     <EmbeddedResource Include="Forms\TagSelectionDialog.resx">
       <DependentUpon>TagSelectionDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\UploadDialog.resx">
-      <DependentUpon>UploadDialog.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\AddPackageDialog.resx">
+      <DependentUpon>AddPackageDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
@@ -285,6 +286,24 @@
   <ItemGroup>
     <Analyzer Include="..\packages\AWSSDK.DynamoDBv2.3.3.101.18\analyzers\dotnet\cs\AWSSDK.DynamoDBv2.CodeAnalysis.dll" />
     <Analyzer Include="..\packages\AWSSDK.S3.3.3.102.9\analyzers\dotnet\cs\AWSSDK.S3.CodeAnalysis.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\shape_handles.png" />
+    <None Include="Icons\folder_go.png" />
+    <None Include="Icons\add.png" />
+    <Content Include="Icons\arrow_down.png" />
+    <Content Include="Icons\arrow_refresh_small.png" />
+    <Content Include="Icons\arrow_undo.png" />
+    <None Include="Icons\disk.png" />
+    <None Include="Icons\asterisk_yellow.png" />
+    <None Include="Icons\blue_arrow_down.png" />
+    <Content Include="Icons\cancel.png" />
+    <Content Include="Icons\cog.png" />
+    <Content Include="Icons\cross.png" />
+    <Content Include="Icons\delete.png" />
+    <None Include="Icons\font.png" />
+    <None Include="Icons\help.png" />
+    <Content Include="Icons\wrench.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

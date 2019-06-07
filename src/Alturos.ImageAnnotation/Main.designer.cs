@@ -29,6 +29,15 @@
         private void InitializeComponent()
         {
             this.menuStripMain = new System.Windows.Forms.MenuStrip();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.panelImageList = new System.Windows.Forms.Panel();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.downloadControl = new Alturos.ImageAnnotation.CustomControls.DownloadControl();
+            this.annotationImageListControl = new Alturos.ImageAnnotation.CustomControls.AnnotationImageListControl();
+            this.tagEditControl = new Alturos.ImageAnnotation.CustomControls.TagEditControl();
+            this.annotationDrawControl = new Alturos.ImageAnnotation.CustomControls.AnnotationDrawControl();
+            this.annotationPackageListControl = new Alturos.ImageAnnotation.CustomControls.AnnotationPackageListControl();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.syncToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.configurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -39,15 +48,6 @@
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addPackageStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.panelImageList = new System.Windows.Forms.Panel();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.downloadControl = new Alturos.ImageAnnotation.CustomControls.DownloadControl();
-            this.annotationImageListControl = new Alturos.ImageAnnotation.CustomControls.AnnotationImageListControl();
-            this.tagEditControl = new Alturos.ImageAnnotation.CustomControls.TagEditControl();
-            this.annotationDrawControl = new Alturos.ImageAnnotation.CustomControls.AnnotationDrawControl();
-            this.annotationPackageListControl = new Alturos.ImageAnnotation.CustomControls.AnnotationPackageListControl();
             this.menuStripMain.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panelImageList.SuspendLayout();
@@ -72,84 +72,12 @@
             this.menuStripMain.TabIndex = 2;
             this.menuStripMain.Text = "menuStrip1";
             // 
-            // loadToolStripMenuItem
-            // 
-            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
-            this.loadToolStripMenuItem.Text = "&Refresh";
-            this.loadToolStripMenuItem.Click += new System.EventHandler(this.RefreshToolStripMenuItem_Click);
-            // 
-            // syncToolStripMenuItem
-            // 
-            this.syncToolStripMenuItem.Name = "syncToolStripMenuItem";
-            this.syncToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.syncToolStripMenuItem.Text = "&Sync";
-            this.syncToolStripMenuItem.Click += new System.EventHandler(this.SyncToolStripMenuItem_Click);
-            // 
-            // configurationToolStripMenuItem
-            // 
-            this.configurationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.autoplaceAnnotationsToolStripMenuItem,
-            this.showLabelsToolStripMenuItem,
-            this.showAnnotatedPackagesToolStripMenuItem,
-            this.toolStripSeparator1,
-            this.settingsToolStripMenuItem});
-            this.configurationToolStripMenuItem.Name = "configurationToolStripMenuItem";
-            this.configurationToolStripMenuItem.Size = new System.Drawing.Size(93, 20);
-            this.configurationToolStripMenuItem.Text = "&Configuration";
-            // 
-            // autoplaceAnnotationsToolStripMenuItem
-            // 
-            this.autoplaceAnnotationsToolStripMenuItem.Name = "autoplaceAnnotationsToolStripMenuItem";
-            this.autoplaceAnnotationsToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
-            this.autoplaceAnnotationsToolStripMenuItem.Text = "Autoplace Annotations";
-            this.autoplaceAnnotationsToolStripMenuItem.Click += new System.EventHandler(this.AutoplaceAnnotationsToolStripMenuItem_Click);
-            // 
-            // showLabelsToolStripMenuItem
-            // 
-            this.showLabelsToolStripMenuItem.Name = "showLabelsToolStripMenuItem";
-            this.showLabelsToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
-            this.showLabelsToolStripMenuItem.Text = "Show Object Labels in Image";
-            this.showLabelsToolStripMenuItem.Click += new System.EventHandler(this.ShowLabelsToolStripMenuItem_Click);
-            // 
-            // showAnnotatedPackagesToolStripMenuItem
-            // 
-            this.showAnnotatedPackagesToolStripMenuItem.Name = "showAnnotatedPackagesToolStripMenuItem";
-            this.showAnnotatedPackagesToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
-            this.showAnnotatedPackagesToolStripMenuItem.Text = "Show Annotated Packages";
-            this.showAnnotatedPackagesToolStripMenuItem.Click += new System.EventHandler(this.ShowAnnotatedPackagesToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(223, 6);
-            // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
-            this.settingsToolStripMenuItem.Text = "Settings";
-            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.SettingsToolStripMenuItem_Click);
-            // 
-            // addPackageStripMenuItem
-            // 
-            this.addPackageStripMenuItem.Name = "addPackageStripMenuItem";
-            this.addPackageStripMenuItem.Size = new System.Drawing.Size(88, 20);
-            this.addPackageStripMenuItem.Text = "&Add Package";
-            this.addPackageStripMenuItem.Click += new System.EventHandler(this.AddPackageStripMenuItem_Click);
-            // 
-            // exportToolStripMenuItem
-            // 
-            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(125, 20);
-            this.exportToolStripMenuItem.Text = "&Export Training Data";
-            this.exportToolStripMenuItem.Click += new System.EventHandler(this.ExportToolStripMenuItem_Click);
-            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.helpToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.help;
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
             this.helpToolStripMenuItem.Text = "&Help";
             this.helpToolStripMenuItem.Click += new System.EventHandler(this.HelpToolStripMenuItem_Click);
             // 
@@ -245,6 +173,87 @@
             this.annotationPackageListControl.Name = "annotationPackageListControl";
             this.annotationPackageListControl.Size = new System.Drawing.Size(301, 524);
             this.annotationPackageListControl.TabIndex = 1;
+            // 
+            // loadToolStripMenuItem
+            // 
+            this.loadToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.arrow_refresh_small;
+            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(74, 20);
+            this.loadToolStripMenuItem.Text = "&Refresh";
+            this.loadToolStripMenuItem.Click += new System.EventHandler(this.RefreshToolStripMenuItem_Click);
+            // 
+            // syncToolStripMenuItem
+            // 
+            this.syncToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.disk;
+            this.syncToolStripMenuItem.Name = "syncToolStripMenuItem";
+            this.syncToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
+            this.syncToolStripMenuItem.Text = "&Save";
+            this.syncToolStripMenuItem.Click += new System.EventHandler(this.SyncToolStripMenuItem_Click);
+            // 
+            // configurationToolStripMenuItem
+            // 
+            this.configurationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.autoplaceAnnotationsToolStripMenuItem,
+            this.showLabelsToolStripMenuItem,
+            this.showAnnotatedPackagesToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.settingsToolStripMenuItem});
+            this.configurationToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.wrench;
+            this.configurationToolStripMenuItem.Name = "configurationToolStripMenuItem";
+            this.configurationToolStripMenuItem.Size = new System.Drawing.Size(109, 20);
+            this.configurationToolStripMenuItem.Text = "&Configuration";
+            // 
+            // autoplaceAnnotationsToolStripMenuItem
+            // 
+            this.autoplaceAnnotationsToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.shape_handles;
+            this.autoplaceAnnotationsToolStripMenuItem.Name = "autoplaceAnnotationsToolStripMenuItem";
+            this.autoplaceAnnotationsToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.autoplaceAnnotationsToolStripMenuItem.Text = "Autoplace Annotations";
+            this.autoplaceAnnotationsToolStripMenuItem.Click += new System.EventHandler(this.AutoplaceAnnotationsToolStripMenuItem_Click);
+            // 
+            // showLabelsToolStripMenuItem
+            // 
+            this.showLabelsToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.font;
+            this.showLabelsToolStripMenuItem.Name = "showLabelsToolStripMenuItem";
+            this.showLabelsToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.showLabelsToolStripMenuItem.Text = "Show Object Labels in Image";
+            this.showLabelsToolStripMenuItem.Click += new System.EventHandler(this.ShowLabelsToolStripMenuItem_Click);
+            // 
+            // showAnnotatedPackagesToolStripMenuItem
+            // 
+            this.showAnnotatedPackagesToolStripMenuItem.Name = "showAnnotatedPackagesToolStripMenuItem";
+            this.showAnnotatedPackagesToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.showAnnotatedPackagesToolStripMenuItem.Text = "Show Annotated Packages";
+            this.showAnnotatedPackagesToolStripMenuItem.Click += new System.EventHandler(this.ShowAnnotatedPackagesToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(223, 6);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.cog;
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.SettingsToolStripMenuItem_Click);
+            // 
+            // addPackageStripMenuItem
+            // 
+            this.addPackageStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.add;
+            this.addPackageStripMenuItem.Name = "addPackageStripMenuItem";
+            this.addPackageStripMenuItem.Size = new System.Drawing.Size(104, 20);
+            this.addPackageStripMenuItem.Text = "&Add Package";
+            this.addPackageStripMenuItem.Click += new System.EventHandler(this.AddPackageStripMenuItem_Click);
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.folder_go;
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(141, 20);
+            this.exportToolStripMenuItem.Text = "&Export Training Data";
+            this.exportToolStripMenuItem.Click += new System.EventHandler(this.ExportToolStripMenuItem_Click);
             // 
             // Main
             // 

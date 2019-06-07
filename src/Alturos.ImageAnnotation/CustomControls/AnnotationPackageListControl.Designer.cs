@@ -38,13 +38,13 @@
             this.downloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redownloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearAnnotationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.textBoxSearch = new System.Windows.Forms.TextBox();
             this.labelLoading = new System.Windows.Forms.Label();
-            this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -119,6 +119,7 @@
             // 
             // downloadToolStripMenuItem
             // 
+            this.downloadToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.arrow_down;
             this.downloadToolStripMenuItem.Name = "downloadToolStripMenuItem";
             this.downloadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.downloadToolStripMenuItem.Text = "&Download";
@@ -126,6 +127,7 @@
             // 
             // redownloadToolStripMenuItem
             // 
+            this.redownloadToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.blue_arrow_down;
             this.redownloadToolStripMenuItem.Name = "redownloadToolStripMenuItem";
             this.redownloadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.redownloadToolStripMenuItem.Text = "&Redownload";
@@ -136,8 +138,17 @@
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
+            // resetToolStripMenuItem
+            // 
+            this.resetToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.arrow_undo;
+            this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
+            this.resetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.resetToolStripMenuItem.Text = "R&evert Changes";
+            this.resetToolStripMenuItem.Click += new System.EventHandler(this.ResetToolStripMenuItem_Click);
+            // 
             // clearAnnotationsToolStripMenuItem
             // 
+            this.clearAnnotationsToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.asterisk_yellow;
             this.clearAnnotationsToolStripMenuItem.Name = "clearAnnotationsToolStripMenuItem";
             this.clearAnnotationsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.clearAnnotationsToolStripMenuItem.Text = "&Clear Annotations";
@@ -150,6 +161,7 @@
             // 
             // deleteToolStripMenuItem
             // 
+            this.deleteToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.delete;
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.deleteToolStripMenuItem.Text = "De&lete";
@@ -186,13 +198,6 @@
             this.labelLoading.Size = new System.Drawing.Size(203, 13);
             this.labelLoading.TabIndex = 3;
             this.labelLoading.Text = "Loading package information, please wait";
-            // 
-            // resetToolStripMenuItem
-            // 
-            this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
-            this.resetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.resetToolStripMenuItem.Text = "R&eset";
-            this.resetToolStripMenuItem.Click += new System.EventHandler(this.ResetToolStripMenuItem_Click);
             // 
             // AnnotationPackageListControl
             // 

@@ -92,6 +92,7 @@ namespace Alturos.ImageAnnotation
             this.annotationDrawControl.ImageEdited += this.ImageEdited;
 
             this.KeyDown += this.annotationDrawControl.OnKeyDown;
+            this.KeyUp += this.annotationDrawControl.OnKeyUp;
         }
 
         private void UnregisterEvents()
@@ -104,6 +105,7 @@ namespace Alturos.ImageAnnotation
             this.annotationDrawControl.ImageEdited -= this.ImageEdited;
 
             this.KeyDown -= this.annotationDrawControl.OnKeyDown;
+            this.KeyUp -= this.annotationDrawControl.OnKeyUp;
         }
 
         #endregion
@@ -200,7 +202,7 @@ namespace Alturos.ImageAnnotation
 
         private async void AddPackageStripMenuItem_Click(object sender, EventArgs e)
         {
-            var uploadDialog = new UploadDialog(this._annotationPackageProvider);
+            var uploadDialog = new AddPackageDialog(this._annotationPackageProvider);
             uploadDialog.StartPosition = FormStartPosition.CenterParent;
 
             var dialogResult = uploadDialog.ShowDialog();

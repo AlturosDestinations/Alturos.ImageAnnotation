@@ -12,6 +12,9 @@ namespace Alturos.ImageAnnotation.CustomControls
 {
     public partial class AnnotationDrawControl : UserControl
     {
+        enum KeyboardOperation { Move, Resize };
+        enum ScaleOperation { Regular, Inverse };
+
         public event Action<AnnotationImage> ImageEdited;
 
         public bool AutoplaceAnnotations { get; set; }
@@ -27,6 +30,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         private RectangleF _selectedObjectRect;
         private AnnotationBoundingBox[] _cachedBoundingBoxes;
         private AnnotationBoundingBox _selectedBoundingBox;
+        private AnnotationBoundingBox _draggedBoundingBox;
         private DragPoint _dragPoint;
         private AnnotationImage _annotationImage;
         private List<ObjectClass> _objectClasses;
@@ -34,6 +38,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         private double _grabOffsetY;
         private bool _createBoundingBox;
         private Point _creationPoint;
+        private bool _changedImageViaKey;
 
         public AnnotationDrawControl()
         {
@@ -266,7 +271,15 @@ namespace Alturos.ImageAnnotation.CustomControls
                     var brush = DrawHelper.GetColorCode(boundingBox.ObjectIndex);
                     var objectClass = this._objectClasses.FirstOrDefault(o => o.Id == boundingBox.ObjectIndex);
 
-                    e.Graphics.DrawRectangle(new Pen(brush, 2), rectangle);
+                    using (var pen = new Pen(brush, 2))
+                    {
+                        e.Graphics.DrawRectangle(pen, rectangle);
+                    }
+                    if (this._selectedBoundingBox == boundingBox)
+                    {
+                        e.Graphics.DrawRectangle(Pens.Yellow, Rectangle.Inflate(rectangle, 2, 2));
+                    }
+
                     this.DrawLabel(e.Graphics, rectangle.X, rectangle.Y, objectClass);
 
                     var biggerRectangle = Rectangle.Inflate(rectangle, 20, 20);
@@ -334,8 +347,23 @@ namespace Alturos.ImageAnnotation.CustomControls
                 var topLeftCorner = new Point((int)Math.Min(point1.X, point2.X), (int)Math.Min(point1.Y, point2.Y));
                 var bottomRightCorner = new Point((int)Math.Max(point1.X, point2.X), (int)Math.Max(point1.Y, point2.Y));
 
-                e.Graphics.DrawRectangle(Pens.Yellow,
-                    new Rectangle(topLeftCorner, new Size(bottomRightCorner.X - topLeftCorner.X, bottomRightCorner.Y - topLeftCorner.Y)));
+                var allowed = true;
+                if (bottomRightCorner.X - topLeftCorner.X < this._minSize.Width || bottomRightCorner.Y - topLeftCorner.Y < this._minSize.Height)
+                {
+                    allowed = false;
+                }
+
+                using (var pen = new Pen(allowed ? Color.FromArgb(255, 255, 255, 0) : Color.FromArgb(255, 255, 191, 0)))
+                {
+                    e.Graphics.DrawRectangle(pen,
+                        new Rectangle(topLeftCorner, new Size(bottomRightCorner.X - topLeftCorner.X, bottomRightCorner.Y - topLeftCorner.Y)));
+
+                    if (!allowed)
+                    {
+                        e.Graphics.DrawLine(pen, topLeftCorner, bottomRightCorner);
+                        e.Graphics.DrawLine(pen, new PointF(topLeftCorner.X, bottomRightCorner.Y), new PointF(bottomRightCorner.X, topLeftCorner.Y));
+                    }
+                }
             }
         }
 
@@ -372,7 +400,7 @@ namespace Alturos.ImageAnnotation.CustomControls
 
                 foreach (var boundingBox in boundingBoxes)
                 {
-                    this._selectedBoundingBox = null;
+                    this._draggedBoundingBox = null;
                     this._dragPoint = null;
 
                     var width = boundingBox.Width * canvasInfo.ScaledWidth;
@@ -397,10 +425,10 @@ namespace Alturos.ImageAnnotation.CustomControls
                         {
                             this._dragPoint = dragPoint;
 
+                            startDrag = true;
+
                             this._grabOffsetX = (this._dragPoint.Point.X - rectangle.X) / canvasInfo.ScaledWidth;
                             this._grabOffsetY = (this._dragPoint.Point.Y - rectangle.Y) / canvasInfo.ScaledHeight;
-
-                            startDrag = true;
 
                             break;
                         }
@@ -409,6 +437,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                     if (startDrag)
                     {
                         this._selectedBoundingBox = boundingBox;
+                        this._draggedBoundingBox = boundingBox;
                         this._selectedObjectRect = new RectangleF(rectangle.X / (float)canvasInfo.ScaledWidth, rectangle.Y / (float)canvasInfo.ScaledHeight,
                             rectangle.Width / (float)canvasInfo.ScaledWidth, rectangle.Height / (float)canvasInfo.ScaledHeight);
 
@@ -432,8 +461,8 @@ namespace Alturos.ImageAnnotation.CustomControls
             if (this._createBoundingBox)
             {
                 this._createBoundingBox = false;
-                if (Math.Abs(this._creationPoint.X - e.Location.X) > this._minSize.Width &&
-                    Math.Abs(this._creationPoint.Y - e.Location.Y) > this._minSize.Height) {
+                if (Math.Abs(this._creationPoint.X - e.Location.X) >= this._minSize.Width &&
+                    Math.Abs(this._creationPoint.Y - e.Location.Y) >= this._minSize.Height) {
                     this.CreateBoundingBox(this._creationPoint, e.Location);
                 }
 
@@ -442,10 +471,10 @@ namespace Alturos.ImageAnnotation.CustomControls
 
             if (this._dragPoint?.Type == DragPointType.Delete)
             {
-                this._annotationImage?.BoundingBoxes?.Remove(this._selectedBoundingBox);
+                this._annotationImage?.BoundingBoxes?.Remove(this._draggedBoundingBox);
             }
 
-            this._selectedBoundingBox = null;
+            this._draggedBoundingBox = null;
 
             this._mousePosition = new Point(0, 0);
             this.pictureBox1.Invalidate();
@@ -455,18 +484,18 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private void PictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
-            if (this._selectedBoundingBox != null)
+            if (this._draggedBoundingBox != null)
             {
                 var canvasInfo = this.GetCanvasInformation();
 
                 var x = (e.X - canvasInfo.OffsetX) / canvasInfo.ScaledWidth;
                 var y = (e.Y - canvasInfo.OffsetY) / canvasInfo.ScaledHeight;
 
-                var centerX = x + (this._selectedBoundingBox.Width / 2) - this._grabOffsetX;
-                var centerY = y + (this._selectedBoundingBox.Height / 2) - this._grabOffsetY;
+                var centerX = x + (this._draggedBoundingBox.Width / 2) - this._grabOffsetX;
+                var centerY = y + (this._draggedBoundingBox.Height / 2) - this._grabOffsetY;
 
-                centerX = centerX.Clamp(this._selectedBoundingBox.Width / 2, 1 - this._selectedBoundingBox.Width / 2);
-                centerY = centerY.Clamp(this._selectedBoundingBox.Height / 2, 1 - this._selectedBoundingBox.Height / 2);
+                centerX = centerX.Clamp(this._draggedBoundingBox.Width / 2, 1 - this._draggedBoundingBox.Width / 2);
+                centerY = centerY.Clamp(this._draggedBoundingBox.Height / 2, 1 - this._draggedBoundingBox.Height / 2);
 
                 if (this._dragPoint != null)
                 {
@@ -494,12 +523,12 @@ namespace Alturos.ImageAnnotation.CustomControls
                     centerX = -(canvasInfo.OffsetX / canvasInfo.ScaledWidth) + cachedCenter.X + (width - this._selectedObjectRect.Width) / 2 * xSign;
                     centerY = -(canvasInfo.OffsetY / canvasInfo.ScaledHeight) + cachedCenter.Y + (height - this._selectedObjectRect.Height) / 2 * ySign;
 
-                    this._selectedBoundingBox.Width = (float)width;
-                    this._selectedBoundingBox.Height = (float)height;
+                    this._draggedBoundingBox.Width = (float)width;
+                    this._draggedBoundingBox.Height = (float)height;
                 }
 
-                this._selectedBoundingBox.CenterX = (float)centerX;
-                this._selectedBoundingBox.CenterY = (float)centerY;
+                this._draggedBoundingBox.CenterX = (float)centerX;
+                this._draggedBoundingBox.CenterY = (float)centerY;
             }
 
             this._mousePosition = e.Location;
@@ -536,6 +565,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 Width = (float)width,
                 Height = (float)height
             };
+            this._selectedBoundingBox = newBoundingBox;
 
             this._annotationImage.BoundingBoxes.Add(newBoundingBox);
             this._dragPoint = null;
@@ -563,29 +593,14 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         public void OnKeyDown(object sender, KeyEventArgs e)
         {
-            AnnotationBoundingBox currentBoundingBox = null;
-
-            var boundingBoxes = this._annotationImage?.BoundingBoxes;
-            if (boundingBoxes != null)
-            {
-                foreach (var boundingBox in boundingBoxes)
-                {
-                    var rectangle = this.GetRectangle(boundingBox);
-
-                    var biggerRectangle = Rectangle.Inflate(rectangle, 20, 20);
-                    if (biggerRectangle.Contains(this._mousePosition))
-                    {
-                        currentBoundingBox = boundingBox;
-                        break;
-                    }
-                }
-            }
+            var currentBoundingBox = this._selectedBoundingBox;
 
             if (currentBoundingBox == null)
             {
                 return;
             }
 
+            // Select object class
             var index = -1;
             if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
             {
@@ -604,15 +619,98 @@ namespace Alturos.ImageAnnotation.CustomControls
                 index = currentBoundingBox.ObjectIndex - 1;
             }
 
-            if (index < 0 || index >= this._objectClasses.Count)
+            if (index >= 0 && index < this._objectClasses.Count)
             {
-                return;
+                this._changedImageViaKey = true;
+                currentBoundingBox.ObjectIndex = index;
             }
 
-            currentBoundingBox.ObjectIndex = index;
-            this.pictureBox1.Invalidate();
+            // Move Bounding Box
+            var speed = e.Shift ? 1 : 10;
+            var canvasInfo = this.GetCanvasInformation();
+            
+            if (e.KeyCode == Keys.W)
+            {
+                this._changedImageViaKey = true;
 
-            this.ImageEdited?.Invoke(this._annotationImage);
+                this.MoveOrResize(currentBoundingBox, new PointF(0, -speed), canvasInfo,
+                    e.Control ? KeyboardOperation.Resize : KeyboardOperation.Move,
+                    e.Alt ? ScaleOperation.Inverse : ScaleOperation.Regular);
+            }
+            if (e.KeyCode == Keys.A)
+            {
+                this._changedImageViaKey = true;
+
+                this.MoveOrResize(currentBoundingBox, new PointF(-speed, 0), canvasInfo,
+                    e.Control ? KeyboardOperation.Resize : KeyboardOperation.Move,
+                    e.Alt ? ScaleOperation.Inverse : ScaleOperation.Regular);
+            }
+            if (e.KeyCode == Keys.S)
+            {
+                this._changedImageViaKey = true;
+
+                this.MoveOrResize(currentBoundingBox, new PointF(0, speed), canvasInfo,
+                    e.Control ? KeyboardOperation.Resize : KeyboardOperation.Move,
+                    e.Alt ? ScaleOperation.Inverse : ScaleOperation.Regular);
+            }
+            if (e.KeyCode == Keys.D)
+            {
+                this._changedImageViaKey = true;
+
+                this.MoveOrResize(currentBoundingBox, new PointF(speed, 0), canvasInfo,
+                    e.Control ? KeyboardOperation.Resize : KeyboardOperation.Move,
+                    e.Alt ? ScaleOperation.Inverse : ScaleOperation.Regular);
+            }
+
+            this.pictureBox1.Invalidate();
+        }
+
+        public void OnKeyUp(object sender, KeyEventArgs e)
+        {
+            if (this._changedImageViaKey)
+            {
+                this._changedImageViaKey = false;
+                this.ImageEdited?.Invoke(this._annotationImage);
+            }
+        }
+
+        private void MoveOrResize(
+            AnnotationBoundingBox boundingBox,
+            PointF translation,
+            CanvasInfo canvasInfo,
+            KeyboardOperation keyboardOperation,
+            ScaleOperation scaleOperation)
+        {
+            if (keyboardOperation == KeyboardOperation.Move)
+            {
+                boundingBox.CenterX += translation.X / (float)canvasInfo.ScaledWidth;
+                boundingBox.CenterY += translation.Y / (float)canvasInfo.ScaledWidth;
+
+                boundingBox.CenterX = boundingBox.CenterX.Clamp(boundingBox.Width / 2, 1 - boundingBox.Width / 2);
+                boundingBox.CenterY = boundingBox.CenterY.Clamp(boundingBox.Height / 2, 1 - boundingBox.Height / 2);
+            }
+            else
+            {
+                var inverseFac = (scaleOperation == ScaleOperation.Inverse ? -1 : 1);
+
+                var newCenterX = boundingBox.CenterX + translation.X / (float)canvasInfo.ScaledWidth / 2;
+                var newWidth = boundingBox.Width + translation.X / (float)canvasInfo.ScaledWidth * inverseFac;
+
+                if (newCenterX - newWidth / 2 >= 0 && newCenterX + newWidth / 2 <= 1 && newWidth * canvasInfo.ScaledWidth > this._minSize.Width)
+                {
+                    boundingBox.CenterX = newCenterX;
+                    boundingBox.Width = newWidth;
+                }
+
+                var newCenterY = boundingBox.CenterY + translation.Y / (float)canvasInfo.ScaledHeight / 2;
+                var newHeight = boundingBox.Height + translation.Y / (float)canvasInfo.ScaledHeight * inverseFac;
+
+                if (newCenterY - newHeight / 2 >= 0 && newCenterY + newHeight / 2 <= 1 && newHeight * canvasInfo.ScaledHeight > this._minSize.Height)
+                {
+                    boundingBox.CenterY += translation.Y / (float)canvasInfo.ScaledHeight / 2;
+                    boundingBox.Height += translation.Y / (float)canvasInfo.ScaledHeight * inverseFac;
+                }
+            }
         }
 
         #endregion
