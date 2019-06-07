@@ -1,4 +1,5 @@
 ﻿using Alturos.ImageAnnotation.Contract;
+using Alturos.ImageAnnotation.Helper;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -45,10 +46,11 @@ namespace Alturos.ImageAnnotation.Forms
             if (dialogResult == DialogResult.OK)
             {
                 this._packagePaths = folderBrowser.SelectedFolders.ToList();
+
                 this.dataGridViewPackages.DataSource = folderBrowser.SelectedFolders.Select(o => new {
                     Name = o,
-                    FileCount = Directory.GetFiles(o).Length,
-                    Size = this.GetDirectorySize(o)
+                    ImageCount = PackageHelper.GetImages(o).Length,
+                    Size = Math.Round(this.GetDirectorySize(o), 2)
                 }).ToList();
             }
 
@@ -59,7 +61,7 @@ namespace Alturos.ImageAnnotation.Forms
         {
             long bytes = 0;
 
-            foreach (var file in Directory.GetFiles(directory))
+            foreach (var file in PackageHelper.GetImages(directory))
             {
                 var fileInfo = new FileInfo(file);
                 bytes += fileInfo.Length;

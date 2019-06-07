@@ -79,6 +79,7 @@
       <DependentUpon>TagSelectionDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Helper\MathHelper.cs" />
+    <Compile Include="Helper\PackageHelper.cs" />
     <Compile Include="Model\AnnotationPackageUploadProgress.cs" />
     <Compile Include="Contract\Amazon\AnnotationTagDto.cs" />
     <Compile Include="Contract\IAnnotationExportProvider.cs" />

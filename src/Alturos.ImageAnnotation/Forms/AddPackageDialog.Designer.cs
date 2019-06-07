@@ -33,14 +33,14 @@
             this.buttonSelectFolders = new System.Windows.Forms.Button();
             this.groupBoxPackages = new System.Windows.Forms.GroupBox();
             this.dataGridViewPackages = new System.Windows.Forms.DataGridView();
-            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnFileCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBoxUpload = new System.Windows.Forms.GroupBox();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonUpload = new System.Windows.Forms.Button();
             this.groupBoxTags = new System.Windows.Forms.GroupBox();
             this.tagSelectionControl = new Alturos.ImageAnnotation.CustomControls.TagSelectionControl();
+            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnImageCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBoxPackages.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPackages)).BeginInit();
             this.groupBoxUpload.SuspendLayout();
@@ -100,34 +100,13 @@
             this.dataGridViewPackages.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewPackages.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ColumnName,
-            this.ColumnFileCount,
+            this.ColumnImageCount,
             this.ColumnSize});
             this.dataGridViewPackages.Location = new System.Drawing.Point(6, 49);
             this.dataGridViewPackages.Name = "dataGridViewPackages";
             this.dataGridViewPackages.RowHeadersVisible = false;
             this.dataGridViewPackages.Size = new System.Drawing.Size(598, 124);
             this.dataGridViewPackages.TabIndex = 3;
-            // 
-            // ColumnName
-            // 
-            this.ColumnName.DataPropertyName = "Name";
-            this.ColumnName.FillWeight = 133.2271F;
-            this.ColumnName.HeaderText = "Name";
-            this.ColumnName.Name = "ColumnName";
-            // 
-            // ColumnFileCount
-            // 
-            this.ColumnFileCount.DataPropertyName = "FileCount";
-            this.ColumnFileCount.FillWeight = 76.14214F;
-            this.ColumnFileCount.HeaderText = "File Count";
-            this.ColumnFileCount.Name = "ColumnFileCount";
-            // 
-            // ColumnSize
-            // 
-            this.ColumnSize.DataPropertyName = "Size";
-            this.ColumnSize.FillWeight = 90.63071F;
-            this.ColumnSize.HeaderText = "Size (MB)";
-            this.ColumnSize.Name = "ColumnSize";
             // 
             // groupBoxUpload
             // 
@@ -189,7 +168,28 @@
             this.tagSelectionControl.Size = new System.Drawing.Size(604, 196);
             this.tagSelectionControl.TabIndex = 5;
             // 
-            // UploadDialog
+            // ColumnName
+            // 
+            this.ColumnName.DataPropertyName = "Name";
+            this.ColumnName.FillWeight = 133.2271F;
+            this.ColumnName.HeaderText = "Name";
+            this.ColumnName.Name = "ColumnName";
+            // 
+            // ColumnImageCount
+            // 
+            this.ColumnImageCount.DataPropertyName = "ImageCount";
+            this.ColumnImageCount.FillWeight = 76.14214F;
+            this.ColumnImageCount.HeaderText = "Image Count";
+            this.ColumnImageCount.Name = "ColumnImageCount";
+            // 
+            // ColumnSize
+            // 
+            this.ColumnSize.DataPropertyName = "Size";
+            this.ColumnSize.FillWeight = 90.63071F;
+            this.ColumnSize.HeaderText = "Size (MB)";
+            this.ColumnSize.Name = "ColumnSize";
+            // 
+            // AddPackageDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -199,7 +199,7 @@
             this.Controls.Add(this.groupBoxPackages);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "UploadDialog";
+            this.Name = "AddPackageDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Add Package";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.UploadDialog_FormClosed);
@@ -226,7 +226,7 @@
         private System.Windows.Forms.Button buttonUpload;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFileCount;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnImageCount;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnSize;
     }
 }

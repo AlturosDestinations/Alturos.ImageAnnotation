@@ -88,6 +88,35 @@ AWS has a free tier for the first 12 months of S3 use (up to 5GB) and DynamoDB i
 
 You can also use [MinIO](https://github.com/minio/minio) instead of S3 and a [local dynamodb]( https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html)
 
+### Local Installation
+
+* In order to use a local DynamoDB, download it first [here](http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.tar.gz).
+You can use an unzipping program like [7-zip](https://www.7-zip.org/) to extract the tar file from the gz, before extracting the tar file into its own folder.
+
+* Next, download and install the Java Runtime Environment [here](https://java.com/download).
+
+* Once installed, set the JAVA_HOME environment variable by opening the command prompt and writing the following:
+```
+setx JAVA_HOME java_path \M
+```
+Replace java_path with the path of the "bin" folder in your Java Runtime Environment installation.
+
+* Download and install the AWS CLI from [here](https://aws.amazon.com/de/cli/).
+
+* Write in the command prompt:
+```
+aws configure
+```
+You'll be asked to enter some keys. Since the database is entirely local, you can just use fixed demo keys, for instance `AKIAIOSFODNN7EXAMPLE` for the access key id, and `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` for the secret access key.
+
+* Restart the command prompt and navigate to the folder of your unzipped DynamoDB tar file. Write the following:
+```
+java -Djava.library.path=./DynamoDBLocal_lib/ -jar DynamoDBLocal.jar
+```
+
+* Change the value `serviceUrl` inside the App.config file of this project to `localhost:8000`, and change the `accessKeyId` and `SecretAccessKey` to the previously defined values.
+Once you launch the project you should be able to use your local database. 
+
 ## Credits
 
 This program uses icons from the Silk icon set created by Mark James, which can be found [here](http://www.famfamfam.com/lab/icons/silk/).

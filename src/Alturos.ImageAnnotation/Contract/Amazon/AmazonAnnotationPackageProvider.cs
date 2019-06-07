@@ -1,8 +1,11 @@
-﻿using Alturos.ImageAnnotation.Model;
+﻿using Alturos.ImageAnnotation.Helper;
+using Alturos.ImageAnnotation.Model;
 using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.DynamoDBv2.Model;
+using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
@@ -23,7 +26,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
         public bool IsSyncing { get; private set; }
         public bool IsUploading { get; private set; }
 
-        private readonly IAmazonS3 _client;
+        private readonly IAmazonS3 _objectStorageClient;
         private readonly IAmazonDynamoDB _dynamoDbClient;
         private readonly string _bucketName;
         private readonly string _extractionFolder;
@@ -45,6 +48,8 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
             this._dbTableName = ConfigurationManager.AppSettings["dbTableName"];
 
+            var serviceUrl = ConfigurationManager.AppSettings["serviceUrl"];
+
             if (string.IsNullOrEmpty(accessKeyId))
             {
                 throw new ConfigurationErrorsException("The accessKeyId has not been configured. Please set it in the App.config");
@@ -60,15 +65,76 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 throw new ConfigurationErrorsException("The bucketName has not been configured. Please set it in the App.config");
             }
 
-            this._client = new AmazonS3Client(accessKeyId, secretAccessKey, RegionEndpoint.EUWest1);
-            this._dynamoDbClient = new AmazonDynamoDBClient(accessKeyId, secretAccessKey, RegionEndpoint.EUWest1);
+            if (string.IsNullOrEmpty(serviceUrl))
+            {
+                this._objectStorageClient = new AmazonS3Client(accessKeyId, secretAccessKey, RegionEndpoint.EUWest1);
+                this._dynamoDbClient = new AmazonDynamoDBClient(accessKeyId, secretAccessKey, RegionEndpoint.EUWest1);
+            }
+            else
+            {
+                var s3Config = new AmazonS3Config
+                {
+                    ServiceURL = serviceUrl
+                   
+                };
+                var dbConfig = new AmazonDynamoDBConfig
+                {
+                    ServiceURL = serviceUrl
+                };
+
+                this._objectStorageClient = new AmazonS3Client(accessKeyId, secretAccessKey, s3Config);
+                this._dynamoDbClient = new AmazonDynamoDBClient(accessKeyId, secretAccessKey, dbConfig);
+
+                //if (!this._objectStorageClient.DoesS3BucketExist(this._bucketName))
+                //{
+                //    this._objectStorageClient.PutBucket(this._bucketName);
+                //}
+
+                var createTableRequest = new CreateTableRequest
+                {
+                    TableName = this._dbTableName,
+                    AttributeDefinitions = new List<AttributeDefinition>(),
+                    KeySchema = new List<KeySchemaElement>(),
+                    GlobalSecondaryIndexes = new List<GlobalSecondaryIndex>(),
+                    LocalSecondaryIndexes = new List<LocalSecondaryIndex>(),
+                    ProvisionedThroughput = new ProvisionedThroughput
+                    {
+                        ReadCapacityUnits = 1,
+                        WriteCapacityUnits = 1
+                    }
+                };
+                createTableRequest.KeySchema = new[]
+                {
+                    new KeySchemaElement
+                    {
+                        AttributeName = "Id",
+                        KeyType = KeyType.HASH,
+                    },
+
+                }.ToList();
+
+                createTableRequest.AttributeDefinitions = new[]
+                {
+                    new AttributeDefinition
+                    {
+                        AttributeName = "Id",
+                        AttributeType = ScalarAttributeType.S,
+                    }
+                }.ToList();
+
+                var tables = this._dynamoDbClient.ListTablesAsync().GetAwaiter().GetResult();
+                if (!tables.TableNames.Contains(this._dbTableName))
+                {
+                    this._dynamoDbClient.CreateTableAsync(createTableRequest).GetAwaiter().GetResult();
+                }
+            }
 
             this._packagesToDownload = new Queue<AnnotationPackage>();
         }
 
         public void Dispose()
         {
-            this._client?.Dispose();
+            this._objectStorageClient?.Dispose();
             this._dynamoDbClient?.Dispose();
         }
 
@@ -236,7 +302,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 Directory.Delete(packagePath, true);
             }
 
-            var files = await this._client.ListObjectsV2Async(new ListObjectsV2Request
+            var files = await this._objectStorageClient.ListObjectsV2Async(new ListObjectsV2Request
             {
                 BucketName = this._bucketName,
                 Prefix = package.PackageName
@@ -253,7 +319,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
             try
             {
-                using (var fileTransferUtility = new TransferUtility(this._client))
+                using (var fileTransferUtility = new TransferUtility(this._objectStorageClient))
                 {
                     await fileTransferUtility.DownloadDirectoryAsync(request, token).ConfigureAwait(false);
                 }
@@ -325,8 +391,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 Tags = tags
             }, token).ConfigureAwait(false);
 
-            var files = Directory.GetFiles(packagePath);
-            foreach (var file in files)
+            foreach (var file in PackageHelper.GetImages(packagePath))
             {
                 await this.UploadFileAsync(file, token).ConfigureAwait(false);
             }
@@ -334,7 +399,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
         private async Task UploadFileAsync(string filePath, CancellationToken token)
         {
-            using (var fileTransferUtility = new TransferUtility(this._client))
+            using (var fileTransferUtility = new TransferUtility(this._objectStorageClient))
             {
                 var keyName = $"{Directory.GetParent(filePath).Name}/{Path.GetFileName(filePath)}";
 
@@ -496,7 +561,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                     Key = $"{image.Package.PackageName}/{image.ImageName}"
                 };
 
-                var response = await this._client.DeleteObjectAsync(deleteObjectRequest).ConfigureAwait(false);
+                var response = await this._objectStorageClient.DeleteObjectAsync(deleteObjectRequest).ConfigureAwait(false);
 
                 // Delete image from DynamoDB
                 using (var context = new DynamoDBContext(this._dynamoDbClient))
