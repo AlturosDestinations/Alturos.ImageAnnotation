@@ -75,8 +75,9 @@
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.helpToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.help;
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
             this.helpToolStripMenuItem.Text = "&Help";
             this.helpToolStripMenuItem.Click += new System.EventHandler(this.HelpToolStripMenuItem_Click);
             // 
@@ -197,7 +198,7 @@
             this.showAnnotatedPackagesToolStripMenuItem,
             this.toolStripSeparator1,
             this.settingsToolStripMenuItem});
-            this.configurationToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.cog;
+            this.configurationToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.wrench;
             this.configurationToolStripMenuItem.Name = "configurationToolStripMenuItem";
             this.configurationToolStripMenuItem.Size = new System.Drawing.Size(109, 20);
             this.configurationToolStripMenuItem.Text = "&Configuration";
@@ -212,6 +213,7 @@
             // 
             // showLabelsToolStripMenuItem
             // 
+            this.showLabelsToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.font;
             this.showLabelsToolStripMenuItem.Name = "showLabelsToolStripMenuItem";
             this.showLabelsToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
             this.showLabelsToolStripMenuItem.Text = "Show Object Labels in Image";

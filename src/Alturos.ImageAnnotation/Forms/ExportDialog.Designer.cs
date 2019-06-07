@@ -32,6 +32,8 @@
             this.dataGridViewTags = new System.Windows.Forms.DataGridView();
             this.ColumnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewResult = new System.Windows.Forms.DataGridView();
+            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnExported = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.groupBoxTags = new System.Windows.Forms.GroupBox();
             this.buttonSearch = new System.Windows.Forms.Button();
             this.groupBoxResult = new System.Windows.Forms.GroupBox();
@@ -40,8 +42,6 @@
             this.groupBoxExportProvider = new System.Windows.Forms.GroupBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.labelDownloadProgress = new System.Windows.Forms.Label();
-            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnExported = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.buttonCancel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTags)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).BeginInit();
@@ -108,6 +108,21 @@
             this.dataGridViewResult.RowHeadersVisible = false;
             this.dataGridViewResult.Size = new System.Drawing.Size(555, 175);
             this.dataGridViewResult.TabIndex = 5;
+            // 
+            // ColumnName
+            // 
+            this.ColumnName.DataPropertyName = "PackageName";
+            this.ColumnName.FillWeight = 164.467F;
+            this.ColumnName.HeaderText = "Package Name";
+            this.ColumnName.Name = "ColumnName";
+            this.ColumnName.ReadOnly = true;
+            // 
+            // ColumnExported
+            // 
+            this.ColumnExported.FillWeight = 35.533F;
+            this.ColumnExported.HeaderText = "Available Locally";
+            this.ColumnExported.Name = "ColumnExported";
+            this.ColumnExported.ReadOnly = true;
             // 
             // groupBoxTags
             // 
@@ -192,21 +207,6 @@
             this.labelDownloadProgress.TabIndex = 9;
             this.labelDownloadProgress.Text = "Exporting... Please wait...";
             // 
-            // ColumnName
-            // 
-            this.ColumnName.DataPropertyName = "PackageName";
-            this.ColumnName.FillWeight = 164.467F;
-            this.ColumnName.HeaderText = "Package Name";
-            this.ColumnName.Name = "ColumnName";
-            this.ColumnName.ReadOnly = true;
-            // 
-            // ColumnExported
-            // 
-            this.ColumnExported.FillWeight = 35.533F;
-            this.ColumnExported.HeaderText = "Available Locally";
-            this.ColumnExported.Name = "ColumnExported";
-            this.ColumnExported.ReadOnly = true;
-            // 
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -236,7 +236,7 @@
             this.MinimizeBox = false;
             this.Name = "ExportDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Export";
+            this.Text = "Export Training Data";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ExportDialog_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTags)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).EndInit();

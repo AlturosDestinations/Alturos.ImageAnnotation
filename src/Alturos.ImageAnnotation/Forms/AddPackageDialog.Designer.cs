@@ -1,6 +1,6 @@
 ﻿namespace Alturos.ImageAnnotation.Forms
 {
-    partial class UploadDialog
+    partial class AddPackageDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -33,14 +33,14 @@
             this.buttonSelectFolders = new System.Windows.Forms.Button();
             this.groupBoxPackages = new System.Windows.Forms.GroupBox();
             this.dataGridViewPackages = new System.Windows.Forms.DataGridView();
-            this.groupBoxUpload = new System.Windows.Forms.GroupBox();
-            this.buttonUpload = new System.Windows.Forms.Button();
-            this.groupBoxTags = new System.Windows.Forms.GroupBox();
-            this.tagSelectionControl = new Alturos.ImageAnnotation.CustomControls.TagSelectionControl();
-            this.buttonCancel = new System.Windows.Forms.Button();
             this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnFileCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.groupBoxUpload = new System.Windows.Forms.GroupBox();
+            this.buttonCancel = new System.Windows.Forms.Button();
+            this.buttonUpload = new System.Windows.Forms.Button();
+            this.groupBoxTags = new System.Windows.Forms.GroupBox();
+            this.tagSelectionControl = new Alturos.ImageAnnotation.CustomControls.TagSelectionControl();
             this.groupBoxPackages.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPackages)).BeginInit();
             this.groupBoxUpload.SuspendLayout();
@@ -108,6 +108,27 @@
             this.dataGridViewPackages.Size = new System.Drawing.Size(598, 124);
             this.dataGridViewPackages.TabIndex = 3;
             // 
+            // ColumnName
+            // 
+            this.ColumnName.DataPropertyName = "Name";
+            this.ColumnName.FillWeight = 133.2271F;
+            this.ColumnName.HeaderText = "Name";
+            this.ColumnName.Name = "ColumnName";
+            // 
+            // ColumnFileCount
+            // 
+            this.ColumnFileCount.DataPropertyName = "FileCount";
+            this.ColumnFileCount.FillWeight = 76.14214F;
+            this.ColumnFileCount.HeaderText = "File Count";
+            this.ColumnFileCount.Name = "ColumnFileCount";
+            // 
+            // ColumnSize
+            // 
+            this.ColumnSize.DataPropertyName = "Size";
+            this.ColumnSize.FillWeight = 90.63071F;
+            this.ColumnSize.HeaderText = "Size (MB)";
+            this.ColumnSize.Name = "ColumnSize";
+            // 
             // groupBoxUpload
             // 
             this.groupBoxUpload.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -122,6 +143,18 @@
             this.groupBoxUpload.TabIndex = 4;
             this.groupBoxUpload.TabStop = false;
             this.groupBoxUpload.Text = "Upload";
+            // 
+            // buttonCancel
+            // 
+            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCancel.Location = new System.Drawing.Point(530, 83);
+            this.buttonCancel.Name = "buttonCancel";
+            this.buttonCancel.Size = new System.Drawing.Size(83, 31);
+            this.buttonCancel.TabIndex = 3;
+            this.buttonCancel.Text = "Cancel";
+            this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);
             // 
             // buttonUpload
             // 
@@ -156,39 +189,6 @@
             this.tagSelectionControl.Size = new System.Drawing.Size(604, 196);
             this.tagSelectionControl.TabIndex = 5;
             // 
-            // buttonCancel
-            // 
-            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCancel.Location = new System.Drawing.Point(530, 83);
-            this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(83, 31);
-            this.buttonCancel.TabIndex = 3;
-            this.buttonCancel.Text = "Cancel";
-            this.buttonCancel.UseVisualStyleBackColor = true;
-            this.buttonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);
-            // 
-            // ColumnName
-            // 
-            this.ColumnName.DataPropertyName = "Name";
-            this.ColumnName.FillWeight = 133.2271F;
-            this.ColumnName.HeaderText = "Name";
-            this.ColumnName.Name = "ColumnName";
-            // 
-            // ColumnFileCount
-            // 
-            this.ColumnFileCount.DataPropertyName = "FileCount";
-            this.ColumnFileCount.FillWeight = 76.14214F;
-            this.ColumnFileCount.HeaderText = "File Count";
-            this.ColumnFileCount.Name = "ColumnFileCount";
-            // 
-            // ColumnSize
-            // 
-            this.ColumnSize.DataPropertyName = "Size";
-            this.ColumnSize.FillWeight = 90.63071F;
-            this.ColumnSize.HeaderText = "Size (MB)";
-            this.ColumnSize.Name = "ColumnSize";
-            // 
             // UploadDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -201,7 +201,7 @@
             this.MinimizeBox = false;
             this.Name = "UploadDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Uploading";
+            this.Text = "Add Package";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.UploadDialog_FormClosed);
             this.Load += new System.EventHandler(this.UploadDialog_Load);
             this.groupBoxPackages.ResumeLayout(false);

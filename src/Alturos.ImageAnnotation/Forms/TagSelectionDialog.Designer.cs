@@ -58,7 +58,7 @@
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.tagSelectionControl);
             this.Name = "TagSelectionDialog";
-            this.Text = "TagSelectionForm";
+            this.Text = "Select Tags";
             this.Load += new System.EventHandler(this.TagSelectionDialog_Load);
             this.ResumeLayout(false);
 

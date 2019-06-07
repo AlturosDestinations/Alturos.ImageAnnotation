@@ -10,7 +10,7 @@ using WK.Libraries.BetterFolderBrowserNS;
 
 namespace Alturos.ImageAnnotation.Forms
 {
-    public partial class UploadDialog : Form
+    public partial class AddPackageDialog : Form
     {
         private readonly IAnnotationPackageProvider _annotationPackageProvider;
 
@@ -18,7 +18,7 @@ namespace Alturos.ImageAnnotation.Forms
         private List<string> _packagePaths;
         private CancellationTokenSource _tokenSource;
 
-        public UploadDialog(IAnnotationPackageProvider annotationPackageProvider)
+        public AddPackageDialog(IAnnotationPackageProvider annotationPackageProvider)
         {
             this._annotationPackageProvider = annotationPackageProvider;
 
