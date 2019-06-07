@@ -295,6 +295,7 @@
     <Content Include="Icons\arrow_undo.png" />
     <None Include="Icons\disk.png" />
     <None Include="Icons\asterisk_yellow.png" />
+    <None Include="Icons\blue_arrow_down.png" />
     <Content Include="Icons\cancel.png" />
     <Content Include="Icons\cog.png" />
     <Content Include="Icons\cross.png" />
