@@ -334,8 +334,23 @@ namespace Alturos.ImageAnnotation.CustomControls
                 var topLeftCorner = new Point((int)Math.Min(point1.X, point2.X), (int)Math.Min(point1.Y, point2.Y));
                 var bottomRightCorner = new Point((int)Math.Max(point1.X, point2.X), (int)Math.Max(point1.Y, point2.Y));
 
-                e.Graphics.DrawRectangle(Pens.Yellow,
-                    new Rectangle(topLeftCorner, new Size(bottomRightCorner.X - topLeftCorner.X, bottomRightCorner.Y - topLeftCorner.Y)));
+                var allowed = true;
+                if (bottomRightCorner.X - topLeftCorner.X < this._minSize.Width || bottomRightCorner.Y - topLeftCorner.Y < this._minSize.Height)
+                {
+                    allowed = false;
+                }
+
+                using (var pen = new Pen(allowed ? Color.FromArgb(255, 255, 255, 0) : Color.FromArgb(255, 255, 191, 0)))
+                {
+                    e.Graphics.DrawRectangle(pen,
+                        new Rectangle(topLeftCorner, new Size(bottomRightCorner.X - topLeftCorner.X, bottomRightCorner.Y - topLeftCorner.Y)));
+
+                    if (!allowed)
+                    {
+                        e.Graphics.DrawLine(pen, topLeftCorner, bottomRightCorner);
+                        e.Graphics.DrawLine(pen, new PointF(topLeftCorner.X, bottomRightCorner.Y), new PointF(bottomRightCorner.X, topLeftCorner.Y));
+                    }
+                }
             }
         }
 
@@ -432,8 +447,8 @@ namespace Alturos.ImageAnnotation.CustomControls
             if (this._createBoundingBox)
             {
                 this._createBoundingBox = false;
-                if (Math.Abs(this._creationPoint.X - e.Location.X) > this._minSize.Width &&
-                    Math.Abs(this._creationPoint.Y - e.Location.Y) > this._minSize.Height) {
+                if (Math.Abs(this._creationPoint.X - e.Location.X) >= this._minSize.Width &&
+                    Math.Abs(this._creationPoint.Y - e.Location.Y) >= this._minSize.Height) {
                     this.CreateBoundingBox(this._creationPoint, e.Location);
                 }
 
