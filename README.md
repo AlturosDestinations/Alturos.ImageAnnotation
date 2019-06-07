@@ -23,7 +23,7 @@ Shortcut | Description |
 <kbd>↑</kbd> | Previous image |
 <kbd>→</kbd> | Next Object Class |
 <kbd>←</kbd> | Previous Object Class |
-<kbd>0</kbd>-<kb>9</kbd> | Select Object Class |
+<kbd>0</kbd>-<kbd>9</kbd> | Select Object Class |
 
 ## Data preperation
 
