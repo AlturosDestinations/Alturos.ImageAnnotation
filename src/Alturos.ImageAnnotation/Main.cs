@@ -92,6 +92,7 @@ namespace Alturos.ImageAnnotation
             this.annotationDrawControl.ImageEdited += this.ImageEdited;
 
             this.KeyDown += this.annotationDrawControl.OnKeyDown;
+            this.KeyUp += this.annotationDrawControl.OnKeyUp;
         }
 
         private void UnregisterEvents()
@@ -104,6 +105,7 @@ namespace Alturos.ImageAnnotation
             this.annotationDrawControl.ImageEdited -= this.ImageEdited;
 
             this.KeyDown -= this.annotationDrawControl.OnKeyDown;
+            this.KeyUp -= this.annotationDrawControl.OnKeyUp;
         }
 
         #endregion

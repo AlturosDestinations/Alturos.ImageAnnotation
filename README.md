@@ -24,6 +24,7 @@ Shortcut | Description |
 <kbd>→</kbd> | Next Object Class |
 <kbd>←</kbd> | Previous Object Class |
 <kbd>0</kbd>-<kbd>9</kbd> | Select Object Class |
+<kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><br>+<kbd>Shift</kbd><br>+<kbd>Ctrl</kbd><br>+<kbd>Alt</kbd> | Move Bounding Box<br>Slow<br>Resize<br>Invert
 
 ## Data preperation
 

@@ -10,5 +10,10 @@ namespace Alturos.ImageAnnotation.Helper
             if (val > max) { return max; }
             return val;
         }
+
+        public static float Clamp(this float val, float min, float max)
+        {
+            return (float)((double)val).Clamp(min, max);
+        }
     }
 }
