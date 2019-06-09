@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Alturos.ImageAnnotation.CustomControls
@@ -90,6 +91,11 @@ namespace Alturos.ImageAnnotation.CustomControls
             }
         }
 
+        private void DataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            e.Cancel = true;
+        }
+
         private async void DeleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dialogResult = MessageBox.Show("Are you sure you want to delete the selected image(s)?", "Confirm deletion", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
@@ -98,38 +104,44 @@ namespace Alturos.ImageAnnotation.CustomControls
                 return;
             }
 
-            var successful = true;
-            var failedImages = new List<AnnotationImage>();
-
             var deleteImages = this.dataGridView1.SelectedRows.Cast<DataGridViewRow>().Select(o => o.DataBoundItem as AnnotationImage).ToList();
             this.dataGridView1.ClearSelection();
 
-            foreach (var image in deleteImages)
+            var package = deleteImages.Select(o => o.Package).FirstOrDefault();
+            if (package != null)
             {
-                if (!await this._annotationPackageProvider.DeleteImageAsync(image))
-                {
-                    successful = false;
-                    failedImages.Add(image);
-
-                    continue;
-                }
-
-                image.Package.Images.Remove(image);
-            }
-
-            if (!successful)
-            {
-                var sb = new StringBuilder();
-                failedImages.ForEach(o => sb.AppendLine(o.ImageName));
-                MessageBox.Show("Couldn't delete the following images:\n\n" + sb.ToString(), "Deletion failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                package.Images.RemoveAll(o => deleteImages.Contains(o));
             }
 
             this._bindingSource.ResetBindings(false);
+
+            var deleteResult = await this.DeleteImagesAsync(deleteImages);
+            if (!deleteResult.Successful)
+            {
+                var sb = new StringBuilder();
+                deleteResult.FailedImages.ForEach(o => sb.AppendLine(o));
+                MessageBox.Show("Couldn't delete the following images:\n\n" + sb.ToString(), "Deletion failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        private async Task<DeleteResult> DeleteImagesAsync(IEnumerable<AnnotationImage> annotationImages)
         {
-            e.Cancel = true;
+            var result = new DeleteResult();
+            result.FailedImages = new List<string>();
+            result.Successful = true;
+
+            foreach (var image in annotationImages)
+            {
+                if (!await this._annotationPackageProvider.DeleteImageAsync(image))
+                {
+                    result.Successful = false;
+                    result.FailedImages.Add(image.ImageName);
+
+                    continue;
+                }
+            }
+
+            return result;
         }
     }
 }

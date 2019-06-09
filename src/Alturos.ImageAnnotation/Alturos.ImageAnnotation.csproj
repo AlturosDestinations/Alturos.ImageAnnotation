@@ -138,6 +138,7 @@
     </Compile>
     <Compile Include="Helper\InterfaceHelper.cs" />
     <Compile Include="Helper\DrawHelper.cs" />
+    <Compile Include="Model\DeleteResult.cs" />
     <Compile Include="Model\NameValueObject.cs" />
     <Compile Include="Helper\MathExtension.cs" />
     <Compile Include="Helper\StringExtension.cs" />
