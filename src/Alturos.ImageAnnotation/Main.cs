@@ -162,32 +162,35 @@ namespace Alturos.ImageAnnotation
         private void SyncToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var packages = this.annotationPackageListControl.GetAllPackages().Where(o => o.IsDirty).ToArray();
-            if (packages.Length > 0)
+            if (packages.Length == 0)
             {
-                // Proceed with syncing
-                var dialog = new SyncConfirmationDialog();
+                MessageBox.Show("There are no unchanged packages to sync.", "Nothing to sync!");
+                return;
+            }
+
+            // Proceed with syncing
+            using (var dialog = new SyncConfirmationDialog())
+            {
                 dialog.StartPosition = FormStartPosition.CenterParent;
                 dialog.SetUnsyncedPackages(packages.ToList());
 
                 var dialogResult = dialog.ShowDialog(this);
-                if (dialogResult == DialogResult.OK)
+                if (dialogResult != DialogResult.OK)
                 {
-                    using (var syncDialog = new SyncProgressDialog(this._annotationPackageProvider))
-                    {
-                        syncDialog.Show(this);
-
-                        _ = Task.Run(() => syncDialog.Sync(packages)).ContinueWith(o=>
-                        {
-                            dialog.Dispose();
-                        });
-
-                        this.annotationPackageListControl.RefreshData();
-                    }
+                    return;
                 }
             }
-            else
+
+            using (var syncDialog = new SyncProgressDialog(this._annotationPackageProvider))
             {
-                MessageBox.Show("There are no unchanged packages to sync.", "Nothing to sync!");
+                syncDialog.Show(this);
+
+                _ = Task.Run(() => syncDialog.Sync(packages)).ContinueWith(o =>
+                {
+                    //dialog.Dispose();
+                });
+
+                this.annotationPackageListControl.RefreshData();
             }
         }
 
@@ -330,12 +333,6 @@ namespace Alturos.ImageAnnotation
             }
 
             this.annotationDrawControl.ApplyCachedBoundingBox();
-
-            //if (image.BoundingBoxes == null)
-            //{
-            //    image.BoundingBoxes = new List<AnnotationBoundingBox>();
-            //    this.ImageEdited(image);
-            //}
         }
 
         private void ImageEdited(AnnotationImage annotationImage)
@@ -346,8 +343,8 @@ namespace Alturos.ImageAnnotation
             }
 
             annotationImage.Package.IsDirty = true;
-
             annotationImage.Package.UpdateAnnotationStatus(annotationImage);
+
             this.annotationPackageListControl.RefreshData();
         }
 

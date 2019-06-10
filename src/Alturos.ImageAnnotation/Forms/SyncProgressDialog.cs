@@ -24,13 +24,17 @@ namespace Alturos.ImageAnnotation.Forms
 
             try
             {
+                foreach (var package in packages)
+                {
+                    package.User = Environment.UserName;
+                }
+
                 _ = Task.Run(() => this.UpdateProgressBar());
                 await this._annotationPackageProvider.SyncPackagesAsync(packages);
 
                 foreach (var package in packages)
                 {
                     package.IsDirty = false;
-                    package.User = Environment.UserName;
                 }
             }
             catch (Exception exception)
