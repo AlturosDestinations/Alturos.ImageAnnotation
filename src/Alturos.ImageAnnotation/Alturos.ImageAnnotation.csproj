@@ -99,7 +99,6 @@
     <Compile Include="Contract\Amazon\AmazonAnnotationPackageProvider.cs" />
     <Compile Include="Contract\Amazon\AnnotationConfigDto.cs" />
     <Compile Include="Contract\IAnnotationPackageProvider.cs" />
-    <Compile Include="Contract\WindowsFileSystemPackageProvider.cs" />
     <Compile Include="CustomControls\DownloadControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
