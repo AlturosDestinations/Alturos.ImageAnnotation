@@ -121,3 +121,7 @@ Once you launch the project you should be able to use your local database.
 
 This program uses icons from the Silk icon set created by Mark James, which can be found [here](http://www.famfamfam.com/lab/icons/silk/).
 The icon set is licensed under a [CC BY 3.0 license](https://creativecommons.org/licenses/by/3.0/). Some changes were made to the icons.
+
+## Other Tools
+
+- [rectlabel.com](https://rectlabel.com)
