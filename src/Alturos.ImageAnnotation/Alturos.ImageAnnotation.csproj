@@ -156,12 +156,6 @@
     <Compile Include="CustomControls\AnnotationDrawControl.Designer.cs">
       <DependentUpon>AnnotationDrawControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="CustomControls\ObjectClassListControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="CustomControls\ObjectClassListControl.Designer.cs">
-      <DependentUpon>ObjectClassListControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="CustomControls\AnnotationImageListControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -215,9 +209,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\DownloadControl.resx">
       <DependentUpon>DownloadControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CustomControls\ObjectClassListControl.resx">
-      <DependentUpon>ObjectClassListControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\AnnotationImageListControl.resx">
       <DependentUpon>AnnotationImageListControl.cs</DependentUpon>

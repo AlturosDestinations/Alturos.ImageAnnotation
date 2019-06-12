@@ -84,7 +84,6 @@ namespace Alturos.ImageAnnotation.Forms
                     {
                         Id = i,
                         Name = checkBox.Text,
-                        Selected = true
                     });
                 }
             }

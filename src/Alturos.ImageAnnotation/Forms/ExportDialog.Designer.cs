@@ -43,11 +43,18 @@
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.labelDownloadProgress = new System.Windows.Forms.Label();
             this.buttonCancel = new System.Windows.Forms.Button();
+            this.groupBoxObjectClasses = new System.Windows.Forms.GroupBox();
+            this.dataGridViewObjectClasses = new System.Windows.Forms.DataGridView();
+            this.ColumnChecked = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.ColumnId = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnObjectClass = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTags)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).BeginInit();
             this.groupBoxTags.SuspendLayout();
             this.groupBoxResult.SuspendLayout();
             this.groupBoxExportProvider.SuspendLayout();
+            this.groupBoxObjectClasses.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewObjectClasses)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonExport
@@ -79,7 +86,7 @@
             this.dataGridViewTags.ReadOnly = true;
             this.dataGridViewTags.RowHeadersVisible = false;
             this.dataGridViewTags.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewTags.Size = new System.Drawing.Size(552, 112);
+            this.dataGridViewTags.Size = new System.Drawing.Size(289, 112);
             this.dataGridViewTags.TabIndex = 4;
             // 
             // ColumnValue
@@ -126,19 +133,21 @@
             // 
             // groupBoxTags
             // 
+            this.groupBoxTags.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxTags.Controls.Add(this.buttonSearch);
             this.groupBoxTags.Controls.Add(this.dataGridViewTags);
             this.groupBoxTags.Location = new System.Drawing.Point(12, 9);
             this.groupBoxTags.Name = "groupBoxTags";
-            this.groupBoxTags.Size = new System.Drawing.Size(564, 167);
+            this.groupBoxTags.Size = new System.Drawing.Size(301, 167);
             this.groupBoxTags.TabIndex = 6;
             this.groupBoxTags.TabStop = false;
             this.groupBoxTags.Text = "Tags";
             // 
             // buttonSearch
             // 
-            this.buttonSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonSearch.Location = new System.Drawing.Point(6, 137);
+            this.buttonSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonSearch.Location = new System.Drawing.Point(220, 137);
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(75, 24);
             this.buttonSearch.TabIndex = 8;
@@ -220,11 +229,72 @@
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);
             // 
+            // groupBoxObjectClasses
+            // 
+            this.groupBoxObjectClasses.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxObjectClasses.Controls.Add(this.dataGridViewObjectClasses);
+            this.groupBoxObjectClasses.Location = new System.Drawing.Point(320, 9);
+            this.groupBoxObjectClasses.Name = "groupBoxObjectClasses";
+            this.groupBoxObjectClasses.Size = new System.Drawing.Size(256, 167);
+            this.groupBoxObjectClasses.TabIndex = 11;
+            this.groupBoxObjectClasses.TabStop = false;
+            this.groupBoxObjectClasses.Text = "Object Classes";
+            // 
+            // dataGridViewObjectClasses
+            // 
+            this.dataGridViewObjectClasses.AllowUserToAddRows = false;
+            this.dataGridViewObjectClasses.AllowUserToDeleteRows = false;
+            this.dataGridViewObjectClasses.AllowUserToResizeRows = false;
+            this.dataGridViewObjectClasses.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridViewObjectClasses.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridViewObjectClasses.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewObjectClasses.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.ColumnChecked,
+            this.ColumnId,
+            this.ColumnObjectClass});
+            this.dataGridViewObjectClasses.Location = new System.Drawing.Point(6, 15);
+            this.dataGridViewObjectClasses.Name = "dataGridViewObjectClasses";
+            this.dataGridViewObjectClasses.RowHeadersVisible = false;
+            this.dataGridViewObjectClasses.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridViewObjectClasses.Size = new System.Drawing.Size(244, 146);
+            this.dataGridViewObjectClasses.TabIndex = 9;
+            this.dataGridViewObjectClasses.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewObjectClasses_CellClick);
+            // 
+            // ColumnChecked
+            // 
+            this.ColumnChecked.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.ColumnChecked.DataPropertyName = "Selected";
+            this.ColumnChecked.FillWeight = 90.63071F;
+            this.ColumnChecked.HeaderText = "";
+            this.ColumnChecked.Name = "ColumnChecked";
+            this.ColumnChecked.Width = 50;
+            // 
+            // ColumnId
+            // 
+            this.ColumnId.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.ColumnId.DataPropertyName = "Id";
+            this.ColumnId.FillWeight = 76.14214F;
+            this.ColumnId.HeaderText = "Id";
+            this.ColumnId.Name = "ColumnId";
+            this.ColumnId.ReadOnly = true;
+            this.ColumnId.Width = 50;
+            // 
+            // ColumnObjectClass
+            // 
+            this.ColumnObjectClass.DataPropertyName = "Name";
+            this.ColumnObjectClass.FillWeight = 133.2271F;
+            this.ColumnObjectClass.HeaderText = "Name";
+            this.ColumnObjectClass.Name = "ColumnObjectClass";
+            this.ColumnObjectClass.ReadOnly = true;
+            // 
             // ExportDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(588, 557);
+            this.Controls.Add(this.groupBoxObjectClasses);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.labelDownloadProgress);
             this.Controls.Add(this.progressBar);
@@ -244,6 +314,8 @@
             this.groupBoxResult.ResumeLayout(false);
             this.groupBoxResult.PerformLayout();
             this.groupBoxExportProvider.ResumeLayout(false);
+            this.groupBoxObjectClasses.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewObjectClasses)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -265,5 +337,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
         private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnExported;
         private System.Windows.Forms.Button buttonCancel;
+        private System.Windows.Forms.GroupBox groupBoxObjectClasses;
+        private System.Windows.Forms.DataGridView dataGridViewObjectClasses;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnChecked;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnId;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnObjectClass;
     }
 }
