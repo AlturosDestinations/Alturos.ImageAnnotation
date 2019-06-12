@@ -90,8 +90,8 @@ You can also use [MinIO](https://github.com/minio/minio) instead of S3 and a [lo
 
 ### Local Installation
 
-* In order to use a local DynamoDB, download it first [here](http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.tar.gz).
-You can use an unzipping program like [7-zip](https://www.7-zip.org/) to extract the tar file from the gz, before extracting the tar file into its own folder.
+* In order to use a local DynamoDB, download it first [here](http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.zip).
+Extract the downloaded zip file into a folder of your choice.
 
 * Next, download and install the Java Runtime Environment [here](https://java.com/download).
 
@@ -109,7 +109,7 @@ aws configure
 ```
 You'll be asked to enter some keys. Since the database is entirely local, you can just use fixed demo keys, for instance `AKIAIOSFODNN7EXAMPLE` for the access key id, and `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` for the secret access key.
 
-* Restart the command prompt and navigate to the folder of your unzipped DynamoDB tar file. Write the following:
+* Restart the command prompt and navigate to the folder of your unzipped DynamoDB file. Write the following:
 ```
 java -Djava.library.path=./DynamoDBLocal_lib/ -jar DynamoDBLocal.jar
 ```
