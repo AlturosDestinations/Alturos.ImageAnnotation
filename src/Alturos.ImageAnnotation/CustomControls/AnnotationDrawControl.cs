@@ -36,6 +36,8 @@ namespace Alturos.ImageAnnotation.CustomControls
         private List<ObjectClass> _objectClasses;
         private double _grabOffsetX;
         private double _grabOffsetY;
+        private double _mouseOffsetX;
+        private double _mouseOffsetY;
         private bool _createBoundingBox;
         private Point _creationPoint;
         private bool _changedImageViaKey;
@@ -463,6 +465,9 @@ namespace Alturos.ImageAnnotation.CustomControls
 
                             this._grabOffsetX = (this._dragPoint.Point.X - rectangle.X) / canvasInfo.ScaledWidth;
                             this._grabOffsetY = (this._dragPoint.Point.Y - rectangle.Y) / canvasInfo.ScaledHeight;
+
+                            this._mouseOffsetX = this._mousePosition.X - this._dragPoint.Point.X;
+                            this._mouseOffsetY = this._mousePosition.Y - this._dragPoint.Point.Y;
 
                             break;
                         }
