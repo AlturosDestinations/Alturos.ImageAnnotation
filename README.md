@@ -115,6 +115,21 @@ java -Djava.library.path=./DynamoDBLocal_lib/ -jar DynamoDBLocal.jar
 ```
 
 * Change the value `serviceUrl` inside the App.config file of this project to `localhost:8000`, and change the `accessKeyId` and `SecretAccessKey` to the previously defined values.
+
+* Download [MinIO](https://min.io/download) into a directory of your choice.
+
+* Create a textfile containing the following line:
+```
+minio.exe server C:\Users\Username\Downloads\minio\
+```
+Replace the path with the directory you downloaded minio.exe to and save the file as "minio.cmd" in the same directory.
+You can do so using a text editor like Notepad. When saving, choose "All files (*.*)" from the "Save as type" dropdown menu, to make sure your program doesn't add a file extension of its own.
+
+* Create a folder named "minio" in the same directory as your exe and cmd files.
+
+* Launch minio.exe.
+MinIO should now be writing content to the folder you just created.
+
 Once you launch the project you should be able to use your local database. 
 
 ## Credits
