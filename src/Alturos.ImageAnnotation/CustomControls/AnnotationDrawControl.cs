@@ -378,6 +378,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 topLeftCorner = this.ClampPoint(topLeftCorner);
                 bottomRightCorner = this.ClampPoint(bottomRightCorner);
 
+                // TODO: Place this outside of painting since this isn't just used for drawing
                 this._canPlaceBoundingBox = true;
                 if (bottomRightCorner.X - topLeftCorner.X < this._minSize.Width || bottomRightCorner.Y - topLeftCorner.Y < this._minSize.Height)
                 {
@@ -520,8 +521,9 @@ namespace Alturos.ImageAnnotation.CustomControls
             {
                 var canvasInfo = this.GetCanvasInformation();
 
-                var x = (e.X - canvasInfo.OffsetX) / canvasInfo.ScaledWidth;
-                var y = (e.Y - canvasInfo.OffsetY) / canvasInfo.ScaledHeight;
+                var clampedMousePosition = this.ClampPoint(new PointF(e.X, e.Y));
+                var x = (clampedMousePosition.X - canvasInfo.OffsetX) / canvasInfo.ScaledWidth;
+                var y = (clampedMousePosition.Y - canvasInfo.OffsetY) / canvasInfo.ScaledHeight;
 
                 var centerX = x + (this._draggedBoundingBox.Width / 2) - this._grabOffsetX;
                 var centerY = y + (this._draggedBoundingBox.Height / 2) - this._grabOffsetY;
