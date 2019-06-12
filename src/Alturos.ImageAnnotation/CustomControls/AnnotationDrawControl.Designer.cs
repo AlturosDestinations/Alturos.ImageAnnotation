@@ -65,13 +65,13 @@
             this.contextMenuStripPicture.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.clearAnnotationsToolStripMenuItem});
             this.contextMenuStripPicture.Name = "contextMenuStripPicture";
-            this.contextMenuStripPicture.Size = new System.Drawing.Size(181, 48);
+            this.contextMenuStripPicture.Size = new System.Drawing.Size(170, 26);
             // 
             // clearAnnotationsToolStripMenuItem
             // 
             this.clearAnnotationsToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.asterisk_yellow;
             this.clearAnnotationsToolStripMenuItem.Name = "clearAnnotationsToolStripMenuItem";
-            this.clearAnnotationsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.clearAnnotationsToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.clearAnnotationsToolStripMenuItem.Text = "&Clear Annotations";
             this.clearAnnotationsToolStripMenuItem.Click += new System.EventHandler(this.ClearAnnotationsToolStripMenuItem_Click);
             // 
@@ -79,7 +79,9 @@
             // 
             this.legendsChart.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.legendsChart.BackColor = System.Drawing.Color.Transparent;
             legend1.Alignment = System.Drawing.StringAlignment.Center;
+            legend1.BackColor = System.Drawing.Color.Transparent;
             legendItem1.Color = System.Drawing.Color.Aqua;
             legendItem1.Name = "Legend 1";
             legendItem2.Color = System.Drawing.Color.Red;

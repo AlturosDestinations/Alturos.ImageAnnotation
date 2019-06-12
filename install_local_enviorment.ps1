@@ -6,7 +6,7 @@ $dynamedbPackageName = "dynamodb_local.zip"
 $minioUrl = "https://dl.min.io/server/minio/release/windows-amd64/minio.exe"
 
 #Download Local DynamoDB
-#Invoke-WebRequest -Uri $dynamodbUrl -OutFile $dynamedbPackageName
+Invoke-WebRequest -Uri $dynamodbUrl -OutFile $dynamedbPackageName
 [System.IO.Compression.ZipFile]::ExtractToDirectory($dynamedbPackageName, ".\dynamodb\")
 
 #Download MinIO

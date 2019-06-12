@@ -145,10 +145,10 @@ namespace Alturos.ImageAnnotation
 
                 this.menuStripMain.Enabled = enable;
                 this.annotationPackageListControl.Enabled = enable;
+                this.tabControl.Enabled = enable;
 
                 this.annotationImageListControl.Visible = showEditControls;
                 this.annotationDrawControl.Visible = showEditControls;
-                this.tagEditControl.Visible = showEditControls;
 
                 this.downloadControl.Visible = showDownloadControl;
             });
@@ -265,6 +265,7 @@ namespace Alturos.ImageAnnotation
         private async Task LoadPackagesAsync(bool annotated)
         {
             this.EnableMainMenu(false);
+            this.tabControl.Invoke((MethodInvoker)delegate { this.tabControl.SelectedIndex = 0; });
             await this.annotationPackageListControl.LoadPackagesAsync(annotated);
             this.EnableMainMenu(true);
         }
@@ -287,6 +288,8 @@ namespace Alturos.ImageAnnotation
 
             this.annotationImageListControl.Reset();
             this.annotationDrawControl.Reset();
+
+            this.labelUserName.Text = package.User;
 
             if (package != null)
             {

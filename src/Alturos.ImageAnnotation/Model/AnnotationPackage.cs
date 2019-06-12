@@ -26,8 +26,6 @@ namespace Alturos.ImageAnnotation.Model
         public List<AnnotationImage> Images { get; set; }
         public List<string> Tags { get; set; }
 
-        private FileInfo[] _files;
-
         public void PrepareImages(string packagePath)
         {
             if (this.Images == null)
@@ -35,17 +33,14 @@ namespace Alturos.ImageAnnotation.Model
                 this.Images = new List<AnnotationImage>();
             }
 
-            if (this._files == null)
-            {
-                var allowedExtensions = new[] { ".png", ".jpg", ".bmp" };
-                this._files = Directory.GetFiles(packagePath)
-                    .Where(file => allowedExtensions.Any(file.ToLower().EndsWith))
-                    .Select(o => new FileInfo(o))
-                    .OrderBy(o => o.Name.GetFirstNumber())
-                    .ToArray();
-            }
+            var allowedExtensions = new[] { ".png", ".jpg", ".bmp" };
+            var files = Directory.GetFiles(packagePath)
+                .Where(file => allowedExtensions.Any(file.ToLower().EndsWith))
+                .Select(o => new FileInfo(o))
+                .OrderBy(o => o.Name.GetFirstNumber())
+                .ToArray();
 
-            var query = from file in this._files
+            var query = from file in files
                         join image in this.Images on file.Name equals image.ImageName into j1
                         from annotationImage in j1.DefaultIfEmpty(new AnnotationImage())
                         select new AnnotationImage

@@ -90,8 +90,8 @@ You can also use [MinIO](https://github.com/minio/minio) instead of S3 and a [lo
 
 ### Local Installation
 
-* In order to use a local DynamoDB, download it first [here](http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.tar.gz).
-You can use an unzipping program like [7-zip](https://www.7-zip.org/) to extract the tar file from the gz, before extracting the tar file into its own folder.
+* In order to use a local DynamoDB, download it first [here](http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.zip).
+Extract the downloaded zip file into a folder of your choice.
 
 * Next, download and install the Java Runtime Environment [here](https://java.com/download).
 
@@ -109,13 +109,30 @@ aws configure
 ```
 You'll be asked to enter some keys. Since the database is entirely local, you can just use fixed demo keys, for instance `AKIAIOSFODNN7EXAMPLE` for the access key id, and `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` for the secret access key.
 
-* Restart the command prompt and navigate to the folder of your unzipped DynamoDB tar file. Write the following:
+* Change the value `serviceUrl` inside the App.config file of this project to `localhost:8000`, and change the `accessKeyId` and `SecretAccessKey` to the previously defined values.
+
+* Download [MinIO](https://min.io/download) into a directory of your choice.
+
+* Create a textfile containing the following line:
+```
+minio.exe server C:\Users\Username\Downloads\minio\
+```
+Replace the path with the directory you downloaded minio.exe to and save the file as "minio.cmd" in the same directory.
+You can do so using a text editor like Notepad. When saving, choose "All files (*.*)" from the "Save as type" dropdown menu, to make sure your program doesn't add a file extension of its own.
+
+* Create a folder named "minio" in the same directory as your exe and cmd files.
+
+### The setup is now complete. Everytime you want to use the local database with the project, you start it as follows:
+
+* Launch minio.cmd.
+
+* Open the command prompt from the folder where your local DynamoDB is located at.
+You can do this by typing "cmd" into the Windows Explorer address bar when you're inside your folder. Write the following:
 ```
 java -Djava.library.path=./DynamoDBLocal_lib/ -jar DynamoDBLocal.jar
 ```
 
-* Change the value `serviceUrl` inside the App.config file of this project to `localhost:8000`, and change the `accessKeyId` and `SecretAccessKey` to the previously defined values.
-Once you launch the project you should be able to use your local database. 
+Once you launch the project you should be able to use your local database.
 
 ## Credits
 

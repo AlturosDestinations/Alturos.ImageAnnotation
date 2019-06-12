@@ -23,7 +23,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         private readonly int _mouseDragElementSize = 10;
         private readonly int _maxMouseDistanceToDragPoint = 10;
         private readonly Size _minSize = new Size(30, 30);
-        private readonly Size _minSizeForEdgeAnchors = new Size(50, 50);
+        private readonly Size _minSizeForEdgeAnchors = new Size(75, 75);
 
         private bool _mouseOver;
         private Point _mousePosition = new Point(0, 0);
@@ -36,9 +36,12 @@ namespace Alturos.ImageAnnotation.CustomControls
         private List<ObjectClass> _objectClasses;
         private double _grabOffsetX;
         private double _grabOffsetY;
+        private double _mouseOffsetX;
+        private double _mouseOffsetY;
         private bool _createBoundingBox;
         private Point _creationPoint;
         private bool _changedImageViaKey;
+        private bool _canPlaceBoundingBox;
 
         public AnnotationDrawControl()
         {
@@ -190,13 +193,11 @@ namespace Alturos.ImageAnnotation.CustomControls
             var topRightPoint = new Point(rectangle.X + rectangle.Width + drawOffset, rectangle.Y - drawOffset);
             var bottomLeftPoint = new Point(rectangle.X - drawOffset, rectangle.Y + rectangle.Height + drawOffset);
             var bottomRightPoint = new Point(rectangle.X + rectangle.Width + drawOffset, rectangle.Y + rectangle.Height + drawOffset);
-            var deletePoint = new Point(rectangle.X + rectangle.Width - 15 - drawOffset, rectangle.Y - drawOffset);
 
             dragPoints.Add(new DragPoint(topLeftPoint, DragPointType.Resize, Cursors.SizeNWSE, 315));
             dragPoints.Add(new DragPoint(topRightPoint, DragPointType.Resize, Cursors.SizeNESW, 225));
             dragPoints.Add(new DragPoint(bottomLeftPoint, DragPointType.Resize, Cursors.SizeNESW, 45));
             dragPoints.Add(new DragPoint(bottomRightPoint, DragPointType.Resize, Cursors.SizeNWSE, 135));
-            dragPoints.Add(new DragPoint(deletePoint, DragPointType.Delete, Cursors.Hand, 0));
 
             if (rectangle.Width > this._minSizeForEdgeAnchors.Width)
             {
@@ -215,6 +216,9 @@ namespace Alturos.ImageAnnotation.CustomControls
                 dragPoints.Add(new DragPoint(leftPoint, DragPointType.Resize, Cursors.SizeWE, 0));
                 dragPoints.Add(new DragPoint(rightPoint, DragPointType.Resize, Cursors.SizeWE, 180));
             }
+
+            var deletePoint = new Point(rectangle.X + rectangle.Width - 15 - drawOffset, rectangle.Y - drawOffset);
+            dragPoints.Add(new DragPoint(deletePoint, DragPointType.Delete, Cursors.Hand, 0));
 
             return dragPoints.ToArray();
         }
@@ -244,6 +248,15 @@ namespace Alturos.ImageAnnotation.CustomControls
             return new PointF(oppositeAnchorX, oppositeAnchorY);
         }
 
+        private PointF ClampPoint(PointF point)
+        {
+            var canvasInfo = GetCanvasInformation();
+
+            return new PointF(
+                point.X.Clamp((float)canvasInfo.OffsetX, (float)canvasInfo.OffsetX + (float)canvasInfo.ScaledWidth),
+                point.Y.Clamp((float)canvasInfo.OffsetY, (float)canvasInfo.OffsetY + (float)canvasInfo.ScaledHeight));
+        }
+
         private void PictureBox1_Paint(object sender, PaintEventArgs e)
         {
             if (this.pictureBox1.Image == null)
@@ -265,6 +278,9 @@ namespace Alturos.ImageAnnotation.CustomControls
             var boundingBoxes = this._annotationImage?.BoundingBoxes;
             if (boundingBoxes != null)
             {
+                var canHighlightBoundingBox = true;
+                var canHighlightDragPoint = true;
+
                 foreach (var boundingBox in boundingBoxes)
                 {
                     var rectangle = this.GetRectangle(boundingBox);
@@ -285,17 +301,29 @@ namespace Alturos.ImageAnnotation.CustomControls
                     var biggerRectangle = Rectangle.Inflate(rectangle, 20, 20);
                     if (biggerRectangle.Contains(this._mousePosition))
                     {
-                        System.Windows.Forms.Cursor.Current = Cursors.SizeAll;
+                        if (canHighlightBoundingBox)
+                        {
+                            System.Windows.Forms.Cursor.Current = Cursors.SizeAll;
+                            canHighlightBoundingBox = false;
+                        }
+                        else
+                        {
+                            continue;
+                        }
 
                         var dragPoints = this.GetDragPoints(rectangle, drawOffset);
+
                         foreach (var dragPoint in dragPoints)
                         {
                             var dragElementBrush = Brushes.LightPink;
 
-                            if (this.PointDistance(this._mousePosition, new Point(dragPoint.Point.X, dragPoint.Point.Y)) < this._maxMouseDistanceToDragPoint)
+                            if (this.PointDistance(this._mousePosition, new Point(dragPoint.Point.X, dragPoint.Point.Y)) < this._maxMouseDistanceToDragPoint && canHighlightDragPoint)
                             {
                                 System.Windows.Forms.Cursor.Current = dragPoint.Cursor;
                                 dragElementBrush = Brushes.Yellow;
+
+                                canHighlightBoundingBox = false;
+                                canHighlightDragPoint = false;
                             }
 
                             if (dragPoint.Type == DragPointType.Resize)
@@ -335,6 +363,8 @@ namespace Alturos.ImageAnnotation.CustomControls
                                 e.Graphics.FillEllipse(dragElementBrush, dragPoint.Point.X, dragPoint.Point.Y, this._mouseDragElementSize, this._mouseDragElementSize);
                             }
                         }
+
+                        canHighlightDragPoint = false;
                     }
                 }
             }
@@ -344,21 +374,27 @@ namespace Alturos.ImageAnnotation.CustomControls
                 var point1 = this._creationPoint;
                 var point2 = this._mousePosition;
 
-                var topLeftCorner = new Point((int)Math.Min(point1.X, point2.X), (int)Math.Min(point1.Y, point2.Y));
-                var bottomRightCorner = new Point((int)Math.Max(point1.X, point2.X), (int)Math.Max(point1.Y, point2.Y));
+                var topLeftCorner = new PointF((int)Math.Min(point1.X, point2.X), (int)Math.Min(point1.Y, point2.Y));
+                var bottomRightCorner = new PointF((int)Math.Max(point1.X, point2.X), (int)Math.Max(point1.Y, point2.Y));
 
-                var allowed = true;
+                topLeftCorner = this.ClampPoint(topLeftCorner);
+                bottomRightCorner = this.ClampPoint(bottomRightCorner);
+
+                // TODO: Place this outside of painting since this isn't just used for drawing
+                this._canPlaceBoundingBox = true;
                 if (bottomRightCorner.X - topLeftCorner.X < this._minSize.Width || bottomRightCorner.Y - topLeftCorner.Y < this._minSize.Height)
                 {
-                    allowed = false;
+                    this._canPlaceBoundingBox = false;
                 }
 
-                using (var pen = new Pen(allowed ? Color.FromArgb(255, 255, 255, 0) : Color.FromArgb(255, 255, 191, 0)))
+                using (var pen = new Pen(this._canPlaceBoundingBox ? Color.FromArgb(255, 255, 255, 0) : Color.FromArgb(255, 255, 191, 0)))
                 {
                     e.Graphics.DrawRectangle(pen,
-                        new Rectangle(topLeftCorner, new Size(bottomRightCorner.X - topLeftCorner.X, bottomRightCorner.Y - topLeftCorner.Y)));
+                        new Rectangle(
+                            new Point((int)topLeftCorner.X, (int)topLeftCorner.Y),
+                            new Size((int)(bottomRightCorner.X - topLeftCorner.X), (int)(bottomRightCorner.Y - topLeftCorner.Y))));
 
-                    if (!allowed)
+                    if (!this._canPlaceBoundingBox)
                     {
                         e.Graphics.DrawLine(pen, topLeftCorner, bottomRightCorner);
                         e.Graphics.DrawLine(pen, new PointF(topLeftCorner.X, bottomRightCorner.Y), new PointF(bottomRightCorner.X, topLeftCorner.Y));
@@ -430,6 +466,9 @@ namespace Alturos.ImageAnnotation.CustomControls
                             this._grabOffsetX = (this._dragPoint.Point.X - rectangle.X) / canvasInfo.ScaledWidth;
                             this._grabOffsetY = (this._dragPoint.Point.Y - rectangle.Y) / canvasInfo.ScaledHeight;
 
+                            this._mouseOffsetX = this._dragPoint.Point.X - this._mousePosition.X;
+                            this._mouseOffsetY = this._dragPoint.Point.Y - this._mousePosition.Y;
+
                             break;
                         }
                     }
@@ -461,8 +500,7 @@ namespace Alturos.ImageAnnotation.CustomControls
             if (this._createBoundingBox)
             {
                 this._createBoundingBox = false;
-                if (Math.Abs(this._creationPoint.X - e.Location.X) >= this._minSize.Width &&
-                    Math.Abs(this._creationPoint.Y - e.Location.Y) >= this._minSize.Height) {
+                if (this._canPlaceBoundingBox) {
                     this.CreateBoundingBox(this._creationPoint, e.Location);
                 }
 
@@ -488,8 +526,9 @@ namespace Alturos.ImageAnnotation.CustomControls
             {
                 var canvasInfo = this.GetCanvasInformation();
 
-                var x = (e.X - canvasInfo.OffsetX) / canvasInfo.ScaledWidth;
-                var y = (e.Y - canvasInfo.OffsetY) / canvasInfo.ScaledHeight;
+                var clampedMousePosition = this.ClampPoint(new PointF(e.X + (float)this._mouseOffsetX, e.Y + (float)this._mouseOffsetY));
+                var x = (clampedMousePosition.X - canvasInfo.OffsetX) / canvasInfo.ScaledWidth;
+                var y = (clampedMousePosition.Y - canvasInfo.OffsetY) / canvasInfo.ScaledHeight;
 
                 var centerX = x + (this._draggedBoundingBox.Width / 2) - this._grabOffsetX;
                 var centerY = y + (this._draggedBoundingBox.Height / 2) - this._grabOffsetY;
@@ -497,7 +536,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 centerX = centerX.Clamp(this._draggedBoundingBox.Width / 2, 1 - this._draggedBoundingBox.Width / 2);
                 centerY = centerY.Clamp(this._draggedBoundingBox.Height / 2, 1 - this._draggedBoundingBox.Height / 2);
 
-                if (this._dragPoint != null)
+                if (this._dragPoint != null && this._dragPoint.Type == DragPointType.Resize)
                 {
                     var cachedCenter = new PointF(this._selectedObjectRect.X + this._selectedObjectRect.Width / 2, this._selectedObjectRect.Y + this._selectedObjectRect.Height / 2);
 
@@ -546,6 +585,9 @@ namespace Alturos.ImageAnnotation.CustomControls
 
             var topLeftCorner = new PointF(Math.Min(point1.X, point2.X), Math.Min(point1.Y, point2.Y));
             var bottomRightCorner = new PointF(Math.Max(point1.X, point2.X), Math.Max(point1.Y, point2.Y));
+
+            topLeftCorner = this.ClampPoint(topLeftCorner);
+            bottomRightCorner = this.ClampPoint(bottomRightCorner);
 
             var width = (bottomRightCorner.X - topLeftCorner.X) / canvasInfo.ScaledWidth;
             var height = (bottomRightCorner.Y - topLeftCorner.Y) / canvasInfo.ScaledHeight;

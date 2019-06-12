@@ -32,6 +32,7 @@ namespace Alturos.ImageAnnotation.Forms
 
             this._config = this._annotationPackageProvider.GetAnnotationConfigAsync().GetAwaiter().GetResult();
             this.dataGridViewTags.DataSource = this._config.Tags;
+            this.dataGridViewObjectClasses.DataSource = this._config.ObjectClasses.ToList();
 
             // Set export providers
             var objects = InterfaceHelper.GetImplementations<IAnnotationExportProvider>();
@@ -51,13 +52,18 @@ namespace Alturos.ImageAnnotation.Forms
             this.Invoke((MethodInvoker)delegate { this.EnableExportMenu(false); });
 
             var items = await this._annotationPackageProvider.GetPackagesAsync(tags.ToArray());
-            this.dataGridViewResult.DataSource = items.ToList();
-            this.labelPackageCount.Text = $"{items.Length.ToString()} found";
+
+            var objectClasses = this.dataGridViewObjectClasses.DataSource as List<ObjectClass>;
+            var packages = items.Where(o => o.IsAnnotated && o.Images.Any(p => p.BoundingBoxes.Any(q => objectClasses.Select(t => t.Id).Contains(q.ObjectIndex)))).ToList();
+
+            this.dataGridViewResult.DataSource = packages;
+            this.labelPackageCount.Text = $"{packages.Count.ToString()} found";
 
             foreach (DataGridViewRow row in this.dataGridViewResult.Rows)
             {
                 if ((row.DataBoundItem as AnnotationPackage).AvailableLocally)
                 {
+                    //TODO:Cleanup
                     row.Cells[1].Value = true;
                 }
             }
@@ -213,6 +219,18 @@ namespace Alturos.ImageAnnotation.Forms
         private void ExportDialog_FormClosed(object sender, FormClosedEventArgs e)
         {
             this._tokenSource?.Cancel();
+        }
+
+        private void DataGridViewObjectClasses_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var cell = this.dataGridViewObjectClasses.CurrentCell as DataGridViewCheckBoxCell;
+
+            if (cell != null && !cell.ReadOnly)
+            {
+                cell.Value = cell.Value == null || !((bool)cell.Value);
+                this.dataGridViewObjectClasses.RefreshEdit();
+                this.dataGridViewObjectClasses.NotifyCurrentCellDirty(true);
+            }
         }
     }
 }
