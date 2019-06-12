@@ -39,6 +39,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         private bool _createBoundingBox;
         private Point _creationPoint;
         private bool _changedImageViaKey;
+        private bool _canPlaceBoundingBox;
 
         public AnnotationDrawControl()
         {
@@ -245,6 +246,15 @@ namespace Alturos.ImageAnnotation.CustomControls
             return new PointF(oppositeAnchorX, oppositeAnchorY);
         }
 
+        private PointF ClampPoint(PointF point)
+        {
+            var canvasInfo = GetCanvasInformation();
+
+            return new PointF(
+                point.X.Clamp((float)canvasInfo.OffsetX, (float)canvasInfo.OffsetX + (float)canvasInfo.ScaledWidth),
+                point.Y.Clamp((float)canvasInfo.OffsetY, (float)canvasInfo.OffsetY + (float)canvasInfo.ScaledHeight));
+        }
+
         private void PictureBox1_Paint(object sender, PaintEventArgs e)
         {
             if (this.pictureBox1.Image == null)
@@ -362,21 +372,26 @@ namespace Alturos.ImageAnnotation.CustomControls
                 var point1 = this._creationPoint;
                 var point2 = this._mousePosition;
 
-                var topLeftCorner = new Point((int)Math.Min(point1.X, point2.X), (int)Math.Min(point1.Y, point2.Y));
-                var bottomRightCorner = new Point((int)Math.Max(point1.X, point2.X), (int)Math.Max(point1.Y, point2.Y));
+                var topLeftCorner = new PointF((int)Math.Min(point1.X, point2.X), (int)Math.Min(point1.Y, point2.Y));
+                var bottomRightCorner = new PointF((int)Math.Max(point1.X, point2.X), (int)Math.Max(point1.Y, point2.Y));
 
-                var allowed = true;
+                topLeftCorner = this.ClampPoint(topLeftCorner);
+                bottomRightCorner = this.ClampPoint(bottomRightCorner);
+
+                this._canPlaceBoundingBox = true;
                 if (bottomRightCorner.X - topLeftCorner.X < this._minSize.Width || bottomRightCorner.Y - topLeftCorner.Y < this._minSize.Height)
                 {
-                    allowed = false;
+                    this._canPlaceBoundingBox = false;
                 }
 
-                using (var pen = new Pen(allowed ? Color.FromArgb(255, 255, 255, 0) : Color.FromArgb(255, 255, 191, 0)))
+                using (var pen = new Pen(this._canPlaceBoundingBox ? Color.FromArgb(255, 255, 255, 0) : Color.FromArgb(255, 255, 191, 0)))
                 {
                     e.Graphics.DrawRectangle(pen,
-                        new Rectangle(topLeftCorner, new Size(bottomRightCorner.X - topLeftCorner.X, bottomRightCorner.Y - topLeftCorner.Y)));
+                        new Rectangle(
+                            new Point((int)topLeftCorner.X, (int)topLeftCorner.Y),
+                            new Size((int)(bottomRightCorner.X - topLeftCorner.X), (int)(bottomRightCorner.Y - topLeftCorner.Y))));
 
-                    if (!allowed)
+                    if (!this._canPlaceBoundingBox)
                     {
                         e.Graphics.DrawLine(pen, topLeftCorner, bottomRightCorner);
                         e.Graphics.DrawLine(pen, new PointF(topLeftCorner.X, bottomRightCorner.Y), new PointF(bottomRightCorner.X, topLeftCorner.Y));
@@ -479,8 +494,7 @@ namespace Alturos.ImageAnnotation.CustomControls
             if (this._createBoundingBox)
             {
                 this._createBoundingBox = false;
-                if (Math.Abs(this._creationPoint.X - e.Location.X) >= this._minSize.Width &&
-                    Math.Abs(this._creationPoint.Y - e.Location.Y) >= this._minSize.Height) {
+                if (this._canPlaceBoundingBox) {
                     this.CreateBoundingBox(this._creationPoint, e.Location);
                 }
 
@@ -564,6 +578,9 @@ namespace Alturos.ImageAnnotation.CustomControls
 
             var topLeftCorner = new PointF(Math.Min(point1.X, point2.X), Math.Min(point1.Y, point2.Y));
             var bottomRightCorner = new PointF(Math.Max(point1.X, point2.X), Math.Max(point1.Y, point2.Y));
+
+            topLeftCorner = this.ClampPoint(topLeftCorner);
+            bottomRightCorner = this.ClampPoint(bottomRightCorner);
 
             var width = (bottomRightCorner.X - topLeftCorner.X) / canvasInfo.ScaledWidth;
             var height = (bottomRightCorner.Y - topLeftCorner.Y) / canvasInfo.ScaledHeight;
