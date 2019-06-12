@@ -466,8 +466,8 @@ namespace Alturos.ImageAnnotation.CustomControls
                             this._grabOffsetX = (this._dragPoint.Point.X - rectangle.X) / canvasInfo.ScaledWidth;
                             this._grabOffsetY = (this._dragPoint.Point.Y - rectangle.Y) / canvasInfo.ScaledHeight;
 
-                            this._mouseOffsetX = this._mousePosition.X - this._dragPoint.Point.X;
-                            this._mouseOffsetY = this._mousePosition.Y - this._dragPoint.Point.Y;
+                            this._mouseOffsetX = this._dragPoint.Point.X - this._mousePosition.X;
+                            this._mouseOffsetY = this._dragPoint.Point.Y - this._mousePosition.Y;
 
                             break;
                         }
@@ -526,7 +526,7 @@ namespace Alturos.ImageAnnotation.CustomControls
             {
                 var canvasInfo = this.GetCanvasInformation();
 
-                var clampedMousePosition = this.ClampPoint(new PointF(e.X, e.Y));
+                var clampedMousePosition = this.ClampPoint(new PointF(e.X + (float)this._mouseOffsetX, e.Y + (float)this._mouseOffsetY));
                 var x = (clampedMousePosition.X - canvasInfo.OffsetX) / canvasInfo.ScaledWidth;
                 var y = (clampedMousePosition.Y - canvasInfo.OffsetY) / canvasInfo.ScaledHeight;
 
