@@ -51,8 +51,9 @@ namespace Alturos.ImageAnnotation.Forms
             this.Invoke((MethodInvoker)delegate { this.EnableExportMenu(false); });
 
             var items = await this._annotationPackageProvider.GetPackagesAsync(tags.ToArray());
-            this.dataGridViewResult.DataSource = items.ToList();
-            this.labelPackageCount.Text = $"{items.Length.ToString()} found";
+            var packages = items.Where(o => o.IsAnnotated).ToList();
+            this.dataGridViewResult.DataSource = packages;
+            this.labelPackageCount.Text = $"{packages.Count.ToString()} found";
 
             foreach (DataGridViewRow row in this.dataGridViewResult.Rows)
             {

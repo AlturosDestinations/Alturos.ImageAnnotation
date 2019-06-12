@@ -331,6 +331,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             }
 
             package.AvailableLocally = true;
+            package.Images = null;
 
             var path = Path.Combine(this._extractionFolder, package.PackageName);
             package.PrepareImages(path);
