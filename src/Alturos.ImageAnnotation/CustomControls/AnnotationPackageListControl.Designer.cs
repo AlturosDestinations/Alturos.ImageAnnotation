@@ -44,7 +44,6 @@
             this.labelLoading = new System.Windows.Forms.Label();
             this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnPercentage = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnUser = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -61,8 +60,7 @@
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ColumnName,
-            this.ColumnPercentage,
-            this.ColumnUser});
+            this.ColumnPercentage});
             this.dataGridView1.ContextMenuStrip = this.contextMenuStrip1;
             this.dataGridView1.Location = new System.Drawing.Point(3, 45);
             this.dataGridView1.Name = "dataGridView1";
@@ -191,14 +189,6 @@
             this.ColumnPercentage.ReadOnly = true;
             this.ColumnPercentage.Width = 60;
             // 
-            // ColumnUser
-            // 
-            this.ColumnUser.DataPropertyName = "User";
-            this.ColumnUser.HeaderText = "User";
-            this.ColumnUser.Name = "ColumnUser";
-            this.ColumnUser.ReadOnly = true;
-            this.ColumnUser.Width = 50;
-            // 
             // AnnotationPackageListControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -230,6 +220,5 @@
         private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnPercentage;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnUser;
     }
 }
