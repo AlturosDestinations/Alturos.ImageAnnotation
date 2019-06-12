@@ -127,7 +127,7 @@ You can do so using a text editor like Notepad. When saving, choose "All files (
 
 * Create a folder named "minio" in the same directory as your exe and cmd files.
 
-* Launch minio.exe.
+* Launch minio.cmd.
 MinIO should now be writing content to the folder you just created.
 
 Once you launch the project you should be able to use your local database. 
