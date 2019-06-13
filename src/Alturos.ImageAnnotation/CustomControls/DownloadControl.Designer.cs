@@ -43,10 +43,9 @@
             // 
             this.buttonDownload.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanel1.SetColumnSpan(this.buttonDownload, 2);
-            this.buttonDownload.Location = new System.Drawing.Point(3, 81);
+            this.buttonDownload.Location = new System.Drawing.Point(3, 96);
             this.buttonDownload.Name = "buttonDownload";
-            this.buttonDownload.Size = new System.Drawing.Size(420, 51);
+            this.buttonDownload.Size = new System.Drawing.Size(426, 51);
             this.buttonDownload.TabIndex = 3;
             this.buttonDownload.Text = "&Download";
             this.buttonDownload.UseVisualStyleBackColor = true;
@@ -67,13 +66,15 @@
             this.progressBarDownload.Dock = System.Windows.Forms.DockStyle.Fill;
             this.progressBarDownload.Location = new System.Drawing.Point(3, 33);
             this.progressBarDownload.Name = "progressBarDownload";
-            this.progressBarDownload.Size = new System.Drawing.Size(360, 24);
+            this.progressBarDownload.Size = new System.Drawing.Size(360, 25);
             this.progressBarDownload.TabIndex = 4;
             this.progressBarDownload.Visible = false;
             // 
             // groupBoxDownload
             // 
             this.groupBoxDownload.Controls.Add(this.tableLayoutPanel1);
+            this.groupBoxDownload.Controls.Add(this.buttonDownload);
+            this.groupBoxDownload.Controls.Add(this.labelDownload);
             this.groupBoxDownload.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBoxDownload.Location = new System.Drawing.Point(0, 0);
             this.groupBoxDownload.Name = "groupBoxDownload";
@@ -90,17 +91,15 @@
             this.tableLayoutPanel1.Controls.Add(this.labelNotification, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.progressBarDownload, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.labelPercentage, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.buttonDownload, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.labelDownload, 0, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 16);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 4;
+            this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 18F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(426, 135);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(426, 61);
             this.tableLayoutPanel1.TabIndex = 6;
             // 
             // labelPercentage
@@ -110,7 +109,7 @@
             this.labelPercentage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.labelPercentage.Location = new System.Drawing.Point(369, 30);
             this.labelPercentage.Name = "labelPercentage";
-            this.labelPercentage.Size = new System.Drawing.Size(54, 30);
+            this.labelPercentage.Size = new System.Drawing.Size(54, 31);
             this.labelPercentage.TabIndex = 5;
             this.labelPercentage.Text = "0%";
             this.labelPercentage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -119,7 +118,7 @@
             // labelDownload
             // 
             this.labelDownload.AutoSize = true;
-            this.labelDownload.Location = new System.Drawing.Point(3, 60);
+            this.labelDownload.Location = new System.Drawing.Point(6, 80);
             this.labelDownload.Name = "labelDownload";
             this.labelDownload.Size = new System.Drawing.Size(103, 13);
             this.labelDownload.TabIndex = 6;
@@ -134,6 +133,7 @@
             this.Name = "DownloadControl";
             this.Size = new System.Drawing.Size(432, 223);
             this.groupBoxDownload.ResumeLayout(false);
+            this.groupBoxDownload.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
