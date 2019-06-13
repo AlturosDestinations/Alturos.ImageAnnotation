@@ -668,7 +668,7 @@ namespace Alturos.ImageAnnotation.CustomControls
             }
 
             // Move Bounding Box
-            var speed = e.Shift ? 1 : 10;
+            var speed = e.Control ? 10 : 1;
             var canvasInfo = this.GetCanvasInformation();
             
             if (e.KeyCode == Keys.W)
@@ -676,7 +676,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 this._changedImageViaKey = true;
 
                 this.MoveOrResize(currentBoundingBox, new PointF(0, -speed), canvasInfo,
-                    e.Control ? KeyboardOperation.Resize : KeyboardOperation.Move,
+                    e.Shift ? KeyboardOperation.Resize : KeyboardOperation.Move,
                     e.Alt ? ScaleOperation.Inverse : ScaleOperation.Regular);
             }
             if (e.KeyCode == Keys.A)
@@ -684,7 +684,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 this._changedImageViaKey = true;
 
                 this.MoveOrResize(currentBoundingBox, new PointF(-speed, 0), canvasInfo,
-                    e.Control ? KeyboardOperation.Resize : KeyboardOperation.Move,
+                    e.Shift ? KeyboardOperation.Resize : KeyboardOperation.Move,
                     e.Alt ? ScaleOperation.Inverse : ScaleOperation.Regular);
             }
             if (e.KeyCode == Keys.S)
@@ -692,7 +692,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 this._changedImageViaKey = true;
 
                 this.MoveOrResize(currentBoundingBox, new PointF(0, speed), canvasInfo,
-                    e.Control ? KeyboardOperation.Resize : KeyboardOperation.Move,
+                    e.Shift ? KeyboardOperation.Resize : KeyboardOperation.Move,
                     e.Alt ? ScaleOperation.Inverse : ScaleOperation.Regular);
             }
             if (e.KeyCode == Keys.D)
@@ -700,7 +700,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 this._changedImageViaKey = true;
 
                 this.MoveOrResize(currentBoundingBox, new PointF(speed, 0), canvasInfo,
-                    e.Control ? KeyboardOperation.Resize : KeyboardOperation.Move,
+                    e.Shift ? KeyboardOperation.Resize : KeyboardOperation.Move,
                     e.Alt ? ScaleOperation.Inverse : ScaleOperation.Regular);
             }
 
