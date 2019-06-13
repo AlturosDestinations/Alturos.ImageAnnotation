@@ -154,15 +154,6 @@ namespace Alturos.ImageAnnotation.CustomControls
             this._selectedPackages.ForEach(o => Task.Run(() => this.DownloadPackage(o)));
         }
 
-        private void RedownloadToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (var package in this._selectedPackages)
-            {
-                package.AvailableLocally = false;
-                Task.Run(() => this.DownloadPackage(package));
-            }
-        }
-
         private async Task DownloadPackage(AnnotationPackage package)
         {
             if (package.Downloading)
@@ -303,19 +294,6 @@ namespace Alturos.ImageAnnotation.CustomControls
             else
             {
                 this.downloadToolStripMenuItem.Visible = true;
-            }
-
-            #endregion
-
-            #region Show Redownload Button
-
-            if (!packages.Any(o => o.AvailableLocally))
-            {
-                this.redownloadToolStripMenuItem.Visible = false;
-            }
-            else
-            {
-                this.redownloadToolStripMenuItem.Visible = true;
             }
 
             #endregion

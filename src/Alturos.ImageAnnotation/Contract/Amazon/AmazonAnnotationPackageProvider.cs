@@ -298,6 +298,8 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             }
 
             var packagePath = Path.Combine(this._extractionFolder, package.PackageName);
+            var tempPath = $"{packagePath}_temp";
+
             if (Directory.Exists(packagePath))
             {
                 Directory.Delete(packagePath, true);
@@ -313,7 +315,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             {
                 BucketName = this._bucketName,
                 S3Directory = package.PackageName,
-                LocalDirectory = packagePath
+                LocalDirectory = tempPath
             };
 
             request.DownloadedDirectoryProgressEvent += this.DownloadedDirectoryProgressEvent;
@@ -331,8 +333,12 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 package.Downloading = false;
             }
 
+            if (Directory.Exists(tempPath))
+            {
+                Directory.Move(tempPath, packagePath);
+            }
+
             package.AvailableLocally = true;
-            package.Images = null;
 
             var path = Path.Combine(this._extractionFolder, package.PackageName);
             package.PrepareImages(path);
