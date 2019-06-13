@@ -59,15 +59,6 @@ namespace Alturos.ImageAnnotation.Forms
             this.dataGridViewResult.DataSource = packages;
             this.labelPackageCount.Text = $"{packages.Count.ToString()} found";
 
-            foreach (DataGridViewRow row in this.dataGridViewResult.Rows)
-            {
-                if ((row.DataBoundItem as AnnotationPackage).AvailableLocally)
-                {
-                    //TODO:Cleanup
-                    row.Cells[1].Value = true;
-                }
-            }
-
             this.Invoke((MethodInvoker)delegate { this.EnableExportMenu(true); });
         }
 
@@ -90,7 +81,7 @@ namespace Alturos.ImageAnnotation.Forms
             }
 
             // Download missing packages
-            var successful = await this.DownloadMissingPackages(packages);
+            var successful = await this.DownloadMissingPackages(packages.Where(o => !o.AvailableLocally).ToList());
             if (!successful)
             {
                 return;
@@ -138,23 +129,16 @@ namespace Alturos.ImageAnnotation.Forms
             {
                 for (var i = 0; i < packages.Count; i++)
                 {
-                    if (!packages[i].AvailableLocally)
-                    {
-                        this._downloadedPackage = packages[i];
-                        this._downloadProgress.CurrentFile = packages[i].PackageName;
+                    this._downloadedPackage = packages[i];
+                    this._downloadProgress.CurrentFile = packages[i].PackageName;
 
-                        packages[i].Downloading = true;
-                        packages[i] = await this._annotationPackageProvider.DownloadPackageAsync(packages[i], token);
+                    packages[i].Downloading = true;
+                    packages[i] = await this._annotationPackageProvider.DownloadPackageAsync(packages[i], token);
 
-                        this._downloadProgress.UploadedFiles++;
-                        this._downloadProgress.CurrentFilePercentDone = 0;
+                    this._downloadProgress.TransferedFiles++;
+                    this._downloadProgress.CurrentFilePercentDone = 0;
 
-                        var row = this.dataGridViewResult.Rows.Cast<DataGridViewRow>().SingleOrDefault(o => (o.DataBoundItem as AnnotationPackage).ExternalId == packages[i].ExternalId);
-                        if (row != null)
-                        {
-                            row.Cells[1].Value = true;
-                        }
-                    }
+                    this.dataGridViewResult.Refresh();
                 }
             }
             catch (Exception)
@@ -185,7 +169,7 @@ namespace Alturos.ImageAnnotation.Forms
                 if (!double.IsNaN(percentageDone))
                 {
                     this.labelDownloadProgress.Invoke((MethodInvoker)delegate {
-                        this.labelDownloadProgress.Text = $"Download in progress {progress.UploadedFiles}/{progress.FileCount} ({(int)percentageDone}%) - {this._downloadProgress.CurrentFile}";
+                        this.labelDownloadProgress.Text = $"Download in progress {(int)percentageDone}% (Package {progress.TransferedFiles}/{progress.FileCount} {this._downloadProgress.CurrentFile})";
                     });
                     this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)percentageDone; });
                 }

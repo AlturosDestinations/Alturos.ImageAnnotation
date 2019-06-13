@@ -32,8 +32,6 @@
             this.dataGridViewTags = new System.Windows.Forms.DataGridView();
             this.ColumnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewResult = new System.Windows.Forms.DataGridView();
-            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnExported = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.groupBoxTags = new System.Windows.Forms.GroupBox();
             this.buttonSearch = new System.Windows.Forms.Button();
             this.groupBoxResult = new System.Windows.Forms.GroupBox();
@@ -48,6 +46,8 @@
             this.ColumnChecked = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ColumnId = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnObjectClass = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnExported = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTags)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).BeginInit();
             this.groupBoxTags.SuspendLayout();
@@ -115,21 +115,6 @@
             this.dataGridViewResult.RowHeadersVisible = false;
             this.dataGridViewResult.Size = new System.Drawing.Size(555, 175);
             this.dataGridViewResult.TabIndex = 5;
-            // 
-            // ColumnName
-            // 
-            this.ColumnName.DataPropertyName = "PackageName";
-            this.ColumnName.FillWeight = 164.467F;
-            this.ColumnName.HeaderText = "Package Name";
-            this.ColumnName.Name = "ColumnName";
-            this.ColumnName.ReadOnly = true;
-            // 
-            // ColumnExported
-            // 
-            this.ColumnExported.FillWeight = 35.533F;
-            this.ColumnExported.HeaderText = "Available Locally";
-            this.ColumnExported.Name = "ColumnExported";
-            this.ColumnExported.ReadOnly = true;
             // 
             // groupBoxTags
             // 
@@ -289,6 +274,22 @@
             this.ColumnObjectClass.Name = "ColumnObjectClass";
             this.ColumnObjectClass.ReadOnly = true;
             // 
+            // ColumnName
+            // 
+            this.ColumnName.DataPropertyName = "PackageName";
+            this.ColumnName.FillWeight = 164.467F;
+            this.ColumnName.HeaderText = "Package Name";
+            this.ColumnName.Name = "ColumnName";
+            this.ColumnName.ReadOnly = true;
+            // 
+            // ColumnExported
+            // 
+            this.ColumnExported.DataPropertyName = "AvailableLocally";
+            this.ColumnExported.FillWeight = 35.533F;
+            this.ColumnExported.HeaderText = "Available Locally";
+            this.ColumnExported.Name = "ColumnExported";
+            this.ColumnExported.ReadOnly = true;
+            // 
             // ExportDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -334,13 +335,13 @@
         private System.Windows.Forms.GroupBox groupBoxExportProvider;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Label labelDownloadProgress;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnExported;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.GroupBox groupBoxObjectClasses;
         private System.Windows.Forms.DataGridView dataGridViewObjectClasses;
         private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnChecked;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnId;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnObjectClass;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnExported;
     }
 }

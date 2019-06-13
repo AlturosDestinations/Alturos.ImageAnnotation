@@ -431,7 +431,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                     .ConfigureAwait(false);
             }
 
-            this._uploadProgress.UploadedFiles++;
+            this._uploadProgress.TransferedFiles++;
             this._uploadProgress.CurrentFilePercentDone = 0;
         }
 
@@ -487,7 +487,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
                 await context.SaveAsync(info, dbConfig, token).ConfigureAwait(false);
 
-                this._syncProgress.UploadedFiles++;
+                this._syncProgress.TransferedFiles++;
                 return true;
             }
         }
