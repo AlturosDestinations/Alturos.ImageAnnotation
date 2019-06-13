@@ -26,7 +26,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
         public bool IsSyncing { get; private set; }
         public bool IsUploading { get; private set; }
 
-        private readonly IAmazonS3 _objectStorageClient;
+        private readonly IAmazonS3 _s3Client;
         private readonly IAmazonDynamoDB _dynamoDbClient;
         private readonly string _bucketName;
         private readonly string _extractionFolder;
@@ -48,7 +48,8 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
             this._dbTableName = ConfigurationManager.AppSettings["dbTableName"];
 
-            var serviceUrl = ConfigurationManager.AppSettings["serviceUrl"];
+            var s3ServiceUrl = ConfigurationManager.AppSettings["s3ServiceUrl"];
+            var dynamoDbServiceUrl = ConfigurationManager.AppSettings["dynamoDbServiceUrl"];
 
             if (string.IsNullOrEmpty(accessKeyId))
             {
@@ -65,24 +66,24 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 throw new ConfigurationErrorsException("The bucketName has not been configured. Please set it in the App.config");
             }
 
-            if (string.IsNullOrEmpty(serviceUrl))
+            if (string.IsNullOrEmpty(s3ServiceUrl) || string.IsNullOrEmpty(dynamoDbServiceUrl))
             {
-                this._objectStorageClient = new AmazonS3Client(accessKeyId, secretAccessKey, RegionEndpoint.EUWest1);
+                this._s3Client = new AmazonS3Client(accessKeyId, secretAccessKey, RegionEndpoint.EUWest1);
                 this._dynamoDbClient = new AmazonDynamoDBClient(accessKeyId, secretAccessKey, RegionEndpoint.EUWest1);
             }
             else
             {
                 var s3Config = new AmazonS3Config
                 {
-                    ServiceURL = serviceUrl
+                    ServiceURL = s3ServiceUrl
                    
                 };
                 var dbConfig = new AmazonDynamoDBConfig
                 {
-                    ServiceURL = serviceUrl
+                    ServiceURL = dynamoDbServiceUrl
                 };
 
-                this._objectStorageClient = new AmazonS3Client(accessKeyId, secretAccessKey, s3Config);
+                this._s3Client = new AmazonS3Client(accessKeyId, secretAccessKey, s3Config);
                 this._dynamoDbClient = new AmazonDynamoDBClient(accessKeyId, secretAccessKey, dbConfig);
 
                 //if (!this._objectStorageClient.DoesS3BucketExist(this._bucketName))
@@ -134,7 +135,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
         public void Dispose()
         {
-            this._objectStorageClient?.Dispose();
+            this._s3Client?.Dispose();
             this._dynamoDbClient?.Dispose();
         }
 
@@ -302,7 +303,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 Directory.Delete(packagePath, true);
             }
 
-            var files = await this._objectStorageClient.ListObjectsV2Async(new ListObjectsV2Request
+            var files = await this._s3Client.ListObjectsV2Async(new ListObjectsV2Request
             {
                 BucketName = this._bucketName,
                 Prefix = package.PackageName
@@ -319,7 +320,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
             try
             {
-                using (var fileTransferUtility = new TransferUtility(this._objectStorageClient))
+                using (var fileTransferUtility = new TransferUtility(this._s3Client))
                 {
                     await fileTransferUtility.DownloadDirectoryAsync(request, token).ConfigureAwait(false);
                 }
@@ -400,7 +401,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
         private async Task UploadFileAsync(string filePath, CancellationToken token)
         {
-            using (var fileTransferUtility = new TransferUtility(this._objectStorageClient))
+            using (var fileTransferUtility = new TransferUtility(this._s3Client))
             {
                 var keyName = $"{Directory.GetParent(filePath).Name}/{Path.GetFileName(filePath)}";
 
@@ -562,7 +563,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                     Key = $"{image.Package.PackageName}/{image.ImageName}"
                 };
 
-                var response = await this._objectStorageClient.DeleteObjectAsync(deleteObjectRequest).ConfigureAwait(false);
+                var response = await this._s3Client.DeleteObjectAsync(deleteObjectRequest).ConfigureAwait(false);
 
                 // Delete image from DynamoDB
                 using (var context = new DynamoDBContext(this._dynamoDbClient))

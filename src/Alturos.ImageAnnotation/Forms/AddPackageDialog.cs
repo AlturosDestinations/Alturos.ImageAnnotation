@@ -123,7 +123,7 @@ namespace Alturos.ImageAnnotation.Forms
                 if (!double.IsNaN(percentageDone))
                 {
                     this.labelUploadProgress.Invoke((MethodInvoker)delegate {
-                        this.labelUploadProgress.Text = $"Upload in progress {progress.UploadedFiles}/{progress.FileCount} ({(int)percentageDone}%) - {Path.GetFileName(progress.CurrentFile)}";
+                        this.labelUploadProgress.Text = $"Upload in progress {(int)percentageDone}% (Image {progress.UploadedFiles + 1}/{progress.FileCount} {Path.GetFileName(progress.CurrentFile)})";
                     });
                     this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)percentageDone; });
                 }
