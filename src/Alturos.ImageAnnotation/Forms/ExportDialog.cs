@@ -53,13 +53,28 @@ namespace Alturos.ImageAnnotation.Forms
 
             var items = await this._annotationPackageProvider.GetPackagesAsync(tags.ToArray());
 
-            var objectClasses = this.dataGridViewObjectClasses.DataSource as List<ObjectClass>;
+            var objectClasses = this.GetSelectedObjectClasses();
             var packages = items.Where(o => o.IsAnnotated && o.Images.Any(p => p.BoundingBoxes.Any(q => objectClasses.Select(t => t.Id).Contains(q.ObjectIndex)))).ToList();
 
             this.dataGridViewResult.DataSource = packages;
             this.labelPackageCount.Text = $"{packages.Count.ToString()} found";
 
             this.Invoke((MethodInvoker)delegate { this.EnableExportMenu(true); });
+        }
+
+        private ObjectClass[] GetSelectedObjectClasses()
+        {
+            var objectClasses = new List<ObjectClass>();
+
+            foreach (DataGridViewRow row in this.dataGridViewObjectClasses.Rows)
+            {
+                if (Convert.ToBoolean(row.Cells[0].Value) == true)
+                {
+                    objectClasses.Add(row.DataBoundItem as ObjectClass);
+                }
+            }
+
+            return objectClasses.ToArray();
         }
 
         private async void ButtonExport_Click(object sender, EventArgs e)
@@ -101,7 +116,7 @@ namespace Alturos.ImageAnnotation.Forms
             }
 
             // Export
-            this._annotationExportProvider.Export(path, packages.ToArray());
+            this._annotationExportProvider.Export(path, packages.ToArray(), this.GetSelectedObjectClasses());
 
             this.EnableExportMenu(true);
 
