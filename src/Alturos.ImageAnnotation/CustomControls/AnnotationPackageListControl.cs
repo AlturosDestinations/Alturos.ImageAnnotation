@@ -290,10 +290,12 @@ namespace Alturos.ImageAnnotation.CustomControls
             if (packages.All(o => o.AvailableLocally))
             {
                 this.downloadToolStripMenuItem.Visible = false;
+                this.toolStripSeparator1.Visible = false;
             }
             else
             {
                 this.downloadToolStripMenuItem.Visible = true;
+                this.toolStripSeparator1.Visible = true;
             }
 
             #endregion
