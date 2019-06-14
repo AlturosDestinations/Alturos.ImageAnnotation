@@ -34,7 +34,6 @@
             this.configurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoplaceAnnotationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showLabelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showAnnotatedPackagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addPackageStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -99,7 +98,6 @@
             this.configurationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.autoplaceAnnotationsToolStripMenuItem,
             this.showLabelsToolStripMenuItem,
-            this.showAnnotatedPackagesToolStripMenuItem,
             this.toolStripSeparator1,
             this.settingsToolStripMenuItem});
             this.configurationToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.wrench;
@@ -122,13 +120,6 @@
             this.showLabelsToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
             this.showLabelsToolStripMenuItem.Text = "Show Object Labels in Image";
             this.showLabelsToolStripMenuItem.Click += new System.EventHandler(this.ShowLabelsToolStripMenuItem_Click);
-            // 
-            // showAnnotatedPackagesToolStripMenuItem
-            // 
-            this.showAnnotatedPackagesToolStripMenuItem.Name = "showAnnotatedPackagesToolStripMenuItem";
-            this.showAnnotatedPackagesToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
-            this.showAnnotatedPackagesToolStripMenuItem.Text = "Show Annotated Packages";
-            this.showAnnotatedPackagesToolStripMenuItem.Click += new System.EventHandler(this.ShowAnnotatedPackagesToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
@@ -351,7 +342,6 @@
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem showAnnotatedPackagesToolStripMenuItem;
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabPageImages;
         private CustomControls.DownloadControl downloadControl;

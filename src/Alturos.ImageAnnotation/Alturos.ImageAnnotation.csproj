@@ -80,6 +80,7 @@
     </Compile>
     <Compile Include="Helper\MathHelper.cs" />
     <Compile Include="Helper\PackageHelper.cs" />
+    <Compile Include="Model\AnnotationCategory.cs" />
     <Compile Include="Model\AnnotationPackageTransferProgress.cs" />
     <Compile Include="Contract\IAnnotationExportProvider.cs" />
     <Compile Include="Contract\YoloAnnotationExportProvider.cs" />

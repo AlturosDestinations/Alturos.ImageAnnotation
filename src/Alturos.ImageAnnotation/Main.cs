@@ -98,6 +98,7 @@ namespace Alturos.ImageAnnotation
         private void RegisterEvents()
         {
             this.annotationPackageListControl.PackageSelected += this.PackageSelected;
+            this.annotationPackageListControl.CategorySelected += this.CategorySelected;
             this.annotationPackageListControl.DirtyUpdated += this.DirtyUpdated;
 
             this.annotationImageListControl.ImageSelected += this.ImageSelected;
@@ -112,6 +113,7 @@ namespace Alturos.ImageAnnotation
         private void UnregisterEvents()
         {
             this.annotationPackageListControl.PackageSelected -= this.PackageSelected;
+            this.annotationPackageListControl.CategorySelected -= this.CategorySelected;
             this.annotationPackageListControl.DirtyUpdated -= this.DirtyUpdated;
 
             this.annotationImageListControl.ImageSelected -= this.ImageSelected;
@@ -240,14 +242,6 @@ namespace Alturos.ImageAnnotation
             this.annotationDrawControl.SetLabelsVisible(this.showLabelsToolStripMenuItem.Checked);
         }
 
-        private async void ShowAnnotatedPackagesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.showAnnotatedPackagesToolStripMenuItem.Checked = !this.showAnnotatedPackagesToolStripMenuItem.Checked;
-            this._showAnnotated = this.showAnnotatedPackagesToolStripMenuItem.Checked;
-
-            await this.LoadPackagesAsync(this._showAnnotated);
-        }
-
         private async void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (var dialog = new ConfigurationDialog())
@@ -323,6 +317,21 @@ namespace Alturos.ImageAnnotation
             }
 
             this._changedPackage = false;
+        }
+
+        private async void CategorySelected(AnnotationCategory category)
+        {
+            switch (category)
+            {
+                case AnnotationCategory.Unannotated:
+                    this._showAnnotated = false;
+                    break;
+                case AnnotationCategory.Annotated:
+                    this._showAnnotated = true;
+                    break;
+            }
+
+            await this.LoadPackagesAsync(this._showAnnotated);
         }
 
         private void DirtyUpdated(bool dirty)

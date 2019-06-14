@@ -15,6 +15,7 @@ namespace Alturos.ImageAnnotation.CustomControls
     public partial class AnnotationPackageListControl : UserControl
     {
         public event Action<AnnotationPackage> PackageSelected;
+        public event Action<AnnotationCategory> CategorySelected;
         public event Action<bool> DirtyUpdated;
 
         private static ILog Log = LogManager.GetLogger(typeof(AnnotationPackageListControl));
@@ -23,15 +24,18 @@ namespace Alturos.ImageAnnotation.CustomControls
         private List<AnnotationPackage> _annotationPackages;
         private List<AnnotationPackage> _selectedPackages;
         private BindingSource _bindingSource;
+        private AnnotationCategory _selectedCategory;
 
         public AnnotationPackageListControl()
         {
             this.InitializeComponent();
             this.dataGridView1.AutoGenerateColumns = false;
-            this.labelLoading.Location = new Point(5, 20);
 
             this._bindingSource = new BindingSource();
             this.dataGridView1.DataSource = this._bindingSource;
+
+            this.comboBoxCategory.DataSource = Enum.GetValues(typeof(AnnotationCategory));
+            this.comboBoxCategory.SelectedIndex = 0;
         }
 
         public void Setup(IAnnotationPackageProvider annotationPackageProvider)
@@ -61,23 +65,18 @@ namespace Alturos.ImageAnnotation.CustomControls
                     this.groupBox1.Text = groupBoxName;
                 });
 
-                this.textBoxSearch.Invoke((MethodInvoker)delegate { this.textBoxSearch.Visible = false; });
-                this.dataGridView1.Invoke((MethodInvoker)delegate { this.dataGridView1.Visible = false; });
+                this.SetLoading(true);
 
                 var packages = await this._annotationPackageProvider.GetPackagesAsync(annotated);
-
-                this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = true; });
                 this._annotationPackages = packages.ToList();
-                this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = false; });
+
+                this.SetLoading(false);
 
                 if (this._annotationPackages?.Count > 0)
                 {
-                    this.textBoxSearch.Invoke((MethodInvoker)delegate { this.textBoxSearch.Visible = true; });
-
                     this.dataGridView1.Invoke((MethodInvoker)delegate
                     {
                         this.RefreshGridData();
-                        this.dataGridView1.Visible = true;
                     });
 
                     this.groupBox1.Invoke((MethodInvoker)delegate
@@ -90,6 +89,18 @@ namespace Alturos.ImageAnnotation.CustomControls
             {
                 MessageBox.Show(exception.ToString(), "Error on loading packages", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void SetLoading(bool loading)
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                this.labelLoading.Visible = loading;
+                this.dataGridView1.Visible = !loading;
+
+                this.comboBoxCategory.Enabled = !loading;
+                this.textBoxSearch.Enabled = !loading;
+            });
         }
 
         public int GetSelectedPackageCount()
@@ -276,6 +287,17 @@ namespace Alturos.ImageAnnotation.CustomControls
             }
 
             this.RefreshData();
+        }
+
+        private void ComboBoxCategory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var newCategory = (AnnotationCategory)this.comboBoxCategory.SelectedItem;
+
+            if (this._selectedCategory != newCategory)
+            {
+                this._selectedCategory = newCategory;
+                this.CategorySelected?.Invoke(newCategory);
+            }
         }
 
         private void TextBoxSearch_TextChanged(object sender, EventArgs e)
