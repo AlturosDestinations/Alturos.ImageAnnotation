@@ -219,17 +219,5 @@ namespace Alturos.ImageAnnotation.Forms
         {
             this._tokenSource?.Cancel();
         }
-
-        private void DataGridViewObjectClasses_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            var cell = this.dataGridViewObjectClasses.CurrentCell as DataGridViewCheckBoxCell;
-
-            if (cell != null && !cell.ReadOnly)
-            {
-                cell.Value = cell.Value == null || !((bool)cell.Value);
-                this.dataGridViewObjectClasses.RefreshEdit();
-                this.dataGridViewObjectClasses.NotifyCurrentCellDirty(true);
-            }
-        }
     }
 }

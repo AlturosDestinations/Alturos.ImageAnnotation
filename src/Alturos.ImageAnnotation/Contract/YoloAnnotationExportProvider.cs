@@ -43,7 +43,9 @@ namespace Alturos.ImageAnnotation.Contract
             // Training list contains the images Yolo uses for training. "_trainingPercentage" dictates how many percent of all images are used for this.
             // Testing list contains all remaining images that Yolo uses to validate how well it performs based on the training data.
             // Unannotated images are not taken into account and will not be exported.
-            var images = packages.SelectMany(o => o.Images).Where(o => o.BoundingBoxes != null && o.BoundingBoxes.Count != 0);
+            var images = packages.SelectMany(o => o.Images).Where(o => o.BoundingBoxes != null && o.BoundingBoxes.Count != 0).ToList();
+            images.RemoveAll(img => !img.BoundingBoxes.Any(bbox => objectClasses.Select(oc => oc.Id).Contains(bbox.ObjectIndex)));
+
             var rng = new Random();
             var shuffledImages = images.OrderBy(o => rng.Next()).ToList();
 
@@ -77,25 +79,20 @@ namespace Alturos.ImageAnnotation.Contract
                 imageMappingSb.AppendLine($"{newFileName} {Path.Combine(image.Package.PackageName, image.ImageName)}");
 
                 var newFilePath = Path.Combine(imagePath, newFileName);
-                var hasObjectClass = false;
 
                 for (var j = 0; j < image.BoundingBoxes.Count; j++)
                 {
-                    if (image.BoundingBoxes[j] != null && objectClasses.Select(o => o.Id).Contains(image.BoundingBoxes[j].ObjectIndex))
+                    if (image.BoundingBoxes[j] != null)
                     {
                         stringBuilderDict[image.BoundingBoxes[j].ObjectIndex].AppendLine(Path.GetFullPath(newFilePath));
-                        hasObjectClass = true;
                     }
                 }
 
-                if (hasObjectClass)
-                {
-                    // Copy image
-                    File.Copy(Path.Combine(packagesFolder, image.Package.PackageName, image.ImageName), newFilePath, true);
+                // Copy image
+                File.Copy(Path.Combine(packagesFolder, image.Package.PackageName, image.ImageName), newFilePath, true);
 
-                    // Create bounding boxes
-                    this.CreateBoundingBoxes(image.BoundingBoxes, Path.ChangeExtension(newFilePath, "txt"), objectClasses);
-                }
+                // Create bounding boxes
+                this.CreateBoundingBoxes(image.BoundingBoxes, Path.ChangeExtension(newFilePath, "txt"), objectClasses);
             }
 
             // Create mappings file

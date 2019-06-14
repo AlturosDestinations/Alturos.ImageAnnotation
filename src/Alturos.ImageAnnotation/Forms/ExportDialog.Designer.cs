@@ -245,7 +245,6 @@
             this.dataGridViewObjectClasses.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewObjectClasses.Size = new System.Drawing.Size(244, 146);
             this.dataGridViewObjectClasses.TabIndex = 9;
-            this.dataGridViewObjectClasses.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewObjectClasses_CellClick);
             // 
             // ColumnChecked
             // 
