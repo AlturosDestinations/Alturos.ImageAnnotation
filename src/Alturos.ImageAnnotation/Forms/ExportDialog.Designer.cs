@@ -32,6 +32,8 @@
             this.dataGridViewTags = new System.Windows.Forms.DataGridView();
             this.ColumnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewResult = new System.Windows.Forms.DataGridView();
+            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnExported = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.groupBoxTags = new System.Windows.Forms.GroupBox();
             this.buttonSearch = new System.Windows.Forms.Button();
             this.groupBoxResult = new System.Windows.Forms.GroupBox();
@@ -46,8 +48,9 @@
             this.ColumnChecked = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ColumnId = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnObjectClass = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnExported = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.trackBarTrainingPercentage = new System.Windows.Forms.TrackBar();
+            this.labelTrainingPercentage = new System.Windows.Forms.Label();
+            this.groupBoxTrainingPercentage = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTags)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).BeginInit();
             this.groupBoxTags.SuspendLayout();
@@ -55,13 +58,15 @@
             this.groupBoxExportProvider.SuspendLayout();
             this.groupBoxObjectClasses.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewObjectClasses)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarTrainingPercentage)).BeginInit();
+            this.groupBoxTrainingPercentage.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonExport
             // 
             this.buttonExport.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonExport.Location = new System.Drawing.Point(12, 454);
+            this.buttonExport.Location = new System.Drawing.Point(12, 529);
             this.buttonExport.Name = "buttonExport";
             this.buttonExport.Size = new System.Drawing.Size(564, 41);
             this.buttonExport.TabIndex = 3;
@@ -115,6 +120,22 @@
             this.dataGridViewResult.RowHeadersVisible = false;
             this.dataGridViewResult.Size = new System.Drawing.Size(555, 175);
             this.dataGridViewResult.TabIndex = 5;
+            // 
+            // ColumnName
+            // 
+            this.ColumnName.DataPropertyName = "PackageName";
+            this.ColumnName.FillWeight = 164.467F;
+            this.ColumnName.HeaderText = "Package Name";
+            this.ColumnName.Name = "ColumnName";
+            this.ColumnName.ReadOnly = true;
+            // 
+            // ColumnExported
+            // 
+            this.ColumnExported.DataPropertyName = "AvailableLocally";
+            this.ColumnExported.FillWeight = 35.533F;
+            this.ColumnExported.HeaderText = "Available Locally";
+            this.ColumnExported.Name = "ColumnExported";
+            this.ColumnExported.ReadOnly = true;
             // 
             // groupBoxTags
             // 
@@ -175,7 +196,7 @@
             // groupBoxExportProvider
             // 
             this.groupBoxExportProvider.Controls.Add(this.comboBoxExportProvider);
-            this.groupBoxExportProvider.Location = new System.Drawing.Point(12, 398);
+            this.groupBoxExportProvider.Location = new System.Drawing.Point(12, 473);
             this.groupBoxExportProvider.Name = "groupBoxExportProvider";
             this.groupBoxExportProvider.Padding = new System.Windows.Forms.Padding(3, 6, 3, 6);
             this.groupBoxExportProvider.Size = new System.Drawing.Size(564, 50);
@@ -187,7 +208,7 @@
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(12, 514);
+            this.progressBar.Location = new System.Drawing.Point(12, 589);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(475, 31);
             this.progressBar.TabIndex = 8;
@@ -195,7 +216,7 @@
             // labelDownloadProgress
             // 
             this.labelDownloadProgress.AutoSize = true;
-            this.labelDownloadProgress.Location = new System.Drawing.Point(12, 498);
+            this.labelDownloadProgress.Location = new System.Drawing.Point(12, 573);
             this.labelDownloadProgress.Name = "labelDownloadProgress";
             this.labelDownloadProgress.Size = new System.Drawing.Size(126, 13);
             this.labelDownloadProgress.TabIndex = 9;
@@ -203,10 +224,9 @@
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.Enabled = false;
-            this.buttonCancel.Location = new System.Drawing.Point(493, 514);
+            this.buttonCancel.Location = new System.Drawing.Point(493, 589);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(83, 31);
             this.buttonCancel.TabIndex = 10;
@@ -273,34 +293,53 @@
             this.ColumnObjectClass.Name = "ColumnObjectClass";
             this.ColumnObjectClass.ReadOnly = true;
             // 
-            // ColumnName
+            // trackBarTrainingPercentage
             // 
-            this.ColumnName.DataPropertyName = "PackageName";
-            this.ColumnName.FillWeight = 164.467F;
-            this.ColumnName.HeaderText = "Package Name";
-            this.ColumnName.Name = "ColumnName";
-            this.ColumnName.ReadOnly = true;
+            this.trackBarTrainingPercentage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.trackBarTrainingPercentage.Location = new System.Drawing.Point(6, 19);
+            this.trackBarTrainingPercentage.Maximum = 100;
+            this.trackBarTrainingPercentage.Name = "trackBarTrainingPercentage";
+            this.trackBarTrainingPercentage.Size = new System.Drawing.Size(519, 45);
+            this.trackBarTrainingPercentage.TabIndex = 12;
+            this.trackBarTrainingPercentage.TickFrequency = 5;
+            this.trackBarTrainingPercentage.Value = 70;
+            this.trackBarTrainingPercentage.Scroll += new System.EventHandler(this.TrackBarTrainingPercentage_Scroll);
             // 
-            // ColumnExported
+            // labelTrainingPercentage
             // 
-            this.ColumnExported.DataPropertyName = "AvailableLocally";
-            this.ColumnExported.FillWeight = 35.533F;
-            this.ColumnExported.HeaderText = "Available Locally";
-            this.ColumnExported.Name = "ColumnExported";
-            this.ColumnExported.ReadOnly = true;
+            this.labelTrainingPercentage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelTrainingPercentage.AutoSize = true;
+            this.labelTrainingPercentage.Location = new System.Drawing.Point(531, 35);
+            this.labelTrainingPercentage.Name = "labelTrainingPercentage";
+            this.labelTrainingPercentage.Size = new System.Drawing.Size(27, 13);
+            this.labelTrainingPercentage.TabIndex = 13;
+            this.labelTrainingPercentage.Text = "70%";
+            // 
+            // groupBoxTrainingPercentage
+            // 
+            this.groupBoxTrainingPercentage.Controls.Add(this.trackBarTrainingPercentage);
+            this.groupBoxTrainingPercentage.Controls.Add(this.labelTrainingPercentage);
+            this.groupBoxTrainingPercentage.Location = new System.Drawing.Point(12, 398);
+            this.groupBoxTrainingPercentage.Name = "groupBoxTrainingPercentage";
+            this.groupBoxTrainingPercentage.Size = new System.Drawing.Size(564, 69);
+            this.groupBoxTrainingPercentage.TabIndex = 14;
+            this.groupBoxTrainingPercentage.TabStop = false;
+            this.groupBoxTrainingPercentage.Text = "Training Percentage";
             // 
             // ExportDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(588, 557);
+            this.ClientSize = new System.Drawing.Size(588, 629);
+            this.Controls.Add(this.groupBoxTrainingPercentage);
             this.Controls.Add(this.groupBoxObjectClasses);
+            this.Controls.Add(this.groupBoxExportProvider);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.labelDownloadProgress);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.groupBoxTags);
             this.Controls.Add(this.groupBoxResult);
-            this.Controls.Add(this.groupBoxExportProvider);
             this.Controls.Add(this.buttonExport);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -316,6 +355,9 @@
             this.groupBoxExportProvider.ResumeLayout(false);
             this.groupBoxObjectClasses.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewObjectClasses)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarTrainingPercentage)).EndInit();
+            this.groupBoxTrainingPercentage.ResumeLayout(false);
+            this.groupBoxTrainingPercentage.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -342,5 +384,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnObjectClass;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
         private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnExported;
+        private System.Windows.Forms.TrackBar trackBarTrainingPercentage;
+        private System.Windows.Forms.Label labelTrainingPercentage;
+        private System.Windows.Forms.GroupBox groupBoxTrainingPercentage;
     }
 }

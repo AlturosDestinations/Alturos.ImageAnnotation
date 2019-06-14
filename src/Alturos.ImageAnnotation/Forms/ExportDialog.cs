@@ -116,7 +116,7 @@ namespace Alturos.ImageAnnotation.Forms
             }
 
             // Export
-            this._annotationExportProvider.Export(path, packages.ToArray(), this.GetSelectedObjectClasses());
+            this._annotationExportProvider.Export(path, packages.ToArray(), this.GetSelectedObjectClasses(), this.trackBarTrainingPercentage.Value);
 
             this.EnableExportMenu(true);
 
@@ -218,6 +218,11 @@ namespace Alturos.ImageAnnotation.Forms
         private void ExportDialog_FormClosed(object sender, FormClosedEventArgs e)
         {
             this._tokenSource?.Cancel();
+        }
+
+        private void TrackBarTrainingPercentage_Scroll(object sender, EventArgs e)
+        {
+            this.labelTrainingPercentage.Text = $"{this.trackBarTrainingPercentage.Value}%";
         }
     }
 }

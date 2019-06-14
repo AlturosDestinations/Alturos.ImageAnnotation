@@ -12,7 +12,6 @@ namespace Alturos.ImageAnnotation.Contract
     [Description("Yolo")]
     public class YoloAnnotationExportProvider : IAnnotationExportProvider
     {
-        private const double TrainingPercentage = 70;
         private const string DataFolderName = "data";
         private const string ImageFolderName = "obj";
         private const string YoloConfigPath = @"..\..\Resources\yolov3.cfg";
@@ -24,7 +23,7 @@ namespace Alturos.ImageAnnotation.Contract
             this._config = config;
         }
 
-        public void Export(string path, AnnotationPackage[] packages, ObjectClass[] objectClasses)
+        public void Export(string path, AnnotationPackage[] packages, ObjectClass[] objectClasses, int trainingPercentage)
         {
             // Create folders
             var dataPath = Path.Combine(path, DataFolderName);
@@ -49,7 +48,7 @@ namespace Alturos.ImageAnnotation.Contract
             var rng = new Random();
             var shuffledImages = images.OrderBy(o => rng.Next()).ToList();
 
-            var count = (int)(shuffledImages.Count * (TrainingPercentage / 100));
+            var count = (int)(shuffledImages.Count * (trainingPercentage / 100.0));
             var trainingImages = shuffledImages.Take(count);
             var testingImages = shuffledImages.Skip(count);
 
