@@ -15,22 +15,28 @@ namespace Alturos.ImageAnnotation.CustomControls
     public partial class AnnotationPackageListControl : UserControl
     {
         public event Action<AnnotationPackage> PackageSelected;
+        public event Action<AnnotationCategory> CategorySelected;
+        public event Action<bool> DirtyUpdated;
 
         private static ILog Log = LogManager.GetLogger(typeof(AnnotationPackageListControl));
+
+        private readonly BindingSource _bindingSource;
 
         private IAnnotationPackageProvider _annotationPackageProvider;
         private List<AnnotationPackage> _annotationPackages;
         private List<AnnotationPackage> _selectedPackages;
-        private BindingSource _bindingSource;
+        private AnnotationCategory _selectedCategory;
 
         public AnnotationPackageListControl()
         {
             this.InitializeComponent();
             this.dataGridView1.AutoGenerateColumns = false;
-            this.labelLoading.Location = new Point(5, 20);
 
             this._bindingSource = new BindingSource();
             this.dataGridView1.DataSource = this._bindingSource;
+
+            this.comboBoxCategory.DataSource = Enum.GetValues(typeof(AnnotationCategory));
+            this.comboBoxCategory.SelectedIndex = 0;
         }
 
         public void Setup(IAnnotationPackageProvider annotationPackageProvider)
@@ -41,6 +47,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         public void RefreshData()
         {
             this.dataGridView1.Refresh();
+            this.DirtyUpdated?.Invoke(this._annotationPackages.Any(o => o.IsDirty));
         }
 
         public AnnotationPackage[] GetAllPackages()
@@ -59,23 +66,18 @@ namespace Alturos.ImageAnnotation.CustomControls
                     this.groupBox1.Text = groupBoxName;
                 });
 
-                this.textBoxSearch.Invoke((MethodInvoker)delegate { this.textBoxSearch.Visible = false; });
-                this.dataGridView1.Invoke((MethodInvoker)delegate { this.dataGridView1.Visible = false; });
+                this.SetLoading(true);
 
                 var packages = await this._annotationPackageProvider.GetPackagesAsync(annotated);
-
-                this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = true; });
                 this._annotationPackages = packages.ToList();
-                this.labelLoading.Invoke((MethodInvoker)delegate { this.labelLoading.Visible = false; });
 
-                if (this._annotationPackages?.Count > 0)
+                this.SetLoading(false);
+
+                if (true)
                 {
-                    this.textBoxSearch.Invoke((MethodInvoker)delegate { this.textBoxSearch.Visible = true; });
-
                     this.dataGridView1.Invoke((MethodInvoker)delegate
                     {
                         this.RefreshGridData();
-                        this.dataGridView1.Visible = true;
                     });
 
                     this.groupBox1.Invoke((MethodInvoker)delegate
@@ -88,6 +90,18 @@ namespace Alturos.ImageAnnotation.CustomControls
             {
                 MessageBox.Show(exception.ToString(), "Error on loading packages", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void SetLoading(bool loading)
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                this.labelLoading.Visible = loading;
+                this.dataGridView1.Visible = !loading;
+
+                this.comboBoxCategory.Enabled = !loading;
+                this.textBoxSearch.Enabled = !loading;
+            });
         }
 
         public int GetSelectedPackageCount()
@@ -154,15 +168,6 @@ namespace Alturos.ImageAnnotation.CustomControls
             this._selectedPackages.ForEach(o => Task.Run(() => this.DownloadPackage(o)));
         }
 
-        private void RedownloadToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (var package in this._selectedPackages)
-            {
-                package.AvailableLocally = false;
-                Task.Run(() => this.DownloadPackage(package));
-            }
-        }
-
         private async Task DownloadPackage(AnnotationPackage package)
         {
             if (package.Downloading)
@@ -195,7 +200,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 this.ParentForm.Enabled = false;
             });
 
-            var remotePackages = await this._annotationPackageProvider.GetPackagesAsync(false);
+            var remotePackages = await this._annotationPackageProvider.GetPackagesAsync(null);
 
             foreach (var package in this._selectedPackages)
             {
@@ -207,6 +212,8 @@ namespace Alturos.ImageAnnotation.CustomControls
                 package.IsAnnotated = remotePackage.IsAnnotated;
                 package.AnnotationPercentage = remotePackage.AnnotationPercentage;
                 package.Tags = remotePackage.Tags;
+
+                package.PrepareImages();
             }
 
             this.ParentForm.Invoke((MethodInvoker)delegate
@@ -283,6 +290,17 @@ namespace Alturos.ImageAnnotation.CustomControls
             this.RefreshData();
         }
 
+        private void ComboBoxCategory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var newCategory = (AnnotationCategory)this.comboBoxCategory.SelectedItem;
+
+            if (this._selectedCategory != newCategory)
+            {
+                this._selectedCategory = newCategory;
+                this.CategorySelected?.Invoke(newCategory);
+            }
+        }
+
         private void TextBoxSearch_TextChanged(object sender, EventArgs e)
         {
             this.dataGridView1.SelectionChanged -= DataGridView1_SelectionChanged;
@@ -299,23 +317,12 @@ namespace Alturos.ImageAnnotation.CustomControls
             if (packages.All(o => o.AvailableLocally))
             {
                 this.downloadToolStripMenuItem.Visible = false;
+                this.toolStripSeparator1.Visible = false;
             }
             else
             {
                 this.downloadToolStripMenuItem.Visible = true;
-            }
-
-            #endregion
-
-            #region Show Redownload Button
-
-            if (!packages.Any(o => o.AvailableLocally))
-            {
-                this.redownloadToolStripMenuItem.Visible = false;
-            }
-            else
-            {
-                this.redownloadToolStripMenuItem.Visible = true;
+                this.toolStripSeparator1.Visible = true;
             }
 
             #endregion

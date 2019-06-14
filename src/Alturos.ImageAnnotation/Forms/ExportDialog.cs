@@ -51,24 +51,30 @@ namespace Alturos.ImageAnnotation.Forms
 
             this.Invoke((MethodInvoker)delegate { this.EnableExportMenu(false); });
 
-            var items = await this._annotationPackageProvider.GetPackagesAsync(tags.ToArray());
+            var items = await this._annotationPackageProvider.GetPackagesAsync(tags?.ToArray());
 
-            var objectClasses = this.dataGridViewObjectClasses.DataSource as List<ObjectClass>;
+            var objectClasses = this.GetSelectedObjectClasses();
             var packages = items.Where(o => o.IsAnnotated && o.Images.Any(p => p.BoundingBoxes.Any(q => objectClasses.Select(t => t.Id).Contains(q.ObjectIndex)))).ToList();
 
             this.dataGridViewResult.DataSource = packages;
             this.labelPackageCount.Text = $"{packages.Count.ToString()} found";
 
-            foreach (DataGridViewRow row in this.dataGridViewResult.Rows)
+            this.Invoke((MethodInvoker)delegate { this.EnableExportMenu(true); });
+        }
+
+        private ObjectClass[] GetSelectedObjectClasses()
+        {
+            var objectClasses = new List<ObjectClass>();
+
+            foreach (DataGridViewRow row in this.dataGridViewObjectClasses.Rows)
             {
-                if ((row.DataBoundItem as AnnotationPackage).AvailableLocally)
+                if (Convert.ToBoolean(row.Cells[0].Value) == true)
                 {
-                    //TODO:Cleanup
-                    row.Cells[1].Value = true;
+                    objectClasses.Add(row.DataBoundItem as ObjectClass);
                 }
             }
 
-            this.Invoke((MethodInvoker)delegate { this.EnableExportMenu(true); });
+            return objectClasses.ToArray();
         }
 
         private async void ButtonExport_Click(object sender, EventArgs e)
@@ -90,7 +96,7 @@ namespace Alturos.ImageAnnotation.Forms
             }
 
             // Download missing packages
-            var successful = await this.DownloadMissingPackages(packages);
+            var successful = await this.DownloadMissingPackages(packages.Where(o => !o.AvailableLocally).ToList());
             if (!successful)
             {
                 return;
@@ -110,7 +116,7 @@ namespace Alturos.ImageAnnotation.Forms
             }
 
             // Export
-            this._annotationExportProvider.Export(path, packages.ToArray());
+            this._annotationExportProvider.Export(path, packages.ToArray(), this.GetSelectedObjectClasses(), this.trackBarTrainingPercentage.Value);
 
             this.EnableExportMenu(true);
 
@@ -138,23 +144,16 @@ namespace Alturos.ImageAnnotation.Forms
             {
                 for (var i = 0; i < packages.Count; i++)
                 {
-                    if (!packages[i].AvailableLocally)
-                    {
-                        this._downloadedPackage = packages[i];
-                        this._downloadProgress.CurrentFile = packages[i].PackageName;
+                    this._downloadedPackage = packages[i];
+                    this._downloadProgress.CurrentFile = packages[i].PackageName;
 
-                        packages[i].Downloading = true;
-                        packages[i] = await this._annotationPackageProvider.DownloadPackageAsync(packages[i], token);
+                    packages[i].Downloading = true;
+                    packages[i] = await this._annotationPackageProvider.DownloadPackageAsync(packages[i], token);
 
-                        this._downloadProgress.UploadedFiles++;
-                        this._downloadProgress.CurrentFilePercentDone = 0;
+                    this._downloadProgress.TransferedFiles++;
+                    this._downloadProgress.CurrentFilePercentDone = 0;
 
-                        var row = this.dataGridViewResult.Rows.Cast<DataGridViewRow>().SingleOrDefault(o => (o.DataBoundItem as AnnotationPackage).ExternalId == packages[i].ExternalId);
-                        if (row != null)
-                        {
-                            row.Cells[1].Value = true;
-                        }
-                    }
+                    this.dataGridViewResult.Refresh();
                 }
             }
             catch (Exception)
@@ -185,7 +184,7 @@ namespace Alturos.ImageAnnotation.Forms
                 if (!double.IsNaN(percentageDone))
                 {
                     this.labelDownloadProgress.Invoke((MethodInvoker)delegate {
-                        this.labelDownloadProgress.Text = $"Download in progress {progress.UploadedFiles}/{progress.FileCount} ({(int)percentageDone}%) - {this._downloadProgress.CurrentFile}";
+                        this.labelDownloadProgress.Text = $"Download in progress {(int)percentageDone}% (Package {progress.TransferedFiles}/{progress.FileCount} {this._downloadProgress.CurrentFile})";
                     });
                     this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)percentageDone; });
                 }
@@ -221,16 +220,9 @@ namespace Alturos.ImageAnnotation.Forms
             this._tokenSource?.Cancel();
         }
 
-        private void DataGridViewObjectClasses_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void TrackBarTrainingPercentage_Scroll(object sender, EventArgs e)
         {
-            var cell = this.dataGridViewObjectClasses.CurrentCell as DataGridViewCheckBoxCell;
-
-            if (cell != null && !cell.ReadOnly)
-            {
-                cell.Value = cell.Value == null || !((bool)cell.Value);
-                this.dataGridViewObjectClasses.RefreshEdit();
-                this.dataGridViewObjectClasses.NotifyCurrentCellDirty(true);
-            }
+            this.labelTrainingPercentage.Text = $"{this.trackBarTrainingPercentage.Value}%";
         }
     }
 }

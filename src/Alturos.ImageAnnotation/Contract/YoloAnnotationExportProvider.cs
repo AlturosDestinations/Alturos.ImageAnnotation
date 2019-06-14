@@ -12,7 +12,6 @@ namespace Alturos.ImageAnnotation.Contract
     [Description("Yolo")]
     public class YoloAnnotationExportProvider : IAnnotationExportProvider
     {
-        private const double TrainingPercentage = 70;
         private const string DataFolderName = "data";
         private const string ImageFolderName = "obj";
         private const string YoloConfigPath = @"..\..\Resources\yolov3.cfg";
@@ -24,7 +23,7 @@ namespace Alturos.ImageAnnotation.Contract
             this._config = config;
         }
 
-        public void Export(string path, AnnotationPackage[] packages)
+        public void Export(string path, AnnotationPackage[] packages, ObjectClass[] objectClasses, int trainingPercentage)
         {
             // Create folders
             var dataPath = Path.Combine(path, DataFolderName);
@@ -43,47 +42,48 @@ namespace Alturos.ImageAnnotation.Contract
             // Training list contains the images Yolo uses for training. "_trainingPercentage" dictates how many percent of all images are used for this.
             // Testing list contains all remaining images that Yolo uses to validate how well it performs based on the training data.
             // Unannotated images are not taken into account and will not be exported.
-            var images = packages.SelectMany(o => o.Images).Where(o => o.BoundingBoxes != null && o.BoundingBoxes.Count != 0);
+            var images = packages.SelectMany(o => o.Images).Where(o => o.BoundingBoxes != null && o.BoundingBoxes.Count != 0).ToList();
+            images.RemoveAll(img => !img.BoundingBoxes.Any(bbox => objectClasses.Select(oc => oc.Id).Contains(bbox.ObjectIndex)));
+
             var rng = new Random();
             var shuffledImages = images.OrderBy(o => rng.Next()).ToList();
 
-            var count = (int)(shuffledImages.Count * (TrainingPercentage / 100));
+            var count = (int)(shuffledImages.Count * (trainingPercentage / 100.0));
             var trainingImages = shuffledImages.Take(count);
             var testingImages = shuffledImages.Skip(count);
 
-            this.CreateFiles(dataPath, imagePath, images.ToArray());
-            this.CreateMetaData(dataPath, trainingImages.ToArray(), testingImages.ToArray());
-            this.CreateYoloConfig(dataPath, YoloConfigPath);
+            this.CreateFiles(dataPath, imagePath, images.ToArray(), objectClasses);
+            this.CreateMetaData(dataPath, trainingImages.ToArray(), testingImages.ToArray(), objectClasses);
+            this.CreateYoloConfig(path, YoloConfigPath, objectClasses);
         }
 
-        private void CreateFiles(string dataPath, string imagePath, AnnotationImage[] images)
+        private void CreateFiles(string dataPath, string imagePath, AnnotationImage[] images, ObjectClass[] objectClasses)
         {
             var stringBuilderDict = new Dictionary<int, StringBuilder>();
-            foreach (var objectClass in this._config.ObjectClasses)
+            foreach (var objectClass in objectClasses)
             {
                 stringBuilderDict[objectClass.Id] = new StringBuilder();
             }
 
-            var usedFileNames = new List<string>();
             var packagesFolder = ConfigurationManager.AppSettings["extractionFolder"];
 
-            foreach (var image in images)
-            {
-                var newFileName = Path.GetFileName(image.ImagePath);
-                while (usedFileNames.Contains(newFileName))
-                {
-                    newFileName = Path.GetFileNameWithoutExtension(image.ImagePath) + "(1)" + Path.GetExtension(image.ImagePath);
-                }
+            var mappingsFile = "mappings.txt";
+            var imageMappingSb = new StringBuilder();
 
-                usedFileNames.Add(newFileName);
+            for (var i = 0; i < images.Length; i++)
+            {
+                var image = images[i];
+                var newFileName = $"export{i.ToString("D5")}{Path.GetExtension(image.ImageName)}";
+
+                imageMappingSb.AppendLine($"{newFileName} {Path.Combine(image.Package.PackageName, image.ImageName)}");
 
                 var newFilePath = Path.Combine(imagePath, newFileName);
 
-                for (var i = 0; i < image.BoundingBoxes.Count; i++)
+                for (var j = 0; j < image.BoundingBoxes.Count; j++)
                 {
-                    if (image.BoundingBoxes[i] != null)
+                    if (image.BoundingBoxes[j] != null)
                     {
-                        stringBuilderDict[image.BoundingBoxes[i].ObjectIndex].AppendLine(Path.GetFullPath(newFilePath));
+                        stringBuilderDict[image.BoundingBoxes[j].ObjectIndex].AppendLine(Path.GetFullPath(newFilePath));
                     }
                 }
 
@@ -91,18 +91,26 @@ namespace Alturos.ImageAnnotation.Contract
                 File.Copy(Path.Combine(packagesFolder, image.Package.PackageName, image.ImageName), newFilePath, true);
 
                 // Create bounding boxes
-                this.CreateBoundingBoxes(image.BoundingBoxes, Path.ChangeExtension(newFilePath, "txt"));
+                this.CreateBoundingBoxes(image.BoundingBoxes, Path.ChangeExtension(newFilePath, "txt"), objectClasses);
             }
+
+            // Create mappings file
+            File.WriteAllText(Path.Combine(dataPath, mappingsFile), imageMappingSb.ToString());
         }
 
         /// <summary>
         /// Writes the bounding boxes to a file
         /// </summary>
-        private void CreateBoundingBoxes(List<AnnotationBoundingBox> boundingBoxes, string filePath)
+        private void CreateBoundingBoxes(List<AnnotationBoundingBox> boundingBoxes, string filePath, ObjectClass[] objectClasses)
         {
             var sb = new StringBuilder();
             foreach (var box in boundingBoxes)
             {
+                if (!objectClasses.Select(o => o.Id).Contains(box.ObjectIndex))
+                {
+                    continue;
+                }
+
                 sb.Append(box.ObjectIndex).Append(" ");
                 sb.Append(box.CenterX).Append(" ");
                 sb.Append(box.CenterY).Append(" ");
@@ -117,14 +125,14 @@ namespace Alturos.ImageAnnotation.Contract
         /// <summary>
         /// Creates the obj.names and obj.data files
         /// </summary>
-        private void CreateMetaData(string dataPath, AnnotationImage[] trainingImages, AnnotationImage[] testingImages)
+        private void CreateMetaData(string dataPath, AnnotationImage[] trainingImages, AnnotationImage[] testingImages, ObjectClass[] objectClasses)
         {
             var namesFile = "obj.names";
             var dataFile = "obj.data";
             var trainFile = "train.txt";
             var testFile = "test.txt";
 
-            var objectNames = this._config.ObjectClasses.Select(o => o.Name).ToArray();
+            var objectNames = objectClasses.Select(o => o.Name).ToArray();
             var sb = new StringBuilder();
 
             // Create obj.names
@@ -160,7 +168,7 @@ namespace Alturos.ImageAnnotation.Contract
             File.WriteAllText(Path.Combine(dataPath, $"{testFile}"), sb.ToString());
         }
 
-        private void CreateYoloConfig(string dataPath, string yoloConfigPath)
+        private void CreateYoloConfig(string dataPath, string yoloConfigPath, ObjectClass[] objectClasses)
         {
             var fileName = "yolo-obj.cfg";
 
@@ -172,7 +180,7 @@ namespace Alturos.ImageAnnotation.Contract
             var subdivisionsLineIndex = Array.FindIndex(lines, o => o.StartsWith("subdivisions"));
             lines[subdivisionsLineIndex] = "subdivisions=8";
 
-            var maxBatches = this._config.ObjectClasses.Count * 2000;
+            var maxBatches = objectClasses.Length * 2000;
             var maxBatchesLineIndex = Array.FindIndex(lines, o => o.StartsWith("max_batches"));
             lines[maxBatchesLineIndex] = $"max_batches={maxBatches}";
 
@@ -184,7 +192,7 @@ namespace Alturos.ImageAnnotation.Contract
             var classLines = lines.Where(o => o.StartsWith("classes"));
             foreach (var classLine in classLines)
             {
-                lines[Array.IndexOf(lines, classLine)] = $"classes={this._config.ObjectClasses.Count}";
+                lines[Array.IndexOf(lines, classLine)] = $"classes={objectClasses.Length}";
             }
 
             var filterIndices = new List<int>();
@@ -202,7 +210,7 @@ namespace Alturos.ImageAnnotation.Contract
             }
             foreach (var filterIndex in filterIndices)
             {
-                lines[filterIndex] = $"filters={(this._config.ObjectClasses.Count + 5) * 3}";
+                lines[filterIndex] = $"filters={(objectClasses.Length + 5) * 3}";
             }
 
             File.WriteAllLines(Path.Combine(dataPath, fileName), lines);

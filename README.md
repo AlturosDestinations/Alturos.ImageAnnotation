@@ -24,7 +24,7 @@ Shortcut | Description |
 <kbd>→</kbd> | Next Object Class |
 <kbd>←</kbd> | Previous Object Class |
 <kbd>0</kbd>-<kbd>9</kbd> | Select Object Class |
-<kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><br>+<kbd>Shift</kbd><br>+<kbd>Ctrl</kbd><br>+<kbd>Alt</kbd> | Move Bounding Box<br>Slow<br>Resize<br>Invert
+<kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><br>+<kbd>Shift</kbd><br>+<kbd>Ctrl</kbd><br>+<kbd>Alt</kbd> | Move Bounding Box<br>Resize<br>Quick<br>Invert
 
 ## Data preperation
 
@@ -113,18 +113,18 @@ You'll be asked to enter some keys. Since the database is entirely local, you ca
 
 * Download [MinIO](https://min.io/download) into a directory of your choice.
 
-* Create a textfile containing the following line:
+* Create minio.cmd using a text editor and add the following line:
 ```
-minio.exe server C:\Users\Username\Downloads\minio\
+minio.exe server minio
 ```
-Replace the path with the directory you downloaded minio.exe to and save the file as "minio.cmd" in the same directory.
-You can do so using a text editor like Notepad. When saving, choose "All files (*.*)" from the "Save as type" dropdown menu, to make sure your program doesn't add a file extension of its own.
+Save the `minio.cmd` in the same directory as the `minio.exe` file.
+When saving, choose `All files (*.*)` from the `Save as type` dropdown menu, to make sure your program doesn't add a file extension of its own.
 
 * Create a folder named "minio" in the same directory as your exe and cmd files.
 
 ### The setup is now complete. Everytime you want to use the local database with the project, you start it as follows:
 
-* Launch minio.cmd.
+* Launch your previously created `minio.cmd` file.
 
 * Open the command prompt from the folder where your local DynamoDB is located at.
 You can do this by typing "cmd" into the Windows Explorer address bar when you're inside your folder. Write the following:

@@ -1,4 +1,5 @@
 ﻿using Alturos.ImageAnnotation.Helper;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,15 +27,27 @@ namespace Alturos.ImageAnnotation.Model
         public List<AnnotationImage> Images { get; set; }
         public List<string> Tags { get; set; }
 
-        public void PrepareImages(string packagePath)
+        private string _packagePath;
+
+        public void PrepareImages(string packagePath = null)
         {
+            if (packagePath != null)
+            {
+                this._packagePath = packagePath;
+            }
+
+            if (this._packagePath == null)
+            {
+                throw new ArgumentException("packagePath can only be null if it was previously set!");
+            }
+
             if (this.Images == null)
             {
                 this.Images = new List<AnnotationImage>();
             }
 
             var allowedExtensions = new[] { ".png", ".jpg", ".bmp" };
-            var files = Directory.GetFiles(packagePath)
+            var files = Directory.GetFiles(this._packagePath)
                 .Where(file => allowedExtensions.Any(file.ToLower().EndsWith))
                 .Select(o => new FileInfo(o))
                 .OrderBy(o => o.Name.GetFirstNumber())

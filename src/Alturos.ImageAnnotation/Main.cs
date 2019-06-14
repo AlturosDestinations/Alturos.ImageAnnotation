@@ -20,7 +20,20 @@ namespace Alturos.ImageAnnotation
         public Main()
         {
             this.StartPosition = FormStartPosition.CenterScreen;
-            this._annotationPackageProvider = new AmazonAnnotationPackageProvider();
+            try
+            {
+                this._annotationPackageProvider = new AmazonAnnotationPackageProvider();
+            }
+            catch (TaskCanceledException)
+            {
+                MessageBox.Show("The local database took too long to respond.\n\n" +
+                    "Make sure your config is correctly setup. Are MinIO and your local DynamoDB running?\n\n" +
+                    "Refer to the README.md for further information on how to correctly setup a local database.",
+                    "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                this.Load += (s, e) => this.Close();
+                return;
+            }
 
             this._annotationConfig = this._annotationPackageProvider.GetAnnotationConfigAsync().GetAwaiter().GetResult();
             if (this._annotationConfig == null)
@@ -85,6 +98,8 @@ namespace Alturos.ImageAnnotation
         private void RegisterEvents()
         {
             this.annotationPackageListControl.PackageSelected += this.PackageSelected;
+            this.annotationPackageListControl.CategorySelected += this.CategorySelected;
+            this.annotationPackageListControl.DirtyUpdated += this.DirtyUpdated;
 
             this.annotationImageListControl.ImageSelected += this.ImageSelected;
             this.downloadControl.DownloadRequested += this.DownloadRequestedAsync;
@@ -98,6 +113,8 @@ namespace Alturos.ImageAnnotation
         private void UnregisterEvents()
         {
             this.annotationPackageListControl.PackageSelected -= this.PackageSelected;
+            this.annotationPackageListControl.CategorySelected -= this.CategorySelected;
+            this.annotationPackageListControl.DirtyUpdated -= this.DirtyUpdated;
 
             this.annotationImageListControl.ImageSelected -= this.ImageSelected;
             this.downloadControl.DownloadRequested -= this.DownloadRequestedAsync;
@@ -159,7 +176,7 @@ namespace Alturos.ImageAnnotation
             await this.LoadPackagesAsync(this._showAnnotated);
         }
 
-        private void SyncToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void SyncToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var packages = this.annotationPackageListControl.GetAllPackages().Where(o => o.IsDirty).ToArray();
             if (packages.Length == 0)
@@ -185,10 +202,8 @@ namespace Alturos.ImageAnnotation
             {
                 syncDialog.Show(this);
 
-                _ = Task.Run(() => syncDialog.Sync(packages)).ContinueWith(o =>
-                {
-                    //dialog.Dispose();
-                });
+                await syncDialog.Sync(packages);
+                syncDialog.Dispose();
 
                 this.annotationPackageListControl.RefreshData();
             }
@@ -225,14 +240,6 @@ namespace Alturos.ImageAnnotation
         {
             this.showLabelsToolStripMenuItem.Checked = !this.showLabelsToolStripMenuItem.Checked;
             this.annotationDrawControl.SetLabelsVisible(this.showLabelsToolStripMenuItem.Checked);
-        }
-
-        private async void ShowAnnotatedPackagesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.showAnnotatedPackagesToolStripMenuItem.Checked = !this.showAnnotatedPackagesToolStripMenuItem.Checked;
-            this._showAnnotated = this.showAnnotatedPackagesToolStripMenuItem.Checked;
-
-            await this.LoadPackagesAsync(this._showAnnotated);
         }
 
         private async void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -289,7 +296,7 @@ namespace Alturos.ImageAnnotation
             this.annotationImageListControl.Reset();
             this.annotationDrawControl.Reset();
 
-            this.labelUserName.Text = package.User;
+            this.labelUserName.Text = package?.User;
 
             if (package != null)
             {
@@ -310,6 +317,27 @@ namespace Alturos.ImageAnnotation
             }
 
             this._changedPackage = false;
+        }
+
+        private async void CategorySelected(AnnotationCategory category)
+        {
+            switch (category)
+            {
+                case AnnotationCategory.Unannotated:
+                    this._showAnnotated = false;
+                    break;
+                case AnnotationCategory.Annotated:
+                    this._showAnnotated = true;
+                    break;
+            }
+
+            await this.LoadPackagesAsync(this._showAnnotated);
+        }
+
+        private void DirtyUpdated(bool dirty)
+        {
+            this.syncToolStripMenuItem.Enabled = dirty;
+            this.Text = $"{this.Text.Replace("*", string.Empty)}{(dirty ? "*" : string.Empty)}";
         }
 
         private void SetPackageEditingControlsEnabled(bool enabled)
