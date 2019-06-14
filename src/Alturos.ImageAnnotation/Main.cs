@@ -161,7 +161,7 @@ namespace Alturos.ImageAnnotation
             await this.LoadPackagesAsync(this._showAnnotated);
         }
 
-        private void SyncToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void SyncToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var packages = this.annotationPackageListControl.GetAllPackages().Where(o => o.IsDirty).ToArray();
             if (packages.Length == 0)
@@ -187,10 +187,8 @@ namespace Alturos.ImageAnnotation
             {
                 syncDialog.Show(this);
 
-                _ = Task.Run(() => syncDialog.Sync(packages)).ContinueWith(o =>
-                {
-                    //dialog.Dispose();
-                });
+                await syncDialog.Sync(packages);
+                syncDialog.Dispose();
 
                 this.annotationPackageListControl.RefreshData();
             }
