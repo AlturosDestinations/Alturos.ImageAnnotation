@@ -26,9 +26,9 @@ namespace Alturos.ImageAnnotation
             }
             catch (TaskCanceledException)
             {
-                MessageBox.Show("The database took too long to respond.\n\n" +
-                    "Make sure your config is correctly setup. If you're using a local database, are MinIO and your local DynamoDB running?\n\n" +
-                    "Refer to the README.md for further information on how to correctly setup the local database.",
+                MessageBox.Show("The local database took too long to respond.\n\n" +
+                    "Make sure your config is correctly setup. Are MinIO and your local DynamoDB running?\n\n" +
+                    "Refer to the README.md for further information on how to correctly setup a local database.",
                     "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 this.Load += (s, e) => this.Close();
