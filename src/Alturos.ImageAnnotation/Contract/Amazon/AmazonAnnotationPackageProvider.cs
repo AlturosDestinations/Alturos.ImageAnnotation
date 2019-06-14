@@ -197,9 +197,17 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
         public async Task<AnnotationPackage[]> GetPackagesAsync(AnnotationPackageTag[] tags)
         {
             var scanConditions = new List<ScanCondition>();
-            foreach (var tag in tags)
+
+            if (tags == null || tags.Length == 0)
             {
-                scanConditions.Add(new ScanCondition("Tags", ScanOperator.Contains, tag.Value));
+                scanConditions.Add(new ScanCondition("IsAnnotated", ScanOperator.IsNotNull));
+            }
+            else
+            {
+                foreach (var tag in tags)
+                {
+                    scanConditions.Add(new ScanCondition("Tags", ScanOperator.Contains, tag.Value));
+                }
             }
 
             return await this.GetPackagesAsync(scanConditions.ToArray()).ConfigureAwait(false);

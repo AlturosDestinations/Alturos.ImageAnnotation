@@ -296,7 +296,7 @@ namespace Alturos.ImageAnnotation
             this.annotationImageListControl.Reset();
             this.annotationDrawControl.Reset();
 
-            this.labelUserName.Text = package.User;
+            this.labelUserName.Text = package?.User;
 
             if (package != null)
             {

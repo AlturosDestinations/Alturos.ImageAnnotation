@@ -20,10 +20,11 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private static ILog Log = LogManager.GetLogger(typeof(AnnotationPackageListControl));
 
+        private readonly BindingSource _bindingSource;
+
         private IAnnotationPackageProvider _annotationPackageProvider;
         private List<AnnotationPackage> _annotationPackages;
         private List<AnnotationPackage> _selectedPackages;
-        private BindingSource _bindingSource;
         private AnnotationCategory _selectedCategory;
 
         public AnnotationPackageListControl()
@@ -72,7 +73,7 @@ namespace Alturos.ImageAnnotation.CustomControls
 
                 this.SetLoading(false);
 
-                if (this._annotationPackages?.Count > 0)
+                if (true)
                 {
                     this.dataGridView1.Invoke((MethodInvoker)delegate
                     {
@@ -199,7 +200,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 this.ParentForm.Enabled = false;
             });
 
-            var remotePackages = await this._annotationPackageProvider.GetPackagesAsync(false);
+            var remotePackages = await this._annotationPackageProvider.GetPackagesAsync(null);
 
             foreach (var package in this._selectedPackages)
             {

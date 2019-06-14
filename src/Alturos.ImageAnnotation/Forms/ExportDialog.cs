@@ -51,7 +51,7 @@ namespace Alturos.ImageAnnotation.Forms
 
             this.Invoke((MethodInvoker)delegate { this.EnableExportMenu(false); });
 
-            var items = await this._annotationPackageProvider.GetPackagesAsync(tags.ToArray());
+            var items = await this._annotationPackageProvider.GetPackagesAsync(tags?.ToArray());
 
             var objectClasses = this.GetSelectedObjectClasses();
             var packages = items.Where(o => o.IsAnnotated && o.Images.Any(p => p.BoundingBoxes.Any(q => objectClasses.Select(t => t.Id).Contains(q.ObjectIndex)))).ToList();
