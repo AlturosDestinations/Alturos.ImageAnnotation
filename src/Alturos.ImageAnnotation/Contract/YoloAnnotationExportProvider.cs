@@ -53,7 +53,7 @@ namespace Alturos.ImageAnnotation.Contract
 
             this.CreateFiles(dataPath, imagePath, images.ToArray(), objectClasses);
             this.CreateMetaData(dataPath, trainingImages.ToArray(), testingImages.ToArray(), objectClasses);
-            this.CreateYoloConfig(dataPath, YoloConfigPath, objectClasses);
+            this.CreateYoloConfig(path, YoloConfigPath, objectClasses);
         }
 
         private void CreateFiles(string dataPath, string imagePath, AnnotationImage[] images, ObjectClass[] objectClasses)
@@ -64,35 +64,42 @@ namespace Alturos.ImageAnnotation.Contract
                 stringBuilderDict[objectClass.Id] = new StringBuilder();
             }
 
-            var usedFileNames = new List<string>();
             var packagesFolder = ConfigurationManager.AppSettings["extractionFolder"];
 
-            foreach (var image in images)
-            {
-                var newFileName = Path.GetFileName(image.ImagePath);
-                while (usedFileNames.Contains(newFileName))
-                {
-                    newFileName = Path.GetFileNameWithoutExtension(image.ImagePath) + "(1)" + Path.GetExtension(image.ImagePath);
-                }
+            var mappingsFile = "mappings.txt";
+            var imageMappingSb = new StringBuilder();
 
-                usedFileNames.Add(newFileName);
+            for (var i = 0; i < images.Length; i++)
+            {
+                var image = images[i];
+                var newFileName = $"export{i.ToString("D5")}{Path.GetExtension(image.ImageName)}";
+
+                imageMappingSb.AppendLine($"{newFileName} {Path.Combine(image.Package.PackageName, image.ImageName)}");
 
                 var newFilePath = Path.Combine(imagePath, newFileName);
+                var hasObjectClass = false;
 
-                for (var i = 0; i < image.BoundingBoxes.Count; i++)
+                for (var j = 0; j < image.BoundingBoxes.Count; j++)
                 {
-                    if (image.BoundingBoxes[i] != null && objectClasses.Select(o => o.Id).Contains(image.BoundingBoxes[i].ObjectIndex))
+                    if (image.BoundingBoxes[j] != null && objectClasses.Select(o => o.Id).Contains(image.BoundingBoxes[j].ObjectIndex))
                     {
-                        stringBuilderDict[image.BoundingBoxes[i].ObjectIndex].AppendLine(Path.GetFullPath(newFilePath));
+                        stringBuilderDict[image.BoundingBoxes[j].ObjectIndex].AppendLine(Path.GetFullPath(newFilePath));
+                        hasObjectClass = true;
                     }
                 }
 
-                // Copy image
-                File.Copy(Path.Combine(packagesFolder, image.Package.PackageName, image.ImageName), newFilePath, true);
+                if (hasObjectClass)
+                {
+                    // Copy image
+                    File.Copy(Path.Combine(packagesFolder, image.Package.PackageName, image.ImageName), newFilePath, true);
 
-                // Create bounding boxes
-                this.CreateBoundingBoxes(image.BoundingBoxes, Path.ChangeExtension(newFilePath, "txt"), objectClasses);
+                    // Create bounding boxes
+                    this.CreateBoundingBoxes(image.BoundingBoxes, Path.ChangeExtension(newFilePath, "txt"), objectClasses);
+                }
             }
+
+            // Create mappings file
+            File.WriteAllText(Path.Combine(dataPath, mappingsFile), imageMappingSb.ToString());
         }
 
         /// <summary>
