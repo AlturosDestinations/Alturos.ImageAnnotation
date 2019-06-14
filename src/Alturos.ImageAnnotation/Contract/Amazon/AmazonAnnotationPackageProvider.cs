@@ -123,7 +123,12 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                     }
                 }.ToList();
 
-                var tables = this._dynamoDbClient.ListTablesAsync().GetAwaiter().GetResult();
+                var tokenSource = new CancellationTokenSource();
+                var token = tokenSource.Token;
+
+                tokenSource.CancelAfter(10000);
+
+                var tables = this._dynamoDbClient.ListTablesAsync(token).GetAwaiter().GetResult();
                 if (!tables.TableNames.Contains(this._dbTableName))
                 {
                     this._dynamoDbClient.CreateTableAsync(createTableRequest).GetAwaiter().GetResult();

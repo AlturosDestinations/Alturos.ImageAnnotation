@@ -20,7 +20,20 @@ namespace Alturos.ImageAnnotation
         public Main()
         {
             this.StartPosition = FormStartPosition.CenterScreen;
-            this._annotationPackageProvider = new AmazonAnnotationPackageProvider();
+            try
+            {
+                this._annotationPackageProvider = new AmazonAnnotationPackageProvider();
+            }
+            catch (TaskCanceledException)
+            {
+                MessageBox.Show("The database took too long to respond.\n\n" +
+                    "Make sure your config is correctly setup. If you're using a local database, are MinIO and your local DynamoDB running?\n\n" +
+                    "Refer to the README.md for further information on how to correctly setup the local database.",
+                    "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                this.Load += (s, e) => this.Close();
+                return;
+            }
 
             this._annotationConfig = this._annotationPackageProvider.GetAnnotationConfigAsync().GetAwaiter().GetResult();
             if (this._annotationConfig == null)
