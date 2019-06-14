@@ -15,6 +15,7 @@ namespace Alturos.ImageAnnotation.CustomControls
     public partial class AnnotationPackageListControl : UserControl
     {
         public event Action<AnnotationPackage> PackageSelected;
+        public event Action<bool> DirtyUpdated;
 
         private static ILog Log = LogManager.GetLogger(typeof(AnnotationPackageListControl));
 
@@ -41,6 +42,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         public void RefreshData()
         {
             this.dataGridView1.Refresh();
+            this.DirtyUpdated?.Invoke(this._annotationPackages.Any(o => o.IsDirty));
         }
 
         public AnnotationPackage[] GetAllPackages()
@@ -198,6 +200,8 @@ namespace Alturos.ImageAnnotation.CustomControls
                 package.IsAnnotated = remotePackage.IsAnnotated;
                 package.AnnotationPercentage = remotePackage.AnnotationPercentage;
                 package.Tags = remotePackage.Tags;
+
+                package.PrepareImages();
             }
 
             this.ParentForm.Invoke((MethodInvoker)delegate

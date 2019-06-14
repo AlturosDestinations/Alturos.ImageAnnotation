@@ -87,6 +87,7 @@
             // 
             // syncToolStripMenuItem
             // 
+            this.syncToolStripMenuItem.Enabled = false;
             this.syncToolStripMenuItem.Image = global::Alturos.ImageAnnotation.Properties.Resources.disk;
             this.syncToolStripMenuItem.Name = "syncToolStripMenuItem";
             this.syncToolStripMenuItem.Size = new System.Drawing.Size(59, 20);

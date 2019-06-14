@@ -85,6 +85,7 @@ namespace Alturos.ImageAnnotation
         private void RegisterEvents()
         {
             this.annotationPackageListControl.PackageSelected += this.PackageSelected;
+            this.annotationPackageListControl.DirtyUpdated += this.DirtyUpdated;
 
             this.annotationImageListControl.ImageSelected += this.ImageSelected;
             this.downloadControl.DownloadRequested += this.DownloadRequestedAsync;
@@ -98,6 +99,7 @@ namespace Alturos.ImageAnnotation
         private void UnregisterEvents()
         {
             this.annotationPackageListControl.PackageSelected -= this.PackageSelected;
+            this.annotationPackageListControl.DirtyUpdated -= this.DirtyUpdated;
 
             this.annotationImageListControl.ImageSelected -= this.ImageSelected;
             this.downloadControl.DownloadRequested -= this.DownloadRequestedAsync;
@@ -310,6 +312,12 @@ namespace Alturos.ImageAnnotation
             }
 
             this._changedPackage = false;
+        }
+
+        private void DirtyUpdated(bool dirty)
+        {
+            this.syncToolStripMenuItem.Enabled = dirty;
+            this.Text = $"{this.Text.Replace("*", string.Empty)}{(dirty ? "*" : string.Empty)}";
         }
 
         private void SetPackageEditingControlsEnabled(bool enabled)
