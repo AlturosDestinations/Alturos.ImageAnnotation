@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.buttonExport = new System.Windows.Forms.Button();
             this.dataGridViewTags = new System.Windows.Forms.DataGridView();
             this.ColumnValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -51,6 +52,11 @@
             this.trackBarTrainingPercentage = new System.Windows.Forms.TrackBar();
             this.labelTrainingPercentage = new System.Windows.Forms.Label();
             this.groupBoxTrainingPercentage = new System.Windows.Forms.GroupBox();
+            this.groupBoxImageSize = new System.Windows.Forms.GroupBox();
+            this.trackBarImageSize = new System.Windows.Forms.TrackBar();
+            this.labelImageSize = new System.Windows.Forms.Label();
+            this.toolTipImageSize = new System.Windows.Forms.ToolTip(this.components);
+            this.toolTipTrainingPercentage = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTags)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewResult)).BeginInit();
             this.groupBoxTags.SuspendLayout();
@@ -60,6 +66,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewObjectClasses)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTrainingPercentage)).BeginInit();
             this.groupBoxTrainingPercentage.SuspendLayout();
+            this.groupBoxImageSize.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarImageSize)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonExport
@@ -300,9 +308,11 @@
             this.trackBarTrainingPercentage.Location = new System.Drawing.Point(6, 19);
             this.trackBarTrainingPercentage.Maximum = 100;
             this.trackBarTrainingPercentage.Name = "trackBarTrainingPercentage";
-            this.trackBarTrainingPercentage.Size = new System.Drawing.Size(519, 45);
+            this.trackBarTrainingPercentage.Size = new System.Drawing.Size(256, 45);
             this.trackBarTrainingPercentage.TabIndex = 12;
             this.trackBarTrainingPercentage.TickFrequency = 5;
+            this.toolTipTrainingPercentage.SetToolTip(this.trackBarTrainingPercentage, "The percentage stands for how many images each package will randomly select to tr" +
+        "ain annotating images.\r\nThe remaining images are used for testing.");
             this.trackBarTrainingPercentage.Value = 70;
             this.trackBarTrainingPercentage.Scroll += new System.EventHandler(this.TrackBarTrainingPercentage_Scroll);
             // 
@@ -310,7 +320,7 @@
             // 
             this.labelTrainingPercentage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelTrainingPercentage.AutoSize = true;
-            this.labelTrainingPercentage.Location = new System.Drawing.Point(531, 35);
+            this.labelTrainingPercentage.Location = new System.Drawing.Point(268, 35);
             this.labelTrainingPercentage.Name = "labelTrainingPercentage";
             this.labelTrainingPercentage.Size = new System.Drawing.Size(27, 13);
             this.labelTrainingPercentage.TabIndex = 13;
@@ -318,20 +328,76 @@
             // 
             // groupBoxTrainingPercentage
             // 
+            this.groupBoxTrainingPercentage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxTrainingPercentage.Controls.Add(this.trackBarTrainingPercentage);
             this.groupBoxTrainingPercentage.Controls.Add(this.labelTrainingPercentage);
             this.groupBoxTrainingPercentage.Location = new System.Drawing.Point(12, 398);
             this.groupBoxTrainingPercentage.Name = "groupBoxTrainingPercentage";
-            this.groupBoxTrainingPercentage.Size = new System.Drawing.Size(564, 69);
+            this.groupBoxTrainingPercentage.Size = new System.Drawing.Size(301, 69);
             this.groupBoxTrainingPercentage.TabIndex = 14;
             this.groupBoxTrainingPercentage.TabStop = false;
             this.groupBoxTrainingPercentage.Text = "Training Percentage";
+            // 
+            // groupBoxImageSize
+            // 
+            this.groupBoxImageSize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxImageSize.Controls.Add(this.trackBarImageSize);
+            this.groupBoxImageSize.Controls.Add(this.labelImageSize);
+            this.groupBoxImageSize.Location = new System.Drawing.Point(320, 398);
+            this.groupBoxImageSize.Name = "groupBoxImageSize";
+            this.groupBoxImageSize.Size = new System.Drawing.Size(256, 69);
+            this.groupBoxImageSize.TabIndex = 15;
+            this.groupBoxImageSize.TabStop = false;
+            this.groupBoxImageSize.Text = "Image Size";
+            // 
+            // trackBarImageSize
+            // 
+            this.trackBarImageSize.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.trackBarImageSize.LargeChange = 32;
+            this.trackBarImageSize.Location = new System.Drawing.Point(6, 19);
+            this.trackBarImageSize.Maximum = 608;
+            this.trackBarImageSize.Minimum = 416;
+            this.trackBarImageSize.Name = "trackBarImageSize";
+            this.trackBarImageSize.Size = new System.Drawing.Size(211, 45);
+            this.trackBarImageSize.SmallChange = 32;
+            this.trackBarImageSize.TabIndex = 12;
+            this.trackBarImageSize.TickFrequency = 32;
+            this.toolTipImageSize.SetToolTip(this.trackBarImageSize, "The size of the image used for training and testing purposes.\r\nA smaller value wi" +
+        "ll require less space, whereas a higher value has the benefit of a more accurate" +
+        " learning process.");
+            this.trackBarImageSize.Value = 416;
+            this.trackBarImageSize.Scroll += new System.EventHandler(this.TrackBarImageSize_Scroll);
+            // 
+            // labelImageSize
+            // 
+            this.labelImageSize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelImageSize.AutoSize = true;
+            this.labelImageSize.Location = new System.Drawing.Point(223, 35);
+            this.labelImageSize.Name = "labelImageSize";
+            this.labelImageSize.Size = new System.Drawing.Size(25, 13);
+            this.labelImageSize.TabIndex = 13;
+            this.labelImageSize.Text = "416";
+            // 
+            // toolTipImageSize
+            // 
+            this.toolTipImageSize.IsBalloon = true;
+            this.toolTipImageSize.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.toolTipImageSize.ToolTipTitle = "Image Size";
+            // 
+            // toolTipTrainingPercentage
+            // 
+            this.toolTipTrainingPercentage.IsBalloon = true;
+            this.toolTipTrainingPercentage.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.toolTipTrainingPercentage.ToolTipTitle = "Training Percentage";
             // 
             // ExportDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(588, 629);
+            this.Controls.Add(this.groupBoxImageSize);
             this.Controls.Add(this.groupBoxTrainingPercentage);
             this.Controls.Add(this.groupBoxObjectClasses);
             this.Controls.Add(this.groupBoxExportProvider);
@@ -358,6 +424,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarTrainingPercentage)).EndInit();
             this.groupBoxTrainingPercentage.ResumeLayout(false);
             this.groupBoxTrainingPercentage.PerformLayout();
+            this.groupBoxImageSize.ResumeLayout(false);
+            this.groupBoxImageSize.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarImageSize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -387,5 +456,10 @@
         private System.Windows.Forms.TrackBar trackBarTrainingPercentage;
         private System.Windows.Forms.Label labelTrainingPercentage;
         private System.Windows.Forms.GroupBox groupBoxTrainingPercentage;
+        private System.Windows.Forms.GroupBox groupBoxImageSize;
+        private System.Windows.Forms.TrackBar trackBarImageSize;
+        private System.Windows.Forms.Label labelImageSize;
+        private System.Windows.Forms.ToolTip toolTipImageSize;
+        private System.Windows.Forms.ToolTip toolTipTrainingPercentage;
     }
 }
