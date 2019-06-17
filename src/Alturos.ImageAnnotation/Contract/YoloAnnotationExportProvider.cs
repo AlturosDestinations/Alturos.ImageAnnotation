@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,10 +14,13 @@ namespace Alturos.ImageAnnotation.Contract
     public class YoloAnnotationExportProvider : IAnnotationExportProvider
     {
         private const string DataFolderName = "data";
+        private const string BackupFolderName = "backup";
         private const string ImageFolderName = "obj";
         private const string YoloConfigPath = @"..\..\Resources\yolov3.cfg";
 
         private AnnotationConfig _config;
+        private int _imageSize = 416;
+        private Dictionary<AnnotationImage, string> _exportedNames;
 
         public void Setup(AnnotationConfig config)
         {
@@ -30,6 +34,12 @@ namespace Alturos.ImageAnnotation.Contract
             if (!Directory.Exists(dataPath))
             {
                 Directory.CreateDirectory(dataPath);
+            }
+
+            var backupPath = Path.Combine(path, BackupFolderName);
+            if (!Directory.Exists(backupPath))
+            {
+                Directory.CreateDirectory(backupPath);
             }
 
             var imagePath = Path.Combine(dataPath, ImageFolderName);
@@ -52,9 +62,18 @@ namespace Alturos.ImageAnnotation.Contract
             var trainingImages = shuffledImages.Take(count);
             var testingImages = shuffledImages.Skip(count);
 
+            this._exportedNames = new Dictionary<AnnotationImage, string>();
+            for (var i = 0; i < images.Count; i++)
+            {
+                var image = images[i];
+                var newName = $"export{i.ToString("D5")}{Path.GetExtension(image.ImageName)}";
+                this._exportedNames[image] = newName;
+            }
+
             this.CreateFiles(dataPath, imagePath, images.ToArray(), objectClasses);
             this.CreateMetaData(dataPath, trainingImages.ToArray(), testingImages.ToArray(), objectClasses);
             this.CreateYoloConfig(path, YoloConfigPath, objectClasses);
+            this.CreateCommandFile(path);
         }
 
         private void CreateFiles(string dataPath, string imagePath, AnnotationImage[] images, ObjectClass[] objectClasses)
@@ -70,14 +89,11 @@ namespace Alturos.ImageAnnotation.Contract
             var mappingsFile = "mappings.txt";
             var imageMappingSb = new StringBuilder();
 
-            for (var i = 0; i < images.Length; i++)
+            foreach (var image in images)
             {
-                var image = images[i];
-                var newFileName = $"export{i.ToString("D5")}{Path.GetExtension(image.ImageName)}";
+                imageMappingSb.AppendLine($"{this._exportedNames[image]} {Path.Combine(image.Package.PackageName, image.ImageName)}");
 
-                imageMappingSb.AppendLine($"{newFileName} {Path.Combine(image.Package.PackageName, image.ImageName)}");
-
-                var newFilePath = Path.Combine(imagePath, newFileName);
+                var newFilePath = Path.Combine(imagePath, this._exportedNames[image]);
 
                 for (var j = 0; j < image.BoundingBoxes.Count; j++)
                 {
@@ -110,12 +126,12 @@ namespace Alturos.ImageAnnotation.Contract
                 {
                     continue;
                 }
-
+                
                 sb.Append(box.ObjectIndex).Append(" ");
-                sb.Append(box.CenterX).Append(" ");
-                sb.Append(box.CenterY).Append(" ");
-                sb.Append(box.Width).Append(" ");
-                sb.Append(box.Height).Append(" ");
+                sb.Append(box.CenterX.ToString("0.0000", CultureInfo.InvariantCulture)).Append(" ");
+                sb.Append(box.CenterY.ToString("0.0000", CultureInfo.InvariantCulture)).Append(" ");
+                sb.Append(box.Width.ToString("0.0000", CultureInfo.InvariantCulture)).Append(" ");
+                sb.Append(box.Height.ToString("0.0000", CultureInfo.InvariantCulture)).Append(" ");
                 sb.AppendLine();
             }
 
@@ -153,17 +169,17 @@ namespace Alturos.ImageAnnotation.Contract
 
             // Create training file
             sb.Clear();
-            foreach (var image in trainingImages)
+            foreach (var image in trainingImages.OrderBy(o => this._exportedNames[o]))
             {
-                sb.AppendLine($"{DataFolderName}/{ImageFolderName}/{image.ImageName}");
+                sb.AppendLine($"{DataFolderName}/{ImageFolderName}/{this._exportedNames[image]}");
             }
             File.WriteAllText(Path.Combine(dataPath, $"{trainFile}"), sb.ToString());
 
             // Create testing file
             sb.Clear();
-            foreach (var image in testingImages)
+            foreach (var image in testingImages.OrderBy(o => this._exportedNames[o]))
             {
-                sb.AppendLine($"{DataFolderName}/{ImageFolderName}/{image.ImageName}");
+                sb.AppendLine($"{DataFolderName}/{ImageFolderName}/{this._exportedNames[image]}");
             }
             File.WriteAllText(Path.Combine(dataPath, $"{testFile}"), sb.ToString());
         }
@@ -173,6 +189,11 @@ namespace Alturos.ImageAnnotation.Contract
             var fileName = "yolo-obj.cfg";
 
             var lines = File.ReadAllLines(yoloConfigPath);
+
+            var widthLineIndex = Array.FindIndex(lines, o => o.StartsWith("width"));
+            lines[widthLineIndex] = $"width={this._imageSize}";
+            var heightLineIndex = Array.FindIndex(lines, o => o.StartsWith("height"));
+            lines[heightLineIndex] = $"height={this._imageSize}";
 
             var batchLineIndex = Array.FindIndex(lines, o => o.StartsWith("batch"));
             lines[batchLineIndex] = "batch=64";
@@ -214,6 +235,11 @@ namespace Alturos.ImageAnnotation.Contract
             }
 
             File.WriteAllLines(Path.Combine(dataPath, fileName), lines);
+        }
+
+        private void CreateCommandFile(string path)
+        {
+            File.WriteAllText(Path.Combine(path, "start_training.cmd"), "darknet.exe detector train data/obj.data yolo-obj.cfg darknet53.conv.74");
         }
     }
 }

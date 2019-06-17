@@ -101,7 +101,7 @@ namespace Alturos.ImageAnnotation.Forms
             {
                 await this._annotationPackageProvider.UploadPackagesAsync(this._packagePaths, tags, Environment.UserName, token);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 MessageBox.Show("The upload was cancelled.", "Upload failed", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
