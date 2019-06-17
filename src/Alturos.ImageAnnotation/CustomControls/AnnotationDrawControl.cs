@@ -144,6 +144,11 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private CanvasInfo GetCanvasInformation()
         {
+            if (this.pictureBox1.Image == null)
+            {
+                return null;
+            }
+
             var imageWidth = this.pictureBox1.Image.Width;
             var imageHeight = this.pictureBox1.Image.Height;
             var canvasWidth = this.pictureBox1.Width;
@@ -670,6 +675,10 @@ namespace Alturos.ImageAnnotation.CustomControls
             // Move Bounding Box
             var speed = e.Control ? 10 : 1;
             var canvasInfo = this.GetCanvasInformation();
+            if (canvasInfo == null)
+            {
+                return;
+            }
             
             if (e.KeyCode == Keys.W)
             {
