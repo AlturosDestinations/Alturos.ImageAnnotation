@@ -200,16 +200,16 @@ namespace Alturos.ImageAnnotation.Contract
 
             var lines = File.ReadAllLines(yoloConfigPath);
 
-            var widthLineIndex = Array.FindIndex(lines, o => o.StartsWith("width"));
-            lines[widthLineIndex] = $"width={this._imageSize}";
-            var heightLineIndex = Array.FindIndex(lines, o => o.StartsWith("height"));
-            lines[heightLineIndex] = $"height={this._imageSize}";
-
             var batchLineIndex = Array.FindIndex(lines, o => o.StartsWith("batch"));
             lines[batchLineIndex] = "batch=64";
 
             var subdivisionsLineIndex = Array.FindIndex(lines, o => o.StartsWith("subdivisions"));
             lines[subdivisionsLineIndex] = "subdivisions=8";
+
+            var widthLineIndex = Array.FindIndex(lines, o => o.StartsWith("width"));
+            lines[widthLineIndex] = $"width={this._imageSize}";
+            var heightLineIndex = Array.FindIndex(lines, o => o.StartsWith("height"));
+            lines[heightLineIndex] = $"height={this._imageSize}";
 
             var maxBatches = objectClasses.Length * 2000;
             var maxBatchesLineIndex = Array.FindIndex(lines, o => o.StartsWith("max_batches"));
