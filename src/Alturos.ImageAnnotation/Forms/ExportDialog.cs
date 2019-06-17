@@ -224,5 +224,11 @@ namespace Alturos.ImageAnnotation.Forms
         {
             this.labelTrainingPercentage.Text = $"{this.trackBarTrainingPercentage.Value}%";
         }
+
+        private void TrackBarImageSize_Scroll(object sender, EventArgs e)
+        {
+            this.trackBarImageSize.Value = (int)(Math.Round(this.trackBarImageSize.Value / 32.0) * 32);
+            this.labelImageSize.Text = $"{this.trackBarImageSize.Value}";
+        }
     }
 }
