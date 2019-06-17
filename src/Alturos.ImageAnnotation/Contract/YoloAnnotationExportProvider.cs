@@ -52,15 +52,25 @@ namespace Alturos.ImageAnnotation.Contract
             // Training list contains the images Yolo uses for training. "_trainingPercentage" dictates how many percent of all images are used for this.
             // Testing list contains all remaining images that Yolo uses to validate how well it performs based on the training data.
             // Unannotated images are not taken into account and will not be exported.
-            var images = packages.SelectMany(o => o.Images).Where(o => o.BoundingBoxes != null && o.BoundingBoxes.Count != 0).ToList();
-            images.RemoveAll(img => !img.BoundingBoxes.Any(bbox => objectClasses.Select(oc => oc.Id).Contains(bbox.ObjectIndex)));
 
-            var rng = new Random();
-            var shuffledImages = images.OrderBy(o => rng.Next()).ToList();
+            var images = new List<AnnotationImage>();
+            var trainingImages = new List<AnnotationImage>();
+            var testingImages = new List<AnnotationImage>();
 
-            var count = (int)(shuffledImages.Count * (trainingPercentage / 100.0));
-            var trainingImages = shuffledImages.Take(count);
-            var testingImages = shuffledImages.Skip(count);
+            foreach (var package in packages)
+            {
+                var availableImages = package.Images.Where(o => o.BoundingBoxes != null && o.BoundingBoxes.Count != 0).ToList();
+                availableImages.RemoveAll(o => !o.BoundingBoxes.Any(p => objectClasses.Select(q => q.Id).Contains(p.ObjectIndex)));
+
+                var rng = new Random();
+                var shuffledImages = availableImages.OrderBy(o => rng.Next()).ToList();
+
+                var count = (int)(shuffledImages.Count * (trainingPercentage / 100.0));
+                trainingImages.AddRange(shuffledImages.Take(count));
+                testingImages.AddRange(shuffledImages.Skip(count));
+
+                images.AddRange(availableImages);
+            }
 
             this._exportedNames = new Dictionary<AnnotationImage, string>();
             for (var i = 0; i < images.Count; i++)
