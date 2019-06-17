@@ -412,9 +412,30 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 Tags = tags
             }, token).ConfigureAwait(false);
 
-            foreach (var file in PackageHelper.GetImages(packagePath))
+            var imageFiles = PackageHelper.GetImages(packagePath);
+            foreach (var file in imageFiles)
             {
                 await this.UploadFileAsync(file, token).ConfigureAwait(false);
+            }
+
+            // Create local directory
+            if (!Directory.Exists(this._extractionFolder))
+            {
+                Directory.CreateDirectory(this._extractionFolder);
+            }
+
+            var localPackagePath = Path.Combine(this._extractionFolder, Path.GetFileName(packagePath));
+
+            if (Directory.Exists(localPackagePath))
+            {
+                Directory.Delete(localPackagePath, true);
+            }
+
+            Directory.CreateDirectory(localPackagePath);
+
+            foreach (var file in imageFiles)
+            {
+                File.Copy(file, Path.Combine(localPackagePath, Path.GetFileName(file)));
             }
         }
 
@@ -470,6 +491,30 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             }
         }
 
+        private async Task<bool> AddPackageAsync(AnnotationPackage package, CancellationToken token)
+        {
+            var info = new AnnotationPackageDto
+            {
+                Id = package.ExternalId,
+                User = package.User,
+                IsAnnotated = package.IsAnnotated,
+                AnnotationPercentage = package.AnnotationPercentage,
+                Tags = package.Tags,
+                Images = new List<AnnotationImageDto>()
+            };
+
+            using (var context = new DynamoDBContext(this._dynamoDbClient))
+            {
+                var dbConfig = new DynamoDBOperationConfig
+                {
+                    OverrideTableName = this._dbTableName
+                };
+                await context.SaveAsync(info, dbConfig, token).ConfigureAwait(false);
+            }
+
+            return true;
+        }
+
         private async Task<bool> UpdatePackageAsync(AnnotationPackage package, CancellationToken token)
         {
             using (var context = new DynamoDBContext(this._dynamoDbClient))
@@ -503,30 +548,6 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 this._syncProgress.TransferedFiles++;
                 return true;
             }
-        }
-
-        private async Task<bool> AddPackageAsync(AnnotationPackage package, CancellationToken token)
-        {
-            var info = new AnnotationPackageDto
-            {
-                Id = package.ExternalId,
-                User = package.User,
-                IsAnnotated = package.IsAnnotated,
-                AnnotationPercentage = package.AnnotationPercentage,
-                Tags = package.Tags,
-                Images = new List<AnnotationImageDto>()
-            };
-
-            using (var context = new DynamoDBContext(this._dynamoDbClient))
-            {
-                var dbConfig = new DynamoDBOperationConfig
-                {
-                    OverrideTableName = this._dbTableName
-                };
-                await context.SaveAsync(info, dbConfig, token).ConfigureAwait(false);
-            }
-
-            return true;
         }
 
         public async Task<bool> DeletePackageAsync(AnnotationPackage package)
