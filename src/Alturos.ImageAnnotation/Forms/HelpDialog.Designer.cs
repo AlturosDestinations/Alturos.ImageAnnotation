@@ -113,9 +113,11 @@
             this.Controls.Add(this.groupBoxBboxEditing);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.groupBoxAnnotation);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "HelpDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Help";
             this.groupBoxAnnotation.ResumeLayout(false);
             this.groupBoxAnnotation.PerformLayout();

@@ -72,6 +72,12 @@
     <Compile Include="CustomControls\TagDisplayControl.Designer.cs">
       <DependentUpon>TagDisplayControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\YoloExportControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\YoloExportControl.Designer.cs">
+      <DependentUpon>YoloExportControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\TagSelectionDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -202,6 +208,9 @@
     <EmbeddedResource Include="CustomControls\TagSelectionControl.resx">
       <DependentUpon>TagSelectionControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\YoloExportControl.resx">
+      <DependentUpon>YoloExportControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ConfigurationDialog.resx">
       <DependentUpon>ConfigurationDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -267,6 +276,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\yolov3-tiny_obj.cfg" />
     <None Include="Resources\yolov3.cfg" />
   </ItemGroup>
   <ItemGroup>

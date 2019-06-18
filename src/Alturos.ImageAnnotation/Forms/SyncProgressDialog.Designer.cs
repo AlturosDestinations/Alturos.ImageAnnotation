@@ -55,6 +55,7 @@
             this.ClientSize = new System.Drawing.Size(392, 63);
             this.Controls.Add(this.labelSyncing);
             this.Controls.Add(this.progressBar);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SyncProgressDialog";

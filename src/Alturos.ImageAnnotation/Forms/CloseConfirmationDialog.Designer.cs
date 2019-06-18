@@ -87,6 +87,7 @@
             this.MinimizeBox = false;
             this.Name = "CloseConfirmationDialog";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Confirm Closing";
             this.ResumeLayout(false);
             this.PerformLayout();

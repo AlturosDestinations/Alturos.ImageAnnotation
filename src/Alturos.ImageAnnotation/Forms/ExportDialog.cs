@@ -116,7 +116,7 @@ namespace Alturos.ImageAnnotation.Forms
             }
 
             // Export
-            this._annotationExportProvider.Export(path, packages.ToArray(), this.GetSelectedObjectClasses(), this.trackBarTrainingPercentage.Value);
+            this._annotationExportProvider.Export(path, packages.ToArray(), this.GetSelectedObjectClasses());
 
             this.EnableExportMenu(true);
 
@@ -184,7 +184,7 @@ namespace Alturos.ImageAnnotation.Forms
                 if (!double.IsNaN(percentageDone))
                 {
                     this.labelDownloadProgress.Invoke((MethodInvoker)delegate {
-                        this.labelDownloadProgress.Text = $"Download in progress {(int)percentageDone}% (Package {progress.TransferedFiles}/{progress.FileCount} {this._downloadProgress.CurrentFile})";
+                        this.labelDownloadProgress.Text = $"Download in progress {(int)percentageDone}% (Package {progress.TransferedFiles + 1}/{progress.FileCount} {this._downloadProgress.CurrentFile})";
                     });
                     this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)percentageDone; });
                 }
@@ -200,6 +200,7 @@ namespace Alturos.ImageAnnotation.Forms
                 this.comboBoxExportProvider.Enabled = enable;
                 this.buttonSearch.Enabled = enable;
                 this.buttonExport.Enabled = enable;
+                this.panelProviderSettings.Enabled = enable;
             });
         }
 
@@ -208,6 +209,9 @@ namespace Alturos.ImageAnnotation.Forms
             var obj = ((NameValueObject)this.comboBoxExportProvider.SelectedItem).Value;
             this._annotationExportProvider = (IAnnotationExportProvider)Activator.CreateInstance((Type)obj);
             this._annotationExportProvider?.Setup(this._config);
+
+            this.panelProviderSettings.Controls.Clear();
+            this.panelProviderSettings.Controls.Add(this._annotationExportProvider.Control);
         }
 
         private void ButtonCancel_Click(object sender, EventArgs e)
@@ -218,17 +222,6 @@ namespace Alturos.ImageAnnotation.Forms
         private void ExportDialog_FormClosed(object sender, FormClosedEventArgs e)
         {
             this._tokenSource?.Cancel();
-        }
-
-        private void TrackBarTrainingPercentage_Scroll(object sender, EventArgs e)
-        {
-            this.labelTrainingPercentage.Text = $"{this.trackBarTrainingPercentage.Value}%";
-        }
-
-        private void TrackBarImageSize_Scroll(object sender, EventArgs e)
-        {
-            this.trackBarImageSize.Value = (int)(Math.Round(this.trackBarImageSize.Value / 32.0) * 32);
-            this.labelImageSize.Text = $"{this.trackBarImageSize.Value}";
         }
     }
 }

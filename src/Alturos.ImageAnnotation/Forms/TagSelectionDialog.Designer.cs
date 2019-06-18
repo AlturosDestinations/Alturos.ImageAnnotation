@@ -57,7 +57,9 @@
             this.ClientSize = new System.Drawing.Size(634, 317);
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.tagSelectionControl);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "TagSelectionDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select Tags";
             this.Load += new System.EventHandler(this.TagSelectionDialog_Load);
             this.ResumeLayout(false);
