@@ -1,4 +1,5 @@
 ﻿using Alturos.ImageAnnotation.CustomControls;
+using Alturos.ImageAnnotation.Helper;
 using Alturos.ImageAnnotation.Model;
 using System;
 using System.Collections.Generic;
@@ -210,6 +211,8 @@ namespace Alturos.ImageAnnotation.Contract
         private void CreateYoloConfig(string dataPath, string yoloConfigPath, ObjectClass[] objectClasses)
         {
             var fileName = "yolo-obj.cfg";
+
+            var yoloConfig = YoloConfigParser.Parse(yoloConfigPath);
 
             var lines = File.ReadAllLines(yoloConfigPath);
 

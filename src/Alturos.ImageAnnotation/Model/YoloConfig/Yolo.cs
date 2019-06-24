@@ -1,6 +1,6 @@
 ﻿namespace Alturos.ImageAnnotation.Model.YoloConfig
 {
-    public class Yolo
+    public class Yolo : YoloConfigElement
     {
         public int[] Mask { get; set; }
         public int[][] Anchors { get; set; }

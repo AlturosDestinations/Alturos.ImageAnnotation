@@ -86,9 +86,15 @@ AWS has a free tier for the first 12 months of S3 use (up to 5GB) and DynamoDB i
 
 ## An alternative solution so you don't need Amazon AWS
 
-You can also use [MinIO](https://github.com/minio/minio) instead of S3 and a [local dynamodb]( https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html)
+You can also use [MinIO](https://github.com/minio/minio) instead of Amazon S3, alongside a [local DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html)
+This way all the files are kept on your PC rather than on a remote server.
 
-### Local Installation
+### Quick installation
+
+Run `install_local_environment.ps1` using the Windows PowerShell. This should download and set up anything that's necessary.
+In case the script doesn't work, you can try a manual setup, as outlined below.
+
+### Manual Installation
 
 * In order to use a local DynamoDB, download it first [here](http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.zip).
 Extract the downloaded zip file into a folder of your choice.
@@ -97,7 +103,7 @@ Extract the downloaded zip file into a folder of your choice.
 
 * Once installed, set the JAVA_HOME environment variable by opening the command prompt and writing the following:
 ```
-setx JAVA_HOME java_path \M
+setx JAVA_HOME java_path /M
 ```
 Replace java_path with the path of the "bin" folder in your Java Runtime Environment installation.
 
@@ -123,6 +129,8 @@ When saving, choose `All files (*.*)` from the `Save as type` dropdown menu, to 
 * Create a folder named "minio" in the same directory as your exe and cmd files.
 
 ### The setup is now complete. Everytime you want to use the local database with the project, you start it as follows:
+
+You can either run `run_local_environment.ps1` using the Windows PowerShell, or do the following:
 
 * Launch your previously created `minio.cmd` file.
 

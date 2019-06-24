@@ -1,6 +1,6 @@
 ﻿namespace Alturos.ImageAnnotation.Model.YoloConfig
 {
-    public class Net
+    public class Net : YoloConfigElement
     {
         public int Batch { get; set; } = 1;
         public int Subdivisions { get; set; } = 1;

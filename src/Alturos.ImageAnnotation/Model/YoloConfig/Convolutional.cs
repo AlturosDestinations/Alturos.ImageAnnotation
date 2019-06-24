@@ -1,6 +1,6 @@
 ﻿namespace Alturos.ImageAnnotation.Model.YoloConfig
 {
-    public class Convolutional
+    public class Convolutional : YoloConfigElement
     {
         public int Filters { get; set; } = 1;
         public int Size { get; set; } = 1;
