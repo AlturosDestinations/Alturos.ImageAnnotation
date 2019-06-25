@@ -1,4 +1,5 @@
-﻿using Alturos.ImageAnnotation.Contract;
+﻿using Alturos.Common.Winform.Extension;
+using Alturos.ImageAnnotation.Contract;
 using Alturos.ImageAnnotation.Contract.Amazon;
 using Alturos.ImageAnnotation.Forms;
 using Alturos.ImageAnnotation.Model;
@@ -48,6 +49,11 @@ namespace Alturos.ImageAnnotation
                     if (dialogResult == DialogResult.OK)
                     {
                         this._annotationPackageProvider.SetAnnotationConfigAsync(this._annotationConfig);
+                    }
+                    else
+                    {
+                        Task.Run(() => this.Invoke(o => o.Close()));
+                        return;
                     }
                 }
             }

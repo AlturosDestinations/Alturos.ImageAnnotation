@@ -75,8 +75,8 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             {
                 var s3Config = new AmazonS3Config
                 {
-                    ServiceURL = s3ServiceUrl
-                   
+                    ServiceURL = s3ServiceUrl,
+                    ForcePathStyle = true
                 };
                 var dbConfig = new AmazonDynamoDBConfig
                 {
@@ -86,10 +86,10 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 this._s3Client = new AmazonS3Client(accessKeyId, secretAccessKey, s3Config);
                 this._dynamoDbClient = new AmazonDynamoDBClient(accessKeyId, secretAccessKey, dbConfig);
 
-                //if (!this._objectStorageClient.DoesS3BucketExist(this._bucketName))
-                //{
-                //    this._objectStorageClient.PutBucket(this._bucketName);
-                //}
+                if (!this._s3Client.DoesS3BucketExist(this._bucketName))
+                {
+                    this._s3Client.PutBucket(this._bucketName);
+                }
 
                 var createTableRequest = new CreateTableRequest
                 {

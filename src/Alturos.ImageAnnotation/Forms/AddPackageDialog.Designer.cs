@@ -93,6 +93,9 @@
             // 
             // dataGridViewPackages
             // 
+            this.dataGridViewPackages.AllowUserToAddRows = false;
+            this.dataGridViewPackages.AllowUserToDeleteRows = false;
+            this.dataGridViewPackages.AllowUserToResizeRows = false;
             this.dataGridViewPackages.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
