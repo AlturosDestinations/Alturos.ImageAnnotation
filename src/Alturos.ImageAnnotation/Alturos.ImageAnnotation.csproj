@@ -33,9 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Alturos.Common.Winform, Version=1.0.13.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Alturos.Common.Winform.1.0.13\lib\net461\Alturos.Common.Winform.dll</HintPath>
-    </Reference>
     <Reference Include="AWSSDK.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
       <HintPath>..\packages\AWSSDK.Core.3.3.102\lib\net45\AWSSDK.Core.dll</HintPath>
     </Reference>
@@ -87,6 +84,7 @@
     <Compile Include="Forms\TagSelectionDialog.Designer.cs">
       <DependentUpon>TagSelectionDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helper\ControlExtension.cs" />
     <Compile Include="Helper\MathHelper.cs" />
     <Compile Include="Helper\PackageHelper.cs" />
     <Compile Include="Helper\YoloConfigParser.cs" />
