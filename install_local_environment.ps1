@@ -1,5 +1,7 @@
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
+$localEnvironment = "localenvironment"
+
 $dynamoDbUrl = "https://s3.eu-central-1.amazonaws.com/dynamodb-local-frankfurt/dynamodb_local_latest.zip"
 $dynamoDbPackageName = "dynamodb_local.zip"
 $dynamoDbName = ".\dynamodb\"
@@ -17,8 +19,14 @@ $secretKey = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
 Write-Host "Proceeding to set up local environment... This may take several minutes."
 Write-Host "Please keep this window open until it closes itself."
 
+#Create folder
+if (!(Test-Path $localEnvironment))
+{
+	New-Item $localEnvironment -ItemType directory
+}
+
 #Download Local DynamoDB
-if (Test-Path $dynamoDbName)
+if (Test-Path "$localEnvironment/$dynamoDbName")
 {
 	Write-Host "DynamoDB found, skipping installation"
 }
@@ -26,9 +34,11 @@ else
 {
 	Write-Host "Installing local DynamoDB..."
 	
-	Invoke-WebRequest -Uri $dynamoDbUrl -OutFile $dynamoDbPackageName
-	[System.IO.Compression.ZipFile]::ExtractToDirectory($dynamoDbPackageName, $dynamoDbName)
-	Remove-Item -Path $dynamoDbPackageName
+	if (!(Test-Path "$localEnvironment/$dynamoDbPackageName"))
+	{
+		Invoke-WebRequest -Uri $dynamoDbUrl -OutFile "$localEnvironment/$dynamoDbPackageName"
+	}
+	[System.IO.Compression.ZipFile]::ExtractToDirectory("$localEnvironment/$dynamoDbPackageName", "$localEnvironment/$dynamoDbName")
 }
 
 #Install Java
@@ -41,8 +51,8 @@ else
 {
 	Write-Host "Installing Java..."
 	
-	Invoke-WebRequest -Uri $javaUrl -OutFile "jre8.exe"
-	Start-Process .\jre8.exe '/s REBOOT=0 SPONSORS=0 AUTO_UPDATE=0' -wait
+	Invoke-WebRequest -Uri $javaUrl -OutFile "$localEnvironment/jre8.exe"
+	Start-Process .\$localEnvironment\jre8.exe '/s REBOOT=0 SPONSORS=0 AUTO_UPDATE=0' -wait
 }
 
 #Set environment variable
@@ -73,7 +83,7 @@ else
 }
 
 #Install MinIO
-if ([System.IO.File]::Exists($minioName))
+if ([System.IO.File]::Exists("$localEnvironment/$minioName"))
 {
 	Write-Host "MinIO found, skipping installation"
 }
@@ -81,19 +91,26 @@ else
 {
 	Write-Host "Installing MinIO..."
 
-	Invoke-WebRequest -Uri $minioUrl -OutFile $minioName
-	
-	#Set config	
+	Invoke-WebRequest -Uri $minioUrl -OutFile "$localEnvironment/$minioName"
+}
+
+#Set up MinIO config	
+if (Test-Path "$localEnvironment/minio")
+{
+	Write-Host "MinIO config found, skipping setup"
+}
+else
+{
 	Write-Host "Setting up MinIO config..."
-	
-	Start-Process "minio.exe" -ArgumentList "server minio"
+
+	Start-Process "$localEnvironment/minio.exe" -ArgumentList "server $localEnvironment/minio"
 	sleep 2
 	Stop-Process -Name "minio"
-	
-	$json = Get-Content .\minio\.minio.sys\config\config.json -raw | ConvertFrom-Json
+
+	$json = Get-Content .\$localEnvironment\minio\.minio.sys\config\config.json -raw | ConvertFrom-Json
 	$json.credential | % { $_.accessKey = $accessKey }
 	$json.credential | % { $_.secretKey = $secretKey }
-	$json | ConvertTo-Json -depth 32 | Set-Content .\minio\.minio.sys\config\config.json
+	$json | ConvertTo-Json -depth 32 | Set-Content .\$localEnvironment\minio\.minio.sys\config\config.json
 }
 
 Write-Host "Setup complete!"
