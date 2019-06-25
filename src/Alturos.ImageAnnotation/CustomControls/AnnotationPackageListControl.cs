@@ -17,6 +17,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         public event Action<AnnotationPackage> PackageSelected;
         public event Action<AnnotationCategory> CategorySelected;
         public event Action<bool> DirtyUpdated;
+        public event Action ChangeToImageList;
 
         private static ILog Log = LogManager.GetLogger(typeof(AnnotationPackageListControl));
 
@@ -46,7 +47,10 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         public void RefreshData()
         {
-            this.dataGridView1.Refresh();
+            this.dataGridView1.Invoke((MethodInvoker)delegate
+            {
+                this.dataGridView1.Refresh();
+            });
             this.DirtyUpdated?.Invoke(this._annotationPackages.Any(o => o.IsDirty));
         }
 
@@ -328,6 +332,14 @@ namespace Alturos.ImageAnnotation.CustomControls
             #endregion
 
             this._selectedPackages = packages.ToList();
+        }
+
+        private void dataGridView1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Right)
+            {
+                this.ChangeToImageList?.Invoke();
+            }
         }
     }
 }

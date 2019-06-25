@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnPercentage = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -72,6 +72,7 @@
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.DataGridView1_DataError);
             this.dataGridView1.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.DataGridView1_RowPrePaint);
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.DataGridView1_SelectionChanged);
+            this.dataGridView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGridView1_KeyDown);
             // 
             // ColumnName
             // 
@@ -84,10 +85,10 @@
             // ColumnPercentage
             // 
             this.ColumnPercentage.DataPropertyName = "AnnotationPercentage";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle2.Format = "0.00\'%";
-            dataGridViewCellStyle2.NullValue = null;
-            this.ColumnPercentage.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Format = "0.00\'%";
+            dataGridViewCellStyle1.NullValue = null;
+            this.ColumnPercentage.DefaultCellStyle = dataGridViewCellStyle1;
             this.ColumnPercentage.HeaderText = "Progress";
             this.ColumnPercentage.Name = "ColumnPercentage";
             this.ColumnPercentage.ReadOnly = true;

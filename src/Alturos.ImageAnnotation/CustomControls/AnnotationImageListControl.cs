@@ -2,6 +2,7 @@
 using Alturos.ImageAnnotation.Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -49,6 +50,8 @@ namespace Alturos.ImageAnnotation.CustomControls
             this._annotationImages = package.Images;
             this._bindingSource.DataSource = this._annotationImages;
             this._bindingSource.ResetBindings(false);
+
+            this._bindingSource.CurrencyManager.Position = 0;
         }
 
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
@@ -59,7 +62,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 return;
             }
 
-            this.ImageSelected?.Invoke(image);
+            this.ImageSelected?.BeginInvoke(image, null, null);
         }
 
         private void DataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)

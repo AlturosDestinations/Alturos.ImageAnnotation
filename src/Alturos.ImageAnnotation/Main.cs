@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace Alturos.ImageAnnotation
 {
@@ -106,6 +107,7 @@ namespace Alturos.ImageAnnotation
             this.annotationPackageListControl.PackageSelected += this.PackageSelected;
             this.annotationPackageListControl.CategorySelected += this.CategorySelected;
             this.annotationPackageListControl.DirtyUpdated += this.DirtyUpdated;
+            this.annotationPackageListControl.ChangeToImageList += this.ChangeToImageList;
 
             this.annotationImageListControl.ImageSelected += this.ImageSelected;
             this.downloadControl.DownloadRequested += this.DownloadRequestedAsync;
@@ -121,6 +123,7 @@ namespace Alturos.ImageAnnotation
             this.annotationPackageListControl.PackageSelected -= this.PackageSelected;
             this.annotationPackageListControl.CategorySelected -= this.CategorySelected;
             this.annotationPackageListControl.DirtyUpdated -= this.DirtyUpdated;
+            this.annotationPackageListControl.ChangeToImageList -= this.ChangeToImageList;
 
             this.annotationImageListControl.ImageSelected -= this.ImageSelected;
             this.downloadControl.DownloadRequested -= this.DownloadRequestedAsync;
@@ -275,6 +278,11 @@ namespace Alturos.ImageAnnotation
 
         #region Logic
 
+        private void ChangeToImageList()
+        {
+            this.annotationImageListControl.Focus();
+        }
+
         private async Task LoadPackagesAsync(bool annotated)
         {
             this.EnableMainMenu(false);
@@ -303,7 +311,7 @@ namespace Alturos.ImageAnnotation
             this.annotationDrawControl.Reset();
 
             this.labelUserName.Text = package?.User;
-
+            
             if (package != null)
             {
                 this.tagEditControl.SetTags(package);
@@ -312,7 +320,6 @@ namespace Alturos.ImageAnnotation
                 {
                     this.annotationImageListControl.SetPackage(package);
                     this.annotationImageListControl.Show();
-                    this.annotationImageListControl.Focus();
 
                     this.annotationPackageListControl.RefreshData();
                 }
