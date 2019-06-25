@@ -350,8 +350,15 @@ namespace Alturos.ImageAnnotation
 
         private void DirtyUpdated(bool dirty)
         {
-            this.syncToolStripMenuItem.Enabled = dirty;
-            this.Text = $"{this.Text.Replace("*", string.Empty)}{(dirty ? "*" : string.Empty)}";
+            this.menuStripMain.Invoke((MethodInvoker)delegate
+            {
+                this.syncToolStripMenuItem.Enabled = dirty;
+            });
+
+            this.Invoke((MethodInvoker)delegate
+            {
+                Text = $"{this.Text.Replace("*", string.Empty)}{(dirty ? "*" : string.Empty)}";
+            });
         }
 
         private void SetPackageEditingControlsEnabled(bool enabled)
