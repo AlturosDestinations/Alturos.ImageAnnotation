@@ -209,6 +209,7 @@ namespace Alturos.ImageAnnotation
 
             using (var syncDialog = new SyncProgressDialog(this._annotationPackageProvider))
             {
+                syncDialog.StartPosition = FormStartPosition.CenterParent;
                 syncDialog.Show(this);
 
                 await syncDialog.Sync(packages);
