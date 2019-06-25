@@ -119,27 +119,26 @@ You'll be asked to enter some keys. Since the database is entirely local, you ca
 
 * Download [MinIO](https://min.io/download) into a directory of your choice.
 
-* Create minio.cmd using a text editor and add the following line:
+* Run the command prompt from the same folder as the downloaded `minio.exe` and write the following:
 ```
 minio.exe server minio
 ```
-Save the `minio.cmd` in the same directory as the `minio.exe` file.
-When saving, choose `All files (*.*)` from the `Save as type` dropdown menu, to make sure your program doesn't add a file extension of its own.
+Close the command prompt. A folder named `minio` should have been created inside the same directory as your `minio.exe` file.
+Navigate to `minio\.minio.sys\config` and open the `config.json` file using a text editor. Change the `accessKey` and `secretKey` on lines 4 and 5 to match the demo keys you chose previously.
 
-* Create a folder named "minio" in the same directory as your exe and cmd files.
-
-### The setup is now complete. Everytime you want to use the local database with the project, you start it as follows:
-
-You can either run `run_local_environment.ps1` using the Windows PowerShell, or do the following:
-
-* Launch your previously created `minio.cmd` file.
-
-* Open the command prompt from the folder where your local DynamoDB is located at.
-You can do this by typing "cmd" into the Windows Explorer address bar when you're inside your folder. Write the following:
+The json block should look like this:
 ```
-java -Djava.library.path=./DynamoDBLocal_lib/ -jar DynamoDBLocal.jar
+"credential": {
+	"accessKey": "AKIAIOSFODNN7EXAMPLE",
+	"secretKey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+	"expiration": "1970-01-01T00:00:00Z",
+	"status": "enabled"
+}
 ```
 
+### The setup is now complete. Launch the run script to use it.
+
+Run `run_local_environment.ps1` using the Windows PowerShell in order to start MinIO and the local DynamoDB.
 Once you launch the project you should be able to use your local database.
 
 ## Credits

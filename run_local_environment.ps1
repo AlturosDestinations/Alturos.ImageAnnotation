@@ -1,6 +1,9 @@
 #Run MinIO
-Invoke-Item minio.cmd
+Write-Host "Starting MinIO"
+Start-Process "minio.exe" -ArgumentList "server minio"
 
 #Run DynamoDB
-cmd.exe /c "cd dynamodb_local"
-cmd.exe /c "java -Djava.library.path=./DynamoDBLocal_lib/ -jar DynamoDBLocal.jar"
+Write-Host "Starting DynamoDB"
+Start-Process "java" -ArgumentList "-Djava.library.path=./dynamodb/DynamoDBLocal_lib/ -jar dynamodb/DynamoDBLocal.jar"
+
+sleep 1
