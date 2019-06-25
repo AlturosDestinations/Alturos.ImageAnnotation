@@ -72,14 +72,22 @@
     <Compile Include="CustomControls\TagDisplayControl.Designer.cs">
       <DependentUpon>TagDisplayControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\YoloExportControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\YoloExportControl.Designer.cs">
+      <DependentUpon>YoloExportControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\TagSelectionDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\TagSelectionDialog.Designer.cs">
       <DependentUpon>TagSelectionDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helper\ControlExtension.cs" />
     <Compile Include="Helper\MathHelper.cs" />
     <Compile Include="Helper\PackageHelper.cs" />
+    <Compile Include="Helper\YoloConfigParser.cs" />
     <Compile Include="Model\AnnotationCategory.cs" />
     <Compile Include="Model\AnnotationPackageTransferProgress.cs" />
     <Compile Include="Contract\IAnnotationExportProvider.cs" />
@@ -181,6 +189,14 @@
     <Compile Include="Model\DragPointType.cs" />
     <Compile Include="Model\ObjectClass.cs" />
     <Compile Include="Model\AnnotationPackageTag.cs" />
+    <Compile Include="Model\YoloConfig\Convolutional.cs" />
+    <Compile Include="Model\YoloConfig\Maxpool.cs" />
+    <Compile Include="Model\YoloConfig\Net.cs" />
+    <Compile Include="Model\YoloConfig\Route.cs" />
+    <Compile Include="Model\YoloConfig\Upsample.cs" />
+    <Compile Include="Model\YoloConfig\Yolo.cs" />
+    <Compile Include="Model\YoloConfig\YoloConfig.cs" />
+    <Compile Include="Model\YoloConfig\YoloConfigElement.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\AnnotationBoundingBox.cs" />
@@ -201,6 +217,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\TagSelectionControl.resx">
       <DependentUpon>TagSelectionControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomControls\YoloExportControl.resx">
+      <DependentUpon>YoloExportControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ConfigurationDialog.resx">
       <DependentUpon>ConfigurationDialog.cs</DependentUpon>
@@ -267,6 +286,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\yolov3-tiny_obj.cfg" />
     <None Include="Resources\yolov3.cfg" />
   </ItemGroup>
   <ItemGroup>
@@ -296,5 +316,6 @@
     <None Include="Icons\help.png" />
     <Content Include="Icons\wrench.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

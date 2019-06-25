@@ -1,4 +1,6 @@
-﻿using Alturos.ImageAnnotation.Model;
+﻿using Alturos.ImageAnnotation.CustomControls;
+using Alturos.ImageAnnotation.Helper;
+using Alturos.ImageAnnotation.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,27 +9,35 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace Alturos.ImageAnnotation.Contract
 {
     [Description("Yolo")]
     public class YoloAnnotationExportProvider : IAnnotationExportProvider
     {
+        public Control Control { get; set; }
+
         private const string DataFolderName = "data";
         private const string BackupFolderName = "backup";
         private const string ImageFolderName = "obj";
         private const string YoloConfigPath = @"..\..\Resources\yolov3.cfg";
+        private const string TinyYoloConfigPath = @"..\..\Resources\yolov3-tiny_obj.cfg";
 
         private AnnotationConfig _config;
-        private int _imageSize = 416;
         private Dictionary<AnnotationImage, string> _exportedNames;
+
+        public YoloAnnotationExportProvider()
+        {
+            this.Control = new YoloExportControl();
+        }
 
         public void Setup(AnnotationConfig config)
         {
             this._config = config;
         }
 
-        public void Export(string path, AnnotationPackage[] packages, ObjectClass[] objectClasses, int trainingPercentage)
+        public void Export(string path, AnnotationPackage[] packages, ObjectClass[] objectClasses)
         {
             // Create folders
             var dataPath = Path.Combine(path, DataFolderName);
@@ -57,6 +67,8 @@ namespace Alturos.ImageAnnotation.Contract
             var trainingImages = new List<AnnotationImage>();
             var testingImages = new List<AnnotationImage>();
 
+            var yoloControl = this.Control as YoloExportControl;
+
             foreach (var package in packages)
             {
                 var availableImages = package.Images.Where(o => o.BoundingBoxes != null && o.BoundingBoxes.Count != 0).ToList();
@@ -65,7 +77,7 @@ namespace Alturos.ImageAnnotation.Contract
                 var rng = new Random();
                 var shuffledImages = availableImages.OrderBy(o => rng.Next()).ToList();
 
-                var count = (int)(shuffledImages.Count * (trainingPercentage / 100.0));
+                var count = (int)(shuffledImages.Count * (yoloControl.TrainingPercentage / 100.0));
                 trainingImages.AddRange(shuffledImages.Take(count));
                 testingImages.AddRange(shuffledImages.Skip(count));
 
@@ -82,7 +94,9 @@ namespace Alturos.ImageAnnotation.Contract
 
             this.CreateFiles(dataPath, imagePath, images.ToArray(), objectClasses);
             this.CreateMetaData(dataPath, trainingImages.ToArray(), testingImages.ToArray(), objectClasses);
-            this.CreateYoloConfig(path, YoloConfigPath, objectClasses);
+
+            var yoloConfigPath = yoloControl.UseTinyYoloConfig ? TinyYoloConfigPath : YoloConfigPath;
+            this.CreateYoloConfig(path, yoloConfigPath, objectClasses);
             this.CreateCommandFile(path);
         }
 
@@ -198,6 +212,8 @@ namespace Alturos.ImageAnnotation.Contract
         {
             var fileName = "yolo-obj.cfg";
 
+            var yoloConfig = YoloConfigParser.Parse(yoloConfigPath);
+
             var lines = File.ReadAllLines(yoloConfigPath);
 
             var batchLineIndex = Array.FindIndex(lines, o => o.StartsWith("batch"));
@@ -206,10 +222,11 @@ namespace Alturos.ImageAnnotation.Contract
             var subdivisionsLineIndex = Array.FindIndex(lines, o => o.StartsWith("subdivisions"));
             lines[subdivisionsLineIndex] = "subdivisions=8";
 
+            var imageSize = (this.Control as YoloExportControl).ImageSize;
             var widthLineIndex = Array.FindIndex(lines, o => o.StartsWith("width"));
-            lines[widthLineIndex] = $"width={this._imageSize}";
+            lines[widthLineIndex] = $"width={imageSize}";
             var heightLineIndex = Array.FindIndex(lines, o => o.StartsWith("height"));
-            lines[heightLineIndex] = $"height={this._imageSize}";
+            lines[heightLineIndex] = $"height={imageSize}";
 
             var maxBatches = objectClasses.Length * 2000;
             var maxBatchesLineIndex = Array.FindIndex(lines, o => o.StartsWith("max_batches"));

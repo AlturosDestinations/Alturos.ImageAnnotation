@@ -118,7 +118,7 @@
             this.labelSelectObjectClasses.TabIndex = 3;
             this.labelSelectObjectClasses.Text = "Select the Object Classes you wish to annotate:";
             // 
-            // StartupForm
+            // StartupDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -127,7 +127,8 @@
             this.Controls.Add(this.buttonConfirm);
             this.Controls.Add(this.groupBoxAnnotationPackageProvider);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Name = "StartupForm";
+            this.Name = "StartupDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Alturos.ImageAnnotation";
             this.groupBoxAnnotationPackageProvider.ResumeLayout(false);
             this.groupBoxAnnotationPackageProvider.PerformLayout();
