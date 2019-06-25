@@ -114,8 +114,7 @@ Replace java_path with the path of the "bin" folder in your Java Runtime Environ
 aws configure
 ```
 You'll be asked to enter some keys. Since the database is entirely local, you can just use fixed demo keys, for instance `AKIAIOSFODNN7EXAMPLE` for the access key id, and `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` for the secret access key.
-
-* Change the value `serviceUrl` inside the App.config file of this project to `localhost:8000`, and change the `accessKeyId` and `SecretAccessKey` to the previously defined values.
+Remember these keys as they will be used later on again.
 
 * Download [MinIO](https://min.io/download) into a directory of your choice.
 
@@ -136,10 +135,24 @@ The json block should look like this:
 }
 ```
 
+### App Config Setup
+
+Once you have installed all the necessary components, you still need to adjust the App.config file in the project.
+
+* Change the `accessKeyId` and `secretAccessKey` to the keys AWS is using.
+If you did a quick installation, the keys should be `AKIAIOSFODNN7EXAMPLE` and `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` respectively.
+If you did a manual installation, use the same keys you chose while configuring AWS earlier.
+
+* Change the `s3ServiceUrl` to `http://localhost:9000`
+
+* Change the `dynamoDbServiceUrl` to `http://localhost:8000`
+
 ### The setup is now complete. Launch the run script to use it.
 
 Run `run_local_environment.ps1` using the Windows PowerShell in order to start MinIO and the local DynamoDB.
 Once you launch the project you should be able to use your local database.
+
+If it doesn't work, try checking `http://localhost:8000/shell/` in your browser to see if the DynamoDB is running.
 
 ## Credits
 

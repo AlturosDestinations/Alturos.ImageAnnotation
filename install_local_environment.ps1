@@ -114,4 +114,4 @@ else
 }
 
 Write-Host "Setup complete!"
-sleep 1
+sleep 5
