@@ -1,5 +1,6 @@
 ﻿using Alturos.ImageAnnotation.Model;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -10,6 +11,7 @@ namespace Alturos.ImageAnnotation.Forms
         private AnnotationConfig _config;
         private BindingSource _bindingSourceObjectClasses;
         private BindingSource _bindingSourceTags;
+        private string _cachedValue;
 
         public ConfigurationDialog()
         {
@@ -82,6 +84,61 @@ namespace Alturos.ImageAnnotation.Forms
 
             this._bindingSourceTags.ResetBindings(false);
             this.dataGridViewTags.Refresh();
+        }
+
+        private void DataGridViewTags_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            this.BeginCellEdit(this.dataGridViewTags, e);
+        }
+
+        private void DataGridViewTags_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            this.EndCellEdit(this.dataGridViewTags, e);
+        }
+
+        private void DataGridViewObjectClasses_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            this.BeginCellEdit(this.dataGridViewObjectClasses, e);
+        }
+
+        private void DataGridViewObjectClasses_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            this.EndCellEdit(this.dataGridViewObjectClasses, e);
+        }
+
+        private void BeginCellEdit(DataGridView dgv, DataGridViewCellCancelEventArgs e)
+        {
+            this._cachedValue = dgv.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
+        }
+
+        private void EndCellEdit(DataGridView dgv, DataGridViewCellEventArgs e)
+        {
+            var cell = dgv.Rows[e.RowIndex].Cells[e.ColumnIndex];
+            if (string.IsNullOrEmpty(cell.Value?.ToString()))
+            {
+                cell.Value = this._cachedValue;
+            }
+            else
+            {
+                var values = new List<string>();
+                foreach (DataGridViewRow row in dgv.Rows)
+                {
+                    if (row.Index == e.RowIndex)
+                    {
+                        continue;
+                    }
+
+                    values.Add(row.Cells[e.ColumnIndex].Value.ToString());
+                }
+
+                var number = 0;
+                var originalValue = cell.Value.ToString();
+                while (values.Any(o => o == cell.Value.ToString()))
+                {
+                    number++;
+                    cell.Value = $"{originalValue}{number.ToString()}";
+                }
+            }
         }
     }
 }

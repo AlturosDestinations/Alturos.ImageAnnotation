@@ -42,10 +42,10 @@ namespace Alturos.ImageAnnotation
             {
                 this._annotationConfig = new AnnotationConfig();
 
-                using (var configurationForm = new ConfigurationDialog())
+                using (var configurationDialog = new ConfigurationDialog())
                 {
-                    configurationForm.Setup(this._annotationConfig);
-                    var dialogResult = configurationForm.ShowDialog();
+                    configurationDialog.Setup(this._annotationConfig);
+                    var dialogResult = configurationDialog.ShowDialog();
 
                     if (dialogResult == DialogResult.OK)
                     {
