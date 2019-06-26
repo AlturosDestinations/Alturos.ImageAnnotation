@@ -2,12 +2,10 @@
 using Alturos.ImageAnnotation.Contract.Amazon;
 using Alturos.ImageAnnotation.Forms;
 using Alturos.ImageAnnotation.Model;
-using Alturos.ImageAnnotation.Helper;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 namespace Alturos.ImageAnnotation
 {
@@ -53,7 +51,7 @@ namespace Alturos.ImageAnnotation
                     }
                     else
                     {
-                        Task.Run(() => this.Invoke(o => o.Close()));
+                        this.Load += (s, e) => this.Close();
                         return;
                     }
                 }

@@ -11,8 +11,7 @@ namespace Alturos.ImageAnnotation.Model
         {
             this.ObjectClasses = new List<ObjectClass>()
             {
-                new ObjectClass { Id = 0, Name = "MyObject1" },
-                new ObjectClass { Id = 1, Name = "MyObject2" }
+                new ObjectClass { Id = 0, Name = "MyObject" },
             };
             this.Tags = new List<AnnotationPackageTag>()
             {
