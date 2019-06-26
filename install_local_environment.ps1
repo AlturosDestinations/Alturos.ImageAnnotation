@@ -42,8 +42,8 @@ else
 }
 
 #Install Java
-$javaVersion = (Get-Command java | Select-Object -ExpandProperty Version).toString()
-if ($javaVersion -eq "8.0.2110.12")
+$javaVersion = (Get-Command java | Select-Object -ExpandProperty Version).Major
+if ($javaVersion -ge 8)
 {
 	Write-Host "Java found, skipping installation"
 }
