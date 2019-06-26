@@ -2,7 +2,6 @@
 using Alturos.ImageAnnotation.Model;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -18,6 +17,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         private IAnnotationPackageProvider _annotationPackageProvider;
         private List<AnnotationImage> _annotationImages;
         private BindingSource _bindingSource;
+        private AnnotationImage _cachedImage;
 
         public AnnotationImageListControl()
         {
@@ -61,6 +61,12 @@ namespace Alturos.ImageAnnotation.CustomControls
             {
                 return;
             }
+
+            if (this._cachedImage == image)
+            {
+                return;
+            }
+            this._cachedImage = image;
 
             this.ImageSelected?.BeginInvoke(image, null, null);
         }

@@ -139,6 +139,8 @@ The json block should look like this:
 
 Once you have installed all the necessary components, you still need to adjust the App.config file in the project.
 
+* Change `bucketName` to the bucket name you wish to you use for your database. See the [Amazon S3 Bucket Naming Requirements](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-s3-bucket-naming-requirements.html).
+
 * Change the `accessKeyId` and `secretAccessKey` to the keys AWS is using.
 If you did a quick installation, the keys should be `AKIAIOSFODNN7EXAMPLE` and `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` respectively.
 If you did a manual installation, use the same keys you chose while configuring AWS earlier.

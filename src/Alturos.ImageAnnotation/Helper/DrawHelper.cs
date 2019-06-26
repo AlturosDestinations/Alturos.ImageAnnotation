@@ -15,10 +15,10 @@ namespace Alturos.ImageAnnotation.Helper
             try
             {
                 var originalBitmap = new Bitmap(image.ImagePath);
-                var bitmap = new Bitmap(originalBitmap, ImageSize);
+                var resizedBitmap = new Bitmap(originalBitmap, ImageSize);
                 originalBitmap.Dispose();
 
-                return bitmap;
+                return resizedBitmap;
             }
             catch (Exception)
             {
