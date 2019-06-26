@@ -365,6 +365,7 @@ namespace Alturos.ImageAnnotation
         {
             this.annotationImageListControl.Visible = enabled;
             this.tagEditControl.Visible = enabled;
+            this.groupBoxInfo.Visible = enabled;
             this.annotationDrawControl.Visible = enabled;
             this.downloadControl.Visible = enabled;
         }
