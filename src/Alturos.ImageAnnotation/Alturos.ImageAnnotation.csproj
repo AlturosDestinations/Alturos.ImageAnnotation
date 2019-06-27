@@ -66,6 +66,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomControls\RotatingPictureBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CustomControls\TagDisplayControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
