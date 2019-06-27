@@ -13,5 +13,13 @@
         public float Saturation { get; set; } = 1;
         public float Exposure { get; set; } = 1;
         public float Hue { get; set; } = 0;
+
+
+        public float LearningRate { get; set; } = 0.001f;
+        public int BurnIn { get; set; } = 0;
+        public int MaxBatches { get; set; } = 0;
+        public int Policy { get; set; } = 0;
+        public int[] Steps { get; set; }
+        public float[] Scales { get; set; }
     }
 }

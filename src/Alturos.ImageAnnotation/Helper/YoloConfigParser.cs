@@ -1,5 +1,6 @@
 ﻿using Alturos.ImageAnnotation.Model.YoloConfig;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -14,6 +15,11 @@ namespace Alturos.ImageAnnotation.Helper
 
             foreach (var line in lines)
             {
+                if (line.Length == 0)
+                {
+                    continue;
+                }
+
                 var firstLetter = line[0];
                 switch (firstLetter)
                 {
@@ -31,7 +37,7 @@ namespace Alturos.ImageAnnotation.Helper
                         break;
 
                     default:
-                        var splitString = line.Split('=');
+                        var splitString = line.Replace(" ", string.Empty).Split('=');
 
                         var propertyName = SnakeCaseToPascalCase(splitString[0]);
                         var value = splitString[1];
@@ -39,13 +45,18 @@ namespace Alturos.ImageAnnotation.Helper
                         var obj = yoloConfig.YoloConfigElements.Last();
                         var property = obj.GetType().GetProperty(propertyName);
 
+                        if (property == null)
+                        {
+
+                        }
+
                         if (property.PropertyType == typeof(int))
                         {
                             property.SetValue(obj, int.Parse(value));
                         }
                         else if (property.PropertyType == typeof(float))
                         {
-                            property.SetValue(obj, float.Parse(value));
+                            property.SetValue(obj, float.Parse(value, CultureInfo.InvariantCulture));
                         }
                         else if (property.PropertyType == typeof(string))
                         {
