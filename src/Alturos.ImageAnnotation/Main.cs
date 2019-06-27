@@ -1,6 +1,7 @@
 ﻿using Alturos.ImageAnnotation.Contract;
 using Alturos.ImageAnnotation.Contract.Amazon;
 using Alturos.ImageAnnotation.Forms;
+using Alturos.ImageAnnotation.Helper;
 using Alturos.ImageAnnotation.Model;
 using System;
 using System.Linq;
@@ -213,7 +214,7 @@ namespace Alturos.ImageAnnotation
                 await syncDialog.Sync(packages);
                 syncDialog.Dispose();
 
-                this.annotationPackageListControl.RefreshData();
+                this.annotationPackageListControl.RefreshDataGrid();
             }
         }
 
@@ -337,7 +338,7 @@ namespace Alturos.ImageAnnotation
                     this.annotationImageListControl.SetPackage(package);
                     this.annotationImageListControl.Show();
 
-                    this.annotationPackageListControl.RefreshData();
+                    this.annotationPackageListControl.RefreshDataGrid();
                 }
                 else
                 {
@@ -413,7 +414,7 @@ namespace Alturos.ImageAnnotation
             annotationImage.Package.IsDirty = true;
             annotationImage.Package.UpdateAnnotationStatus(annotationImage);
 
-            this.annotationPackageListControl.RefreshData();
+            this.annotationPackageListControl.RefreshDataGrid();
         }
 
         private async Task DownloadRequestedAsync(AnnotationPackage package)
