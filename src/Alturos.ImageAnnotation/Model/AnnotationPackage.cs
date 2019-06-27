@@ -46,7 +46,7 @@ namespace Alturos.ImageAnnotation.Model
                 this.Images = new List<AnnotationImage>();
             }
 
-            var allowedExtensions = new[] { ".png", ".jpg", ".bmp" };
+            var allowedExtensions = PackageHelper.AllowedExtensions;
             var files = Directory.GetFiles(this._packagePath)
                 .Where(file => allowedExtensions.Any(file.ToLower().EndsWith))
                 .Select(o => new FileInfo(o))
