@@ -290,8 +290,25 @@ namespace Alturos.ImageAnnotation
             this.EnableMainMenu(true);
         }
 
-        private void PackageSelected(AnnotationPackage package)
+        private void PackageSelected(AnnotationPackage package, PackageSelectionBehavior behavior)
         {
+            switch (behavior)
+            {
+                case PackageSelectionBehavior.RefreshOnly:
+                    if (this._selectedPackage != package)
+                    {
+                        return;
+                    }
+                    break;
+                case PackageSelectionBehavior.SwitchOnly:
+                    if (this._selectedPackage == package)
+                    {
+                        return;
+                    }
+                    break;
+            }
+
+            // Cancel if multiple packages are selected
             if (this.annotationPackageListControl.GetSelectedPackageCount() > 1)
             {
                 this.SetPackageEditingControlsEnabled(false);
@@ -403,10 +420,7 @@ namespace Alturos.ImageAnnotation
         {
             await this._annotationPackageProvider.DownloadPackageAsync(package);
 
-            if (this._selectedPackage == package)
-            {
-                this.PackageSelected(package);
-            }
+            this.PackageSelected(package, PackageSelectionBehavior.RefreshOnly);
         }
 
         #endregion

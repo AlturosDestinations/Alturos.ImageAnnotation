@@ -14,7 +14,7 @@ namespace Alturos.ImageAnnotation.CustomControls
 {
     public partial class AnnotationPackageListControl : UserControl
     {
-        public event Action<AnnotationPackage> PackageSelected;
+        public event Action<AnnotationPackage, PackageSelectionBehavior> PackageSelected;
         public event Action<AnnotationCategory> CategorySelected;
         public event Action<bool> DirtyUpdated;
         public event Action ChangeToImageList;
@@ -128,7 +128,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             var package = this.dataGridView1.CurrentRow?.DataBoundItem as AnnotationPackage;
-            this.PackageSelected?.Invoke(package);
+            this.PackageSelected?.Invoke(package, PackageSelectionBehavior.SwitchOnly);
         }
 
         private void DataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
@@ -189,12 +189,12 @@ namespace Alturos.ImageAnnotation.CustomControls
             package.DownloadProgress = 0;
 
             // Reset UI for this package
-            this.Invoke((MethodInvoker)delegate { this.PackageSelected?.Invoke(package); });
+            this.Invoke((MethodInvoker)delegate { this.PackageSelected?.Invoke(package, PackageSelectionBehavior.RefreshOnly); });
 
             var downloadedPackage = await this._annotationPackageProvider.DownloadPackageAsync(package);
 
             // Refresh UI once download is complete
-            this.Invoke((MethodInvoker)delegate { this.PackageSelected?.Invoke(downloadedPackage); });
+            this.Invoke((MethodInvoker)delegate { this.PackageSelected?.Invoke(downloadedPackage, PackageSelectionBehavior.RefreshOnly); });
         }
 
         private async void ResetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -231,7 +231,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 return;
             }
 
-            this.PackageSelected?.Invoke(selectedPackage);
+            this.PackageSelected?.Invoke(selectedPackage, PackageSelectionBehavior.RefreshOnly);
         }
 
         private void ClearAnnotationsToolStripMenuItem_Click(object sender, EventArgs e)
