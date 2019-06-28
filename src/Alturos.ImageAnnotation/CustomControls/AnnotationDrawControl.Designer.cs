@@ -33,32 +33,14 @@
             System.Windows.Forms.DataVisualization.Charting.LegendItem legendItem1 = new System.Windows.Forms.DataVisualization.Charting.LegendItem();
             System.Windows.Forms.DataVisualization.Charting.LegendItem legendItem2 = new System.Windows.Forms.DataVisualization.Charting.LegendItem();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.contextMenuStripPicture = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.clearAnnotationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.legendsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.rotatingPictureBox = new Alturos.ImageAnnotation.CustomControls.RotatingPictureBox();
             this.contextMenuStripPicture.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.legendsChart)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.rotatingPictureBox)).BeginInit();
             this.SuspendLayout();
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.ContextMenuStrip = this.contextMenuStripPicture;
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(624, 336);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 1;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.PictureBox1_Paint);
-            this.pictureBox1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseDoubleClick);
-            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseDown);
-            this.pictureBox1.MouseEnter += new System.EventHandler(this.PictureBox1_MouseEnter);
-            this.pictureBox1.MouseLeave += new System.EventHandler(this.PictureBox1_MouseLeave);
-            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseMove);
-            this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseUp);
             // 
             // contextMenuStripPicture
             // 
@@ -101,26 +83,47 @@
             this.legendsChart.TabIndex = 2;
             this.legendsChart.Text = "chart1";
             // 
+            // rotatingPictureBox
+            // 
+            this.rotatingPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rotatingPictureBox.Image = null;
+            this.rotatingPictureBox.Location = new System.Drawing.Point(0, 0);
+            this.rotatingPictureBox.Name = "rotatingPictureBox";
+            this.rotatingPictureBox.Size = new System.Drawing.Size(624, 336);
+            this.rotatingPictureBox.TabIndex = 3;
+            this.rotatingPictureBox.TabStop = false;
+            this.rotatingPictureBox.ContextMenuStrip = this.contextMenuStripPicture;
+            this.rotatingPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.rotatingPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.PictureBox1_Paint);
+            this.rotatingPictureBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseDoubleClick);
+            this.rotatingPictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseDown);
+            this.rotatingPictureBox.MouseEnter += new System.EventHandler(this.PictureBox1_MouseEnter);
+            this.rotatingPictureBox.MouseLeave += new System.EventHandler(this.PictureBox1_MouseLeave);
+            this.rotatingPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseMove);
+            this.rotatingPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseUp);
+            // 
             // AnnotationDrawControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.rotatingPictureBox);
             this.Controls.Add(this.legendsChart);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.rotatingPictureBox);
             this.Name = "AnnotationDrawControl";
             this.Size = new System.Drawing.Size(624, 336);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.rotatingPictureBox)).EndInit();
             this.contextMenuStripPicture.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.legendsChart)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.rotatingPictureBox)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripPicture;
         private System.Windows.Forms.ToolStripMenuItem clearAnnotationsToolStripMenuItem;
         private System.Windows.Forms.DataVisualization.Charting.Chart legendsChart;
+        private RotatingPictureBox rotatingPictureBox;
     }
 }

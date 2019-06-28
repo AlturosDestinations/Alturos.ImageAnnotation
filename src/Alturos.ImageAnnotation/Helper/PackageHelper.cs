@@ -5,7 +5,7 @@ namespace Alturos.ImageAnnotation.Helper
 {
     public static class PackageHelper
     {
-        public static readonly string[] AllowedExtensions = new[] { ".png", ".jpg", ".bmp" };
+        public static readonly string[] AllowedExtensions = new[] { ".png", ".jpg", ".jpeg", ".bmp" };
 
         public static string[] GetImages(string directory)
         {

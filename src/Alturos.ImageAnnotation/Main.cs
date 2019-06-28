@@ -1,13 +1,12 @@
 ﻿using Alturos.ImageAnnotation.Contract;
 using Alturos.ImageAnnotation.Contract.Amazon;
 using Alturos.ImageAnnotation.Forms;
-using Alturos.ImageAnnotation.Model;
 using Alturos.ImageAnnotation.Helper;
+using Alturos.ImageAnnotation.Model;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 namespace Alturos.ImageAnnotation
 {
@@ -42,10 +41,10 @@ namespace Alturos.ImageAnnotation
             {
                 this._annotationConfig = new AnnotationConfig();
 
-                using (var configurationForm = new ConfigurationDialog())
+                using (var configurationDialog = new ConfigurationDialog())
                 {
-                    configurationForm.Setup(this._annotationConfig);
-                    var dialogResult = configurationForm.ShowDialog();
+                    configurationDialog.Setup(this._annotationConfig);
+                    var dialogResult = configurationDialog.ShowDialog();
 
                     if (dialogResult == DialogResult.OK)
                     {
@@ -53,7 +52,7 @@ namespace Alturos.ImageAnnotation
                     }
                     else
                     {
-                        Task.Run(() => this.Invoke(o => o.Close()));
+                        this.Load += (s, e) => this.Close();
                         return;
                     }
                 }
@@ -215,7 +214,7 @@ namespace Alturos.ImageAnnotation
                 await syncDialog.Sync(packages);
                 syncDialog.Dispose();
 
-                this.annotationPackageListControl.RefreshData();
+                this.annotationPackageListControl.RefreshDataGrid();
             }
         }
 
@@ -292,8 +291,25 @@ namespace Alturos.ImageAnnotation
             this.EnableMainMenu(true);
         }
 
-        private void PackageSelected(AnnotationPackage package)
+        private void PackageSelected(AnnotationPackage package, PackageSelectionBehavior behavior)
         {
+            switch (behavior)
+            {
+                case PackageSelectionBehavior.RefreshOnly:
+                    if (this._selectedPackage != package)
+                    {
+                        return;
+                    }
+                    break;
+                case PackageSelectionBehavior.SwitchOnly:
+                    if (this._selectedPackage == package)
+                    {
+                        return;
+                    }
+                    break;
+            }
+
+            // Cancel if multiple packages are selected
             if (this.annotationPackageListControl.GetSelectedPackageCount() > 1)
             {
                 this.SetPackageEditingControlsEnabled(false);
@@ -322,7 +338,7 @@ namespace Alturos.ImageAnnotation
                     this.annotationImageListControl.SetPackage(package);
                     this.annotationImageListControl.Show();
 
-                    this.annotationPackageListControl.RefreshData();
+                    this.annotationPackageListControl.RefreshDataGrid();
                 }
                 else
                 {
@@ -398,17 +414,14 @@ namespace Alturos.ImageAnnotation
             annotationImage.Package.IsDirty = true;
             annotationImage.Package.UpdateAnnotationStatus(annotationImage);
 
-            this.annotationPackageListControl.RefreshData();
+            this.annotationPackageListControl.RefreshDataGrid();
         }
 
         private async Task DownloadRequestedAsync(AnnotationPackage package)
         {
             await this._annotationPackageProvider.DownloadPackageAsync(package);
 
-            if (this._selectedPackage == package)
-            {
-                this.PackageSelected(package);
-            }
+            this.PackageSelected(package, PackageSelectionBehavior.RefreshOnly);
         }
 
         #endregion

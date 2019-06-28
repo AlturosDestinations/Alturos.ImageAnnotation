@@ -14,7 +14,7 @@ namespace Alturos.ImageAnnotation.CustomControls
 {
     public partial class AnnotationPackageListControl : UserControl
     {
-        public event Action<AnnotationPackage> PackageSelected;
+        public event Action<AnnotationPackage, PackageSelectionBehavior> PackageSelected;
         public event Action<AnnotationCategory> CategorySelected;
         public event Action<bool> DirtyUpdated;
         public event Action ChangeToImageList;
@@ -45,15 +45,6 @@ namespace Alturos.ImageAnnotation.CustomControls
             this._annotationPackageProvider = annotationPackageProvider;
         }
 
-        public void RefreshData()
-        {
-            this.dataGridView1.Invoke((MethodInvoker)delegate
-            {
-                this.dataGridView1.Refresh();
-            });
-            this.DirtyUpdated?.Invoke(this._annotationPackages.Any(o => o.IsDirty));
-        }
-
         public AnnotationPackage[] GetAllPackages()
         {
             return this._annotationPackages.ToArray();
@@ -77,18 +68,15 @@ namespace Alturos.ImageAnnotation.CustomControls
 
                 this.SetLoading(false);
 
-                if (true)
+                this.dataGridView1.Invoke((MethodInvoker)delegate
                 {
-                    this.dataGridView1.Invoke((MethodInvoker)delegate
-                    {
-                        this.RefreshGridData();
-                    });
+                    this.RefreshDataBindings();
+                });
 
-                    this.groupBox1.Invoke((MethodInvoker)delegate
-                    {
-                        this.groupBox1.Text = $"{groupBoxName} ({this._annotationPackages.Count:n0})";
-                    });
-                }
+                this.groupBox1.Invoke((MethodInvoker)delegate
+                {
+                    this.groupBox1.Text = $"{groupBoxName} ({this._annotationPackages.Count:n0})";
+                });
             }
             catch (Exception exception)
             {
@@ -113,22 +101,31 @@ namespace Alturos.ImageAnnotation.CustomControls
             return this.dataGridView1.SelectedRows.Count;
         }
 
-        private void RefreshGridData()
+        public void RefreshDataGrid()
         {
-            if (string.IsNullOrEmpty(this.textBoxSearch.Text))
+            this.dataGridView1.Invoke((MethodInvoker)delegate
             {
-                this._bindingSource.DataSource = this._annotationPackages;
-                return;
+                this.dataGridView1.Refresh();
+            });
+            this.DirtyUpdated?.Invoke(this._annotationPackages.Any(o => o.IsDirty));
+        }
+
+        private void RefreshDataBindings()
+        {
+            var packages = this._annotationPackages.AsQueryable();
+            if (!string.IsNullOrEmpty(this.textBoxSearch.Text))
+            {
+                packages = packages.Where(o => o.PackageName.Contains(this.textBoxSearch.Text, StringComparison.OrdinalIgnoreCase));
             }
-            
-            var packages = this._annotationPackages.Where(o => o.PackageName.Contains(this.textBoxSearch.Text, StringComparison.OrdinalIgnoreCase)).ToArray();
-            this._bindingSource.DataSource = packages;
+
+            this._bindingSource.DataSource = packages.ToArray();
+            this._bindingSource.ResetBindings(false);
         }
 
         private void DataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             var package = this.dataGridView1.CurrentRow?.DataBoundItem as AnnotationPackage;
-            this.PackageSelected?.Invoke(package);
+            this.PackageSelected?.Invoke(package, PackageSelectionBehavior.SwitchOnly);
         }
 
         private void DataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
@@ -189,12 +186,12 @@ namespace Alturos.ImageAnnotation.CustomControls
             package.DownloadProgress = 0;
 
             // Reset UI for this package
-            this.Invoke((MethodInvoker)delegate { this.PackageSelected?.Invoke(package); });
+            this.Invoke((MethodInvoker)delegate { this.PackageSelected?.Invoke(package, PackageSelectionBehavior.RefreshOnly); });
 
             var downloadedPackage = await this._annotationPackageProvider.DownloadPackageAsync(package);
 
             // Refresh UI once download is complete
-            this.Invoke((MethodInvoker)delegate { this.PackageSelected?.Invoke(downloadedPackage); });
+            this.Invoke((MethodInvoker)delegate { this.PackageSelected?.Invoke(downloadedPackage, PackageSelectionBehavior.RefreshOnly); });
         }
 
         private async void ResetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -231,7 +228,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 return;
             }
 
-            this.PackageSelected?.Invoke(selectedPackage);
+            this.PackageSelected?.Invoke(selectedPackage, PackageSelectionBehavior.RefreshOnly);
         }
 
         private void ClearAnnotationsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -257,7 +254,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 }
             }
 
-            this.RefreshData();
+            this.RefreshDataGrid();
         }
 
         private async void DeleteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -291,7 +288,10 @@ namespace Alturos.ImageAnnotation.CustomControls
                 MessageBox.Show("Couldn't delete the following packages:\n\n" + sb.ToString(), "Deletion failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            this.RefreshData();
+            this.dataGridView1.Invoke((MethodInvoker)delegate
+            {
+                this.RefreshDataBindings();
+            });
         }
 
         private void ComboBoxCategory_SelectedIndexChanged(object sender, EventArgs e)
@@ -308,7 +308,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         private void TextBoxSearch_TextChanged(object sender, EventArgs e)
         {
             this.dataGridView1.SelectionChanged -= DataGridView1_SelectionChanged;
-            this.RefreshGridData();
+            this.RefreshDataBindings();
             this.dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
         }
 

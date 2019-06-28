@@ -35,8 +35,6 @@
             this.textBoxObjectClass = new System.Windows.Forms.TextBox();
             this.buttonAddObjectClass = new System.Windows.Forms.Button();
             this.dataGridViewObjectClasses = new System.Windows.Forms.DataGridView();
-            this.ColumnId = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBoxTags = new System.Windows.Forms.GroupBox();
             this.textBoxTag = new System.Windows.Forms.TextBox();
             this.buttonAddTag = new System.Windows.Forms.Button();
@@ -45,6 +43,8 @@
             this.contextMenuStripTag = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonSave = new System.Windows.Forms.Button();
+            this.ColumnId = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
             this.splitContainerMain.Panel2.SuspendLayout();
@@ -145,26 +145,11 @@
             this.ColumnName});
             this.dataGridViewObjectClasses.Location = new System.Drawing.Point(7, 20);
             this.dataGridViewObjectClasses.Name = "dataGridViewObjectClasses";
-            this.dataGridViewObjectClasses.ReadOnly = true;
             this.dataGridViewObjectClasses.RowHeadersVisible = false;
             this.dataGridViewObjectClasses.Size = new System.Drawing.Size(279, 200);
             this.dataGridViewObjectClasses.TabIndex = 0;
-            // 
-            // ColumnId
-            // 
-            this.ColumnId.DataPropertyName = "Id";
-            this.ColumnId.FillWeight = 50.76142F;
-            this.ColumnId.HeaderText = "Id";
-            this.ColumnId.Name = "ColumnId";
-            this.ColumnId.ReadOnly = true;
-            // 
-            // ColumnName
-            // 
-            this.ColumnName.DataPropertyName = "Name";
-            this.ColumnName.FillWeight = 149.2386F;
-            this.ColumnName.HeaderText = "Name";
-            this.ColumnName.Name = "ColumnName";
-            this.ColumnName.ReadOnly = true;
+            this.dataGridViewObjectClasses.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.DataGridViewObjectClasses_CellBeginEdit);
+            this.dataGridViewObjectClasses.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewObjectClasses_CellEndEdit);
             // 
             // groupBoxTags
             // 
@@ -215,17 +200,17 @@
             this.dataGridViewTags.ContextMenuStrip = this.contextMenuStripTag;
             this.dataGridViewTags.Location = new System.Drawing.Point(6, 20);
             this.dataGridViewTags.Name = "dataGridViewTags";
-            this.dataGridViewTags.ReadOnly = true;
             this.dataGridViewTags.RowHeadersVisible = false;
             this.dataGridViewTags.Size = new System.Drawing.Size(264, 200);
             this.dataGridViewTags.TabIndex = 1;
+            this.dataGridViewTags.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.DataGridViewTags_CellBeginEdit);
+            this.dataGridViewTags.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewTags_CellEndEdit);
             // 
             // ColumnValue
             // 
             this.ColumnValue.DataPropertyName = "Value";
             this.ColumnValue.HeaderText = "Value";
             this.ColumnValue.Name = "ColumnValue";
-            this.ColumnValue.ReadOnly = true;
             // 
             // contextMenuStripTag
             // 
@@ -251,6 +236,21 @@
             this.buttonSave.Text = "Save";
             this.buttonSave.UseVisualStyleBackColor = true;
             this.buttonSave.Click += new System.EventHandler(this.ButtonSave_Click);
+            // 
+            // ColumnId
+            // 
+            this.ColumnId.DataPropertyName = "Id";
+            this.ColumnId.FillWeight = 50.76142F;
+            this.ColumnId.HeaderText = "Id";
+            this.ColumnId.Name = "ColumnId";
+            this.ColumnId.ReadOnly = true;
+            // 
+            // ColumnName
+            // 
+            this.ColumnName.DataPropertyName = "Name";
+            this.ColumnName.FillWeight = 149.2386F;
+            this.ColumnName.HeaderText = "Name";
+            this.ColumnName.Name = "ColumnName";
             // 
             // ConfigurationDialog
             // 
@@ -296,10 +296,10 @@
         private System.Windows.Forms.TextBox textBoxObjectClass;
         private System.Windows.Forms.TextBox textBoxTag;
         private System.Windows.Forms.Button buttonSave;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnId;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripTag;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnValue;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnId;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
     }
 }

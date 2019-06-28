@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
@@ -78,7 +77,7 @@ namespace Alturos.ImageAnnotation.CustomControls
             this.ShowLabels = showLabels;
             this.legendsChart.Visible = !showLabels;
 
-            this.pictureBox1.Invalidate();
+            this.rotatingPictureBox.Invalidate();
         }
 
         private void CacheLastBoundingBoxes()
@@ -104,15 +103,15 @@ namespace Alturos.ImageAnnotation.CustomControls
             this.CacheLastBoundingBoxes();
 
             this._annotationImage = image;
-            var oldImage = this.pictureBox1.Image;
+            var oldImage = this.rotatingPictureBox.Image;
 
             if (image == null)
             {
-                this.pictureBox1.Image = null;
+                this.rotatingPictureBox.Image = null;
             }
             else
             {
-                this.pictureBox1.Image = DrawHelper.DrawBoxes(image);
+                this.rotatingPictureBox.Image = DrawHelper.DrawBoxes(image);
             }
 
             if (oldImage != null)
@@ -145,15 +144,15 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private CanvasInfo GetCanvasInformation()
         {
-            if (this.pictureBox1.Image == null)
+            if (this.rotatingPictureBox.Image == null)
             {
                 return null;
             }
 
-            var imageWidth = this.pictureBox1.Image.Width;
-            var imageHeight = this.pictureBox1.Image.Height;
-            var canvasWidth = this.pictureBox1.Width;
-            var canvasHeight = this.pictureBox1.Height;
+            var imageWidth = this.rotatingPictureBox.Image.Width;
+            var imageHeight = this.rotatingPictureBox.Image.Height;
+            var canvasWidth = this.rotatingPictureBox.Width;
+            var canvasHeight = this.rotatingPictureBox.Height;
 
             var imageRatio = imageWidth / (float)imageHeight; // image W:H ratio
             var containerRatio = canvasWidth / (float)canvasHeight; // container W:H ratio
@@ -265,7 +264,7 @@ namespace Alturos.ImageAnnotation.CustomControls
 
         private void PictureBox1_Paint(object sender, PaintEventArgs e)
         {
-            if (this.pictureBox1.Image == null)
+            if (this.rotatingPictureBox.Image == null)
             {
                 return;
             }
@@ -277,8 +276,8 @@ namespace Alturos.ImageAnnotation.CustomControls
 
             if (this._mouseOver)
             {
-                e.Graphics.DrawLine(Pens.Blue, new Point(this._mousePosition.X, this.pictureBox1.Top), new Point(this._mousePosition.X, this.pictureBox1.Bottom));
-                e.Graphics.DrawLine(Pens.Blue, new Point(this.pictureBox1.Left, this._mousePosition.Y), new Point(this.pictureBox1.Right, this._mousePosition.Y));
+                e.Graphics.DrawLine(Pens.Blue, new Point(this._mousePosition.X, this.rotatingPictureBox.Top), new Point(this._mousePosition.X, this.rotatingPictureBox.Bottom));
+                e.Graphics.DrawLine(Pens.Blue, new Point(this.rotatingPictureBox.Left, this._mousePosition.Y), new Point(this.rotatingPictureBox.Right, this._mousePosition.Y));
             }
 
             var boundingBoxes = this._annotationImage?.BoundingBoxes;
@@ -498,7 +497,7 @@ namespace Alturos.ImageAnnotation.CustomControls
             }
 
             this._mousePosition = e.Location;
-            this.pictureBox1.Invalidate();
+            this.rotatingPictureBox.Invalidate();
         }
 
         private void PictureBox1_MouseUp(object sender, MouseEventArgs e)
@@ -521,7 +520,7 @@ namespace Alturos.ImageAnnotation.CustomControls
             this._draggedBoundingBox = null;
 
             this._mousePosition = new Point(0, 0);
-            this.pictureBox1.Invalidate();
+            this.rotatingPictureBox.Invalidate();
 
             this.ImageEdited?.Invoke(this._annotationImage);
         }
@@ -577,7 +576,7 @@ namespace Alturos.ImageAnnotation.CustomControls
             }
 
             this._mousePosition = e.Location;
-            this.pictureBox1.Invalidate();
+            this.rotatingPictureBox.Invalidate();
         }
 
         private void PictureBox1_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -628,7 +627,7 @@ namespace Alturos.ImageAnnotation.CustomControls
         private void PictureBox1_MouseLeave(object sender, EventArgs e)
         {
             this._mouseOver = false;
-            this.pictureBox1.Invalidate();
+            this.rotatingPictureBox.Invalidate();
         }
 
         private void ClearAnnotationsToolStripMenuItem_Click(object sender, System.EventArgs e)
@@ -714,7 +713,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                     e.Alt ? ScaleOperation.Inverse : ScaleOperation.Regular);
             }
 
-            this.pictureBox1.Invalidate();
+            this.rotatingPictureBox.Invalidate();
         }
 
         public void OnKeyUp(object sender, KeyEventArgs e)

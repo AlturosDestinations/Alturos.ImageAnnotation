@@ -443,7 +443,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
         {
             using (var fileTransferUtility = new TransferUtility(this._s3Client))
             {
-                var keyName = $"{Directory.GetParent(filePath).Name}/{Path.GetFileName(filePath)}";
+                var keyName = $"{Directory.GetParent(filePath).Name.ReplaceSpecialCharacters()}/{Path.GetFileName(filePath).ReplaceSpecialCharacters()}";
 
                 var uploadRequest = new TransferUtilityUploadRequest
                 {
@@ -600,7 +600,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 var deleteObjectRequest = new DeleteObjectRequest
                 {
                     BucketName = this._bucketName,
-                    Key = $"{image.Package.PackageName}/{image.ImageName}"
+                    Key = $"{image.Package.PackageName.ReplaceSpecialCharacters()}/{image.ImageName.ReplaceSpecialCharacters()}"
                 };
 
                 var response = await this._s3Client.DeleteObjectAsync(deleteObjectRequest).ConfigureAwait(false);

@@ -137,7 +137,7 @@ The json block should look like this:
 
 ### App Config Setup
 
-Once you have installed all the necessary components, you still need to adjust the App.config file in the project.
+Once you have installed all the necessary components, you still need to adjust the Alturos.ImageAnnotation.exe.config file.
 
 * Change `bucketName` to the bucket name you wish to you use for your database. See the [Amazon S3 Bucket Naming Requirements](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-s3-bucket-naming-requirements.html).
 

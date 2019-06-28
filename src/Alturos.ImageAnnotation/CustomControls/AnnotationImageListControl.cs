@@ -68,7 +68,7 @@ namespace Alturos.ImageAnnotation.CustomControls
             }
             this._cachedImage = image;
 
-            this.ImageSelected?.BeginInvoke(image, null, null);
+            this.ImageSelected?.Invoke(image);
         }
 
         private void DataGridView1_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)

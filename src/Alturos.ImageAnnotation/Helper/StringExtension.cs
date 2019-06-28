@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Alturos.ImageAnnotation.Helper
 {
@@ -20,6 +22,18 @@ namespace Alturos.ImageAnnotation.Helper
         public static bool Contains(this string str, string value, StringComparison comp)
         {
             return str?.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        public static string ReplaceSpecialCharacters(this string str, char replacementChar = '_')
+        {
+            var sb = new StringBuilder();
+
+            foreach (var c in str)
+            {
+                sb.Append(char.IsLetterOrDigit(c) ? c : replacementChar);
+            }
+
+            return sb.ToString();
         }
     }
 }

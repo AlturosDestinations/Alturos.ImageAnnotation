@@ -15,7 +15,25 @@ namespace Alturos.ImageAnnotation.Helper
             try
             {
                 var originalBitmap = new Bitmap(image.ImagePath);
-                var resizedBitmap = new Bitmap(originalBitmap, ImageSize);
+
+                var newImageSize = new Size();
+                if (originalBitmap.Width > ImageSize.Width)
+                {
+                    newImageSize.Height = (int)(originalBitmap.Height * (ImageSize.Width / (double)originalBitmap.Width));
+                    newImageSize.Width = ImageSize.Width;
+                }
+                if (originalBitmap.Height > ImageSize.Height)
+                {
+                    newImageSize.Width = (int)(originalBitmap.Width * (ImageSize.Height / (double)originalBitmap.Height));
+                    newImageSize.Height = ImageSize.Height;
+                }
+
+                var resizedBitmap = new Bitmap(originalBitmap, newImageSize);
+                foreach (var id in originalBitmap.PropertyIdList)
+                {
+                    resizedBitmap.SetPropertyItem(originalBitmap.GetPropertyItem(id));
+                }
+  
                 originalBitmap.Dispose();
 
                 return resizedBitmap;

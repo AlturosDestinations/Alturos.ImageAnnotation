@@ -66,6 +66,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomControls\RotatingPictureBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CustomControls\TagDisplayControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -84,7 +87,6 @@
     <Compile Include="Forms\TagSelectionDialog.Designer.cs">
       <DependentUpon>TagSelectionDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helper\ControlExtension.cs" />
     <Compile Include="Helper\MathHelper.cs" />
     <Compile Include="Helper\PackageHelper.cs" />
     <Compile Include="Helper\YoloConfigParser.cs" />
@@ -189,10 +191,12 @@
     <Compile Include="Model\DragPointType.cs" />
     <Compile Include="Model\ObjectClass.cs" />
     <Compile Include="Model\AnnotationPackageTag.cs" />
+    <Compile Include="Model\PackageSelectionBehavior.cs" />
     <Compile Include="Model\YoloConfig\Convolutional.cs" />
     <Compile Include="Model\YoloConfig\Maxpool.cs" />
     <Compile Include="Model\YoloConfig\Net.cs" />
     <Compile Include="Model\YoloConfig\Route.cs" />
+    <Compile Include="Model\YoloConfig\Shortcut.cs" />
     <Compile Include="Model\YoloConfig\Upsample.cs" />
     <Compile Include="Model\YoloConfig\Yolo.cs" />
     <Compile Include="Model\YoloConfig\YoloConfig.cs" />
