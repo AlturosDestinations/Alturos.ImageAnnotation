@@ -196,6 +196,7 @@
     <Compile Include="Model\YoloConfig\Maxpool.cs" />
     <Compile Include="Model\YoloConfig\Net.cs" />
     <Compile Include="Model\YoloConfig\Route.cs" />
+    <Compile Include="Model\YoloConfig\Shortcut.cs" />
     <Compile Include="Model\YoloConfig\Upsample.cs" />
     <Compile Include="Model\YoloConfig\Yolo.cs" />
     <Compile Include="Model\YoloConfig\YoloConfig.cs" />

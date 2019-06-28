@@ -18,7 +18,7 @@
         public float LearningRate { get; set; } = 0.001f;
         public int BurnIn { get; set; } = 0;
         public int MaxBatches { get; set; } = 0;
-        public int Policy { get; set; } = 0;
+        public string Policy { get; set; }
         public int[] Steps { get; set; }
         public float[] Scales { get; set; }
     }

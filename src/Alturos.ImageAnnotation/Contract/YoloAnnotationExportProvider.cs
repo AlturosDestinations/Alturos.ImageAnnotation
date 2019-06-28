@@ -1,6 +1,7 @@
 ﻿using Alturos.ImageAnnotation.CustomControls;
 using Alturos.ImageAnnotation.Helper;
 using Alturos.ImageAnnotation.Model;
+using Alturos.ImageAnnotation.Model.YoloConfig;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -214,54 +215,30 @@ namespace Alturos.ImageAnnotation.Contract
 
             var yoloConfig = YoloConfigParser.Parse(yoloConfigPath);
 
-            var lines = File.ReadAllLines(yoloConfigPath);
-
-            var batchLineIndex = Array.FindIndex(lines, o => o.StartsWith("batch"));
-            lines[batchLineIndex] = "batch=64";
-
-            var subdivisionsLineIndex = Array.FindIndex(lines, o => o.StartsWith("subdivisions"));
-            lines[subdivisionsLineIndex] = "subdivisions=8";
+            var net = yoloConfig.YoloConfigElements.OfType<Net>().Single();
+            net.Batch = 64;
+            net.Subdivisions = 8;
 
             var imageSize = (this.Control as YoloExportControl).ImageSize;
-            var widthLineIndex = Array.FindIndex(lines, o => o.StartsWith("width"));
-            lines[widthLineIndex] = $"width={imageSize}";
-            var heightLineIndex = Array.FindIndex(lines, o => o.StartsWith("height"));
-            lines[heightLineIndex] = $"height={imageSize}";
+            net.Width = imageSize;
+            net.Height = imageSize;
 
             var maxBatches = objectClasses.Length * 2000;
-            var maxBatchesLineIndex = Array.FindIndex(lines, o => o.StartsWith("max_batches"));
-            lines[maxBatchesLineIndex] = $"max_batches={maxBatches}";
-
-            var steps1 = (int)(maxBatches * 0.8);
-            var steps2 = (int)(maxBatches * 0.9);
-            var stepsLineIndex = Array.FindIndex(lines, o => o.StartsWith("steps"));
-            lines[stepsLineIndex] = $"steps={steps1},{steps2}";
-
-            var classLines = lines.Where(o => o.StartsWith("classes"));
-            foreach (var classLine in classLines)
+            net.MaxBatches = maxBatches;
+            net.Steps = new int[] { (int)(maxBatches * 0.8), (int)(maxBatches * 0.9) };
+            
+            foreach (var yolo in yoloConfig.YoloConfigElements.OfType<Yolo>())
             {
-                lines[Array.IndexOf(lines, classLine)] = $"classes={objectClasses.Length}";
+                yolo.Classes = objectClasses.Length;
+
+                var convolutionalIndex = yoloConfig.YoloConfigElements.IndexOf(yolo) - 1;
+                var convolutional = yoloConfig.YoloConfigElements[convolutionalIndex] as Convolutional;
+
+                convolutional.Filters = (objectClasses.Length + 5) * 3;
             }
 
-            var filterIndices = new List<int>();
-            for (var i = 0; i < lines.Length; i++)
-            {
-                if (lines[i].StartsWith("[yolo]"))
-                {
-                    var filterIndex = i;
-                    while (!lines[filterIndex].StartsWith("filters"))
-                    {
-                        filterIndex--;
-                    }
-                    filterIndices.Add(filterIndex);
-                }
-            }
-            foreach (var filterIndex in filterIndices)
-            {
-                lines[filterIndex] = $"filters={(objectClasses.Length + 5) * 3}";
-            }
-
-            File.WriteAllLines(Path.Combine(dataPath, fileName), lines);
+            var composedConfig = YoloConfigParser.Compose(yoloConfig);
+            File.WriteAllText(Path.Combine(dataPath, fileName), composedConfig);
         }
 
         private void CreateCommandFile(string path)
