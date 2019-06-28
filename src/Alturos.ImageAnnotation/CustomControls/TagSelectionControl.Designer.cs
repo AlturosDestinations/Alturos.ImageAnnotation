@@ -56,6 +56,7 @@
             this.ColumnValue});
             this.dataGridViewAvailableTags.Location = new System.Drawing.Point(326, 55);
             this.dataGridViewAvailableTags.Name = "dataGridViewAvailableTags";
+            this.dataGridViewAvailableTags.ReadOnly = true;
             this.dataGridViewAvailableTags.RowHeadersVisible = false;
             this.dataGridViewAvailableTags.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewAvailableTags.Size = new System.Drawing.Size(279, 196);
@@ -66,6 +67,7 @@
             this.ColumnValue.DataPropertyName = "Value";
             this.ColumnValue.HeaderText = "Value";
             this.ColumnValue.Name = "ColumnValue";
+            this.ColumnValue.ReadOnly = true;
             // 
             // textBoxFilter
             // 
@@ -99,6 +101,7 @@
             this.dataGridViewTextBoxColumn1});
             this.dataGridViewSelectedTags.Location = new System.Drawing.Point(3, 29);
             this.dataGridViewSelectedTags.Name = "dataGridViewSelectedTags";
+            this.dataGridViewSelectedTags.ReadOnly = true;
             this.dataGridViewSelectedTags.RowHeadersVisible = false;
             this.dataGridViewSelectedTags.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewSelectedTags.Size = new System.Drawing.Size(268, 222);
@@ -109,6 +112,7 @@
             this.dataGridViewTextBoxColumn1.DataPropertyName = "Value";
             this.dataGridViewTextBoxColumn1.HeaderText = "Value";
             this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
             // 
             // buttonAdd
             // 
