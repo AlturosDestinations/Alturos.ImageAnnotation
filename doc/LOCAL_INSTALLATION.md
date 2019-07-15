@@ -49,3 +49,26 @@ The json block should look like this:
 	"status": "enabled"
 }
 ```
+
+### App Config Setup
+
+Once you have installed all the necessary components, you still need to adjust the `Alturos.ImageAnnotation.exe.config` file.
+
+* Change `bucketName` to the bucket name you wish to you use for your database. See the [Amazon S3 Bucket Naming Requirements](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-s3-bucket-naming-requirements.html).
+
+* Change the `accessKeyId` and `secretAccessKey` to the keys AWS is using.
+If you did a quick installation, the keys should be `AKIAIOSFODNN7EXAMPLE` and `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` respectively.
+If you did a manual installation, use the same keys you chose while configuring AWS earlier.
+
+* Change the `s3ServiceUrl` to `http://localhost:9000`
+
+* Change the `dynamoDbServiceUrl` to `http://localhost:8000`
+
+### Launching
+
+The setup is now complete.
+
+Run `run_local_environment.ps1` using the Windows PowerShell in order to start MinIO and the local DynamoDB.
+Once you launch the project you should be able to use your local database.
+
+If it doesn't work, try checking `http://localhost:8000/shell/` in your browser to see if the DynamoDB is running.
