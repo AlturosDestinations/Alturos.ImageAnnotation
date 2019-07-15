@@ -15,6 +15,11 @@ For every AnnotationPackage you can set your own tags... this information is sto
  - Export for yolo (train.txt, test.txt, obj.names) with filters
  - No requirement for a custom server
 
+## Installation
+
+- [Cloud Installation](doc/CLOUD_INSTALLATION.md)
+- [Local Installation](doc/LOCAL_INSTALLATION.md)
+
 ## Keyboard Shortcuts
 
 Shortcut | Description | 
@@ -34,11 +39,6 @@ If you have a video file and need the individual frames you can use [ffmpeg](htt
 ## Articles of interest
 
 - [Training YOLOv3 : Deep Learning based Custom Object Detector](https://www.learnopencv.com/training-yolov3-deep-learning-based-custom-object-detector/)
-
-## Installation
-
-- [Cloud Installation](doc/CLOUD_INSTALLATION.md)
-- [Local Installation](doc/LOCAL_INSTALLATION.md)
 
 ## Credits
 
