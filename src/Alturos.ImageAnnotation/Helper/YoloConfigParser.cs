@@ -50,8 +50,14 @@ namespace Alturos.ImageAnnotation.Helper
                         var obj = yoloConfig.YoloConfigElements.Last();
                         var property = obj.GetType().GetProperty(propertyName);
 
-                        var parsedProperty = ParseProperty(property.PropertyType, value);
-                        property.SetValue(obj, parsedProperty);
+                        try
+                        {
+                            var parsedProperty = ParseProperty(property.PropertyType, value);
+                            property.SetValue(obj, parsedProperty);
+                        }
+                        catch (Exception ex)
+                        {
+                        }
 
                         break;
                 }
@@ -65,36 +71,38 @@ namespace Alturos.ImageAnnotation.Helper
             object parsedProperty = null;
 
             var arrayRank = type.IsArray ? type.GetArrayRank() : 0;
+            var elementType = type.IsArray ? type.GetElementType() : type;
+
             switch (arrayRank)
             {
                 case 0:
-                    parsedProperty = ParseValue(type, value);
+                    parsedProperty = ParseValue(elementType, value);
                     break;
                 case 1:
-                    parsedProperty = ParseArray(type, value);
+                    parsedProperty = ParseArray(elementType, value);
                     break;
                 case 2:
-                    parsedProperty = Parse2DArray(type, value);
+                    parsedProperty = Parse2DArray(elementType, value);
                     break;
             }
 
             return parsedProperty;
         }
 
-        private static object ParseValue(Type type, string value)
+        private static object ParseValue(Type elementType, string value)
         {
-            if (type == typeof(int))
+            if (elementType == typeof(int))
             {
                 if (int.TryParse(value, out var intValue))
                 {
                     return intValue;
                 }
             }
-            else if (type == typeof(float))
+            else if (elementType == typeof(float))
             {
                 return float.Parse(value, CultureInfo.InvariantCulture);
             }
-            else if (type == typeof(string))
+            else if (elementType == typeof(string))
             {
                 return value;
             }
@@ -102,15 +110,16 @@ namespace Alturos.ImageAnnotation.Helper
             return null;
         }
 
-        private static object[] ParseArray(Type type, string value)
+        private static object[] ParseArray(Type elementType, string value)
         {
-            return value.Split(',').Select(o => ParseValue(type, o)).ToArray();
+            var parsedValues = value.Split(',').Select(o => ParseValue(elementType, o)).ToArray();
+            return parsedValues;
         }
 
-        private static object[,] Parse2DArray(Type type, string value)
+        private static object[,] Parse2DArray(Type elementType, string value)
         {
             var parsedValues = value.Split(new string[] { ",  " }, StringSplitOptions.RemoveEmptyEntries);
-            return parsedValues.Select(o => ParseArray(type, o)).ToArray().To2DArray();
+            return parsedValues.Select(o => ParseArray(elementType, o)).ToArray().To2DArray();
         }
 
         #endregion
