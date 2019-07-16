@@ -1,6 +1,7 @@
 ﻿using Alturos.ImageAnnotation.Model.YoloConfig;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -50,14 +51,8 @@ namespace Alturos.ImageAnnotation.Helper
                         var obj = yoloConfig.YoloConfigElements.Last();
                         var property = obj.GetType().GetProperty(propertyName);
 
-                        try
-                        {
-                            var parsedProperty = ParseProperty(property.PropertyType, value);
-                            property.SetValue(obj, parsedProperty);
-                        }
-                        catch (Exception ex)
-                        {
-                        }
+                        var parsedProperty = ParseProperty(property.PropertyType, value);
+                        property.SetValue(obj, parsedProperty);
 
                         break;
                 }
@@ -68,58 +63,58 @@ namespace Alturos.ImageAnnotation.Helper
 
         private static object ParseProperty(Type type, string value)
         {
-            object parsedProperty = null;
-
             var arrayRank = type.IsArray ? type.GetArrayRank() : 0;
             var elementType = type.IsArray ? type.GetElementType() : type;
+
+            var methodToCall = string.Empty;
 
             switch (arrayRank)
             {
                 case 0:
-                    parsedProperty = ParseValue(elementType, value);
+                    methodToCall = nameof(ParseValue);
                     break;
                 case 1:
-                    parsedProperty = ParseArray(elementType, value);
+                    methodToCall = nameof(ParseArray);
                     break;
                 case 2:
-                    parsedProperty = Parse2DArray(elementType, value);
+                    methodToCall = nameof(Parse2DArray);
                     break;
             }
+
+            var methodInfo = typeof(YoloConfigParser).GetMethod(methodToCall, BindingFlags.NonPublic | BindingFlags.Static);
+            var genericMethod = methodInfo.MakeGenericMethod(elementType);
+            var parsedProperty = genericMethod.Invoke(null, new object[] { value });
 
             return parsedProperty;
         }
 
-        private static object ParseValue(Type elementType, string value)
+        private static T ParseValue<T>(string value)
         {
-            if (elementType == typeof(int))
+            try
             {
-                if (int.TryParse(value, out var intValue))
+                var converter = TypeDescriptor.GetConverter(typeof(T));
+                if (converter != null)
                 {
-                    return intValue;
+                    return (T)converter.ConvertFromString(null, CultureInfo.InvariantCulture, value);
                 }
+                return default(T);
             }
-            else if (elementType == typeof(float))
+            catch (NotSupportedException)
             {
-                return float.Parse(value, CultureInfo.InvariantCulture);
+                return default(T);
             }
-            else if (elementType == typeof(string))
-            {
-                return value;
-            }
-
-            return null;
         }
 
-        private static object[] ParseArray(Type elementType, string value)
+        private static T[] ParseArray<T>(string value)
         {
-            var parsedValues = value.Split(',').Select(o => ParseValue(elementType, o)).ToArray();
+            var parsedValues = value.Split(',').Select(o => ParseValue<T>(o)).ToArray();
             return parsedValues;
         }
 
-        private static object[,] Parse2DArray(Type elementType, string value)
+        private static T[,] Parse2DArray<T>(string value)
         {
             var parsedValues = value.Split(new string[] { ",  " }, StringSplitOptions.RemoveEmptyEntries);
-            return parsedValues.Select(o => ParseArray(elementType, o)).ToArray().To2DArray();
+            return parsedValues.Select(o => ParseArray<T>(o)).ToArray().To2DArray();
         }
 
         #endregion
