@@ -144,7 +144,6 @@ namespace Alturos.ImageAnnotation.Helper
                     var value = property.GetValue(element);
 
                     var composedProperty = ComposeProperty(propertyType, value);
-
                     sb.AppendLine($"{PascalCaseToSnakeCase(property.Name)}={PascalCaseToSnakeCase(composedProperty)}");
                 }
             }
@@ -156,45 +155,50 @@ namespace Alturos.ImageAnnotation.Helper
 
         private static string ComposeProperty(Type type, object value)
         {
-            var composedProperty = string.Empty;
-
             var arrayRank = type.IsArray ? type.GetArrayRank() : 0;
+            var elementType = type.IsArray ? type.GetElementType() : type;
+
+            var methodToCall = string.Empty;
+
             switch (arrayRank)
             {
                 case 0:
-                    composedProperty = ComposeValue(value);
+                    methodToCall = nameof(ComposeValue);
                     break;
                 case 1:
-                    var values1d = value as object[];
-                    composedProperty = ComposeArray(values1d);
+                    methodToCall = nameof(ComposeArray);
                     break;
                 case 2:
-                    var values2d = value as object[,];
-                    composedProperty = Compose2DArray(values2d);
+                    methodToCall = nameof(Compose2DArray);
                     break;
             }
 
-            return composedProperty;
+            var methodInfo = typeof(YoloConfigParser).GetMethod(methodToCall, BindingFlags.NonPublic | BindingFlags.Static);
+            var genericMethod = methodInfo.MakeGenericMethod(elementType);
+            var composedProperty = genericMethod.Invoke(null, new object[] { value });
+
+            return composedProperty.ToString();
         }
 
-        private static string ComposeValue(object value)
+        private static string ComposeValue<T>(T value)
         {
             return value.ToString();
         }
 
-        private static string ComposeArray(object[] values)
+        private static string ComposeArray<T>(T[] values)
         {
             return string.Concat(values.Select((o, i) => i < values.Length - 1 ? ComposeValue(o) + "," : ComposeValue(o)));
         }
 
-        private static string Compose2DArray(object[,] values)
+        private static string Compose2DArray<T>(T[,] values)
         {
             var composedValue = string.Empty;
+            var length = values.GetLength(0);
 
-            for (var i = 0; i < values.Length; i++)
+            for (var i = 0; i < length; i++)
             {
                 composedValue += ComposeArray(new object[] { values[i, 0], values[i, 1] });
-                if (i != values.Length - 1)
+                if (i != length - 1)
                 {
                     composedValue += ",  ";
                 }
