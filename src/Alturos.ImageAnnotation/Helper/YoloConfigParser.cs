@@ -1,14 +1,19 @@
 ﻿using Alturos.ImageAnnotation.Model.YoloConfig;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Alturos.ImageAnnotation.Helper
 {
     public static class YoloConfigParser
     {
+        #region Parsing (text file to Yolo config model)
+
         public static YoloConfig Parse(string filePath)
         {
             var lines = File.ReadAllLines(filePath);
@@ -46,37 +51,8 @@ namespace Alturos.ImageAnnotation.Helper
                         var obj = yoloConfig.YoloConfigElements.Last();
                         var property = obj.GetType().GetProperty(propertyName);
 
-                        if (property.PropertyType == typeof(int))
-                        {
-                            if (int.TryParse(value, out var intValue))
-                            {
-                                property.SetValue(obj, intValue);
-                            }
-                        }
-                        else if (property.PropertyType == typeof(float))
-                        {
-                            property.SetValue(obj, float.Parse(value, CultureInfo.InvariantCulture));
-                        }
-                        else if (property.PropertyType == typeof(string))
-                        {
-                            property.SetValue(obj, value);
-                        }
-                        else if (property.PropertyType == typeof(int[]))
-                        {
-                            var values = value.Split(',').Select(o => int.Parse(o)).ToArray();
-                            property.SetValue(obj, values);
-                        }
-                        else if (property.PropertyType == typeof(int[][]))
-                        {
-                            var values = value.Split(new string[] { ",  " }, StringSplitOptions.RemoveEmptyEntries)
-                                .Select(o => o.Split(',').Select(p => int.Parse(p)).ToArray()).ToArray();
-                            property.SetValue(obj, values);
-                        }
-                        else if (property.PropertyType == typeof(float[]))
-                        {
-                            var values = value.Split(',').Select(o => float.Parse(o, CultureInfo.InvariantCulture)).ToArray();
-                            property.SetValue(obj, values);
-                        }
+                        var parsedProperty = ParseProperty(property.PropertyType, value);
+                        property.SetValue(obj, parsedProperty);
 
                         break;
                 }
@@ -84,6 +60,66 @@ namespace Alturos.ImageAnnotation.Helper
 
             return yoloConfig;
         }
+
+        private static object ParseProperty(Type type, string value)
+        {
+            var arrayRank = type.IsArray ? type.GetArrayRank() : 0;
+            var elementType = type.IsArray ? type.GetElementType() : type;
+
+            var methodToCall = string.Empty;
+
+            switch (arrayRank)
+            {
+                case 0:
+                    methodToCall = nameof(ParseValue);
+                    break;
+                case 1:
+                    methodToCall = nameof(ParseArray);
+                    break;
+                case 2:
+                    methodToCall = nameof(Parse2DArray);
+                    break;
+            }
+
+            var methodInfo = typeof(YoloConfigParser).GetMethod(methodToCall, BindingFlags.NonPublic | BindingFlags.Static);
+            var genericMethod = methodInfo.MakeGenericMethod(elementType);
+            var parsedProperty = genericMethod.Invoke(null, new object[] { value });
+
+            return parsedProperty;
+        }
+
+        private static T ParseValue<T>(string value)
+        {
+            try
+            {
+                var converter = TypeDescriptor.GetConverter(typeof(T));
+                if (converter != null)
+                {
+                    return (T)converter.ConvertFromString(null, CultureInfo.InvariantCulture, value);
+                }
+                return default(T);
+            }
+            catch (NotSupportedException)
+            {
+                return default(T);
+            }
+        }
+
+        private static T[] ParseArray<T>(string value)
+        {
+            var parsedValues = value.Split(',').Select(o => ParseValue<T>(o)).ToArray();
+            return parsedValues;
+        }
+
+        private static T[,] Parse2DArray<T>(string value)
+        {
+            var parsedValues = value.Split(new string[] { ",  " }, StringSplitOptions.RemoveEmptyEntries);
+            return parsedValues.Select(o => ParseArray<T>(o)).ToArray().To2DArray();
+        }
+
+        #endregion
+
+        #region Composing (Yolo config model to text file)
 
         public static string Compose(YoloConfig yoloConfig)
         {
@@ -106,36 +142,9 @@ namespace Alturos.ImageAnnotation.Helper
                 {
                     var propertyType = property.PropertyType;
                     var value = property.GetValue(element);
-                    var valueStr = string.Empty;
 
-                    if (propertyType == typeof(int[]))
-                    {
-                        var intValues = value as int[];
-                        valueStr = string.Concat(intValues.Select((o, i) => i < intValues.Length - 1 ? o.ToString() + "," : o.ToString()));
-                    }
-                    else if (propertyType == typeof(int[][]))
-                    {
-                        var intValues = value as int[][];
-                        for (var i = 0; i < intValues.Length; i++)
-                        {
-                            valueStr += string.Concat(intValues[i].Select((o, j) => j < intValues[i].Length - 1 ? o.ToString() + "," : o.ToString()));
-                            if (i != intValues.Length - 1)
-                            {
-                                valueStr += ",  ";
-                            }
-                        }
-                    }
-                    else if (propertyType == typeof(float[]))
-                    {
-                        var floatValues = value as float[];
-                        valueStr = string.Concat(floatValues.Select((o, i) => i < floatValues.Length - 1 ? o.ToString() + "," : o.ToString()));
-                    }
-                    else
-                    {
-                        valueStr = value.ToString();
-                    }
-
-                    sb.AppendLine($"{PascalCaseToSnakeCase(property.Name)}={PascalCaseToSnakeCase(valueStr)}");
+                    var composedProperty = ComposeProperty(propertyType, value);
+                    sb.AppendLine($"{PascalCaseToSnakeCase(property.Name)}={PascalCaseToSnakeCase(composedProperty)}");
                 }
             }
 
@@ -143,6 +152,64 @@ namespace Alturos.ImageAnnotation.Helper
 
             return sb.ToString();
         }
+
+        private static string ComposeProperty(Type type, object value)
+        {
+            var arrayRank = type.IsArray ? type.GetArrayRank() : 0;
+            var elementType = type.IsArray ? type.GetElementType() : type;
+
+            var methodToCall = string.Empty;
+
+            switch (arrayRank)
+            {
+                case 0:
+                    methodToCall = nameof(ComposeValue);
+                    break;
+                case 1:
+                    methodToCall = nameof(ComposeArray);
+                    break;
+                case 2:
+                    methodToCall = nameof(Compose2DArray);
+                    break;
+            }
+
+            var methodInfo = typeof(YoloConfigParser).GetMethod(methodToCall, BindingFlags.NonPublic | BindingFlags.Static);
+            var genericMethod = methodInfo.MakeGenericMethod(elementType);
+            var composedProperty = genericMethod.Invoke(null, new object[] { value });
+
+            return composedProperty.ToString();
+        }
+
+        private static string ComposeValue<T>(T value)
+        {
+            return value.ToString();
+        }
+
+        private static string ComposeArray<T>(T[] values)
+        {
+            return string.Concat(values.Select((o, i) => i < values.Length - 1 ? ComposeValue(o) + "," : ComposeValue(o)));
+        }
+
+        private static string Compose2DArray<T>(T[,] values)
+        {
+            var composedValue = string.Empty;
+            var length = values.GetLength(0);
+
+            for (var i = 0; i < length; i++)
+            {
+                composedValue += ComposeArray(new object[] { values[i, 0], values[i, 1] });
+                if (i != length - 1)
+                {
+                    composedValue += ",  ";
+                }
+            }
+
+            return composedValue;
+        }
+
+        #endregion
+
+        #region Case converters
 
         private static string SnakeCaseToPascalCase(string snakeCase)
         {
@@ -154,5 +221,7 @@ namespace Alturos.ImageAnnotation.Helper
         {
             return string.Concat(pascalCase.Select((x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString())).ToLower();
         }
+
+        #endregion
     }
 }

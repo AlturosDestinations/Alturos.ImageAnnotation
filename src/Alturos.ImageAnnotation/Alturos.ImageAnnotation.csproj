@@ -87,6 +87,7 @@
     <Compile Include="Forms\TagSelectionDialog.Designer.cs">
       <DependentUpon>TagSelectionDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helper\EnumerableExtension.cs" />
     <Compile Include="Helper\MathHelper.cs" />
     <Compile Include="Helper\PackageHelper.cs" />
     <Compile Include="Helper\YoloConfigParser.cs" />
