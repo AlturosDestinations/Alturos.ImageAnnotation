@@ -2,7 +2,7 @@
 
 # Alturos.ImageAnnotation
 
-The purpose of this project is to manage training data for Neural Networks. The image data are stored in a object storage for example Amazon S3.
+The purpose of this project is to manage training data for Neural Networks. The images are stored in an object storage for example Amazon S3.
 In our case we have image data for different runs that we want to annotate together. You can upload a folder into a package.
 For every package you can set your own tags... this information is stored in a database for example Amazon DynamoDB.
 
