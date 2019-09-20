@@ -6,7 +6,7 @@ This way all the files are kept on your PC rather than on a remote server.
 
 ### Quick installation
 
-Run `install_local_environment.ps1` using the Windows PowerShell (right-click -> `Run with PowerShell`). This should download and set up anything that's necessary.
+Run `install_local_environment.ps1` using the Windows PowerShell (right-click the .ps1 file in Windows Explorer -> `Run with PowerShell`). This should download and set up anything that's necessary.
 In case the script doesn't work, you can try a manual setup, as outlined below.
 
 ### Manual Installation
