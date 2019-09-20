@@ -52,7 +52,7 @@ namespace Alturos.ImageAnnotation.Helper
 
         public static Color GetColorCode(int index)
         {
-            return ColorTranslator.FromHtml(Colors[index]);
+            return ColorTranslator.FromHtml(Colors[index % Colors.Length]);
         }
     }
 }
