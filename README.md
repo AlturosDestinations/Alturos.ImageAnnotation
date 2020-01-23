@@ -21,6 +21,7 @@ You have the choice to use AWS or install your own environment.
 
 - [Cloud Installation](doc/CLOUD_INSTALLATION.md)
 - [Local Installation](doc/LOCAL_INSTALLATION.md)
+- [Docker Installation](doc/DOCKER_INSTALLATION.md)
 
 ## Keyboard Shortcuts
 
