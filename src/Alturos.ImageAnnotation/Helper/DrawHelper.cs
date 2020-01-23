@@ -16,7 +16,7 @@ namespace Alturos.ImageAnnotation.Helper
             {
                 var originalBitmap = new Bitmap(image.ImagePath);
 
-                var newImageSize = new Size();
+                var newImageSize = new Size(originalBitmap.Width, originalBitmap.Height);
                 if (originalBitmap.Width > ImageSize.Width)
                 {
                     newImageSize.Height = (int)(originalBitmap.Height * (ImageSize.Width / (double)originalBitmap.Width));
@@ -38,12 +38,13 @@ namespace Alturos.ImageAnnotation.Helper
 
                 return resizedBitmap;
             }
-            catch (Exception)
+            catch (Exception exception)
             {
                 var bitmap = new Bitmap(ImageSize.Width, ImageSize.Height);
                 using (var graphics = Graphics.FromImage(bitmap))
                 {
                     graphics.Clear(Color.White);
+                    graphics.DrawString(exception.Message, new Font("Arial", 12), Brushes.Black, 50, 50);
                 }
 
                 return bitmap;
