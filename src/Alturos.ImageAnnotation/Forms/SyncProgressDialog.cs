@@ -14,7 +14,7 @@ namespace Alturos.ImageAnnotation.Forms
         public SyncProgressDialog(IAnnotationPackageProvider annotationPackageProvider)
         {
             this._annotationPackageProvider = annotationPackageProvider;
-
+            this.CenterToParent();
             this.InitializeComponent();
         }
 
@@ -45,8 +45,6 @@ namespace Alturos.ImageAnnotation.Forms
             }
 
             this._syncing = false;
-
-            this.Invoke((MethodInvoker)delegate { this.Close(); });
         }
 
         private async Task UpdateProgressBar()

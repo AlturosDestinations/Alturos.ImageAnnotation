@@ -36,23 +36,24 @@ namespace Alturos.ImageAnnotation.Forms
 
         private void ButtonSelectFolders_Click(object sender, System.EventArgs e)
         {
-            var folderBrowser = new BetterFolderBrowser
+            using (var folderBrowser = new BetterFolderBrowser
             {
                 Multiselect = true,
                 RootFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-            };
-
-            var dialogResult = folderBrowser.ShowDialog();
-            if (dialogResult == DialogResult.OK)
+            })
             {
-                this._packagePaths = folderBrowser.SelectedFolders.ToList();
-
-                this.dataGridViewPackages.DataSource = folderBrowser.SelectedFolders.Select(o => new
+                var dialogResult = folderBrowser.ShowDialog(this);
+                if (dialogResult == DialogResult.OK)
                 {
-                    Name = o,
-                    ImageCount = PackageHelper.GetImages(o).Length,
-                    Size = Math.Round(this.GetDirectorySize(o), 2)
-                }).ToList();
+                    this._packagePaths = folderBrowser.SelectedFolders.ToList();
+
+                    this.dataGridViewPackages.DataSource = folderBrowser.SelectedFolders.Select(o => new
+                    {
+                        Name = o,
+                        ImageCount = PackageHelper.GetImages(o).Length,
+                        Size = Math.Round(this.GetDirectorySize(o), 2)
+                    }).ToList();
+                }
             }
 
             this.buttonUpload.Enabled = this._packagePaths?.Count > 0;

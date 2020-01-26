@@ -219,8 +219,7 @@ namespace Alturos.ImageAnnotation
                 syncDialog.Show(this);
 
                 await syncDialog.Sync(packages);
-                syncDialog.Dispose();
-
+                syncDialog.Close();
                 this.annotationPackageListControl.RefreshDataGrid();
             }
         }
