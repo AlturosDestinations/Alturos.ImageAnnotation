@@ -30,5 +30,4 @@ Alturos.ImageAnnotation.exe.config/App.config
     <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6.1" />
   </startup>
 </configuration>
-
 ```
