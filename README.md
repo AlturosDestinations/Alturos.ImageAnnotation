@@ -21,6 +21,7 @@ You have the choice to use AWS or install your own environment.
 
 - [Cloud Installation](doc/CLOUD_INSTALLATION.md)
 - [Local Installation](doc/LOCAL_INSTALLATION.md)
+- [Docker Installation](doc/DOCKER_INSTALLATION.md)
 
 ## Keyboard Shortcuts
 
@@ -51,4 +52,4 @@ The icon set is licensed under a [CC BY 3.0 license](https://creativecommons.org
 
 ## Other Image Annotation Tools
 
-- [rectlabel.com](https://rectlabel.com)
+[List of annotation tools for machine learning research](https://simonwenkel.com/2019/07/19/list-of-annotation-tools-for-machine-learning-research.html)
