@@ -52,4 +52,4 @@ The icon set is licensed under a [CC BY 3.0 license](https://creativecommons.org
 
 ## Other Image Annotation Tools
 
-- [rectlabel.com](https://rectlabel.com)
+[List of annotation tools for machine learning research](https://simonwenkel.com/2019/07/19/list-of-annotation-tools-for-machine-learning-research.html)
