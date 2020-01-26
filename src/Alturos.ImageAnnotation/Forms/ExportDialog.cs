@@ -183,7 +183,8 @@ namespace Alturos.ImageAnnotation.Forms
 
                 if (!double.IsNaN(percentageDone))
                 {
-                    this.labelDownloadProgress.Invoke((MethodInvoker)delegate {
+                    this.labelDownloadProgress.Invoke((MethodInvoker)delegate
+                    {
                         this.labelDownloadProgress.Text = $"Download in progress {(int)percentageDone}% (Package {progress.TransferedFiles + 1}/{progress.FileCount} {this._downloadProgress.CurrentFile})";
                     });
                     this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)percentageDone; });

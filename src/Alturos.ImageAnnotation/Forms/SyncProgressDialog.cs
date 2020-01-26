@@ -8,7 +8,7 @@ namespace Alturos.ImageAnnotation.Forms
 {
     public partial class SyncProgressDialog : Form
     {
-        private IAnnotationPackageProvider _annotationPackageProvider;
+        private readonly IAnnotationPackageProvider _annotationPackageProvider;
         private bool _syncing;
 
         public SyncProgressDialog(IAnnotationPackageProvider annotationPackageProvider)

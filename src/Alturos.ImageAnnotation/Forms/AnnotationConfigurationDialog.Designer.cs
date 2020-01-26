@@ -1,6 +1,6 @@
 ﻿namespace Alturos.ImageAnnotation.Forms
 {
-    partial class ConfigurationDialog
+    partial class AnnotationConfigurationDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -35,6 +35,8 @@
             this.textBoxObjectClass = new System.Windows.Forms.TextBox();
             this.buttonAddObjectClass = new System.Windows.Forms.Button();
             this.dataGridViewObjectClasses = new System.Windows.Forms.DataGridView();
+            this.ColumnId = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBoxTags = new System.Windows.Forms.GroupBox();
             this.textBoxTag = new System.Windows.Forms.TextBox();
             this.buttonAddTag = new System.Windows.Forms.Button();
@@ -43,8 +45,6 @@
             this.contextMenuStripTag = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonSave = new System.Windows.Forms.Button();
-            this.ColumnId = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
             this.splitContainerMain.Panel1.SuspendLayout();
             this.splitContainerMain.Panel2.SuspendLayout();
@@ -151,6 +151,21 @@
             this.dataGridViewObjectClasses.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.DataGridViewObjectClasses_CellBeginEdit);
             this.dataGridViewObjectClasses.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewObjectClasses_CellEndEdit);
             // 
+            // ColumnId
+            // 
+            this.ColumnId.DataPropertyName = "Id";
+            this.ColumnId.FillWeight = 50.76142F;
+            this.ColumnId.HeaderText = "Id";
+            this.ColumnId.Name = "ColumnId";
+            this.ColumnId.ReadOnly = true;
+            // 
+            // ColumnName
+            // 
+            this.ColumnName.DataPropertyName = "Name";
+            this.ColumnName.FillWeight = 149.2386F;
+            this.ColumnName.HeaderText = "Name";
+            this.ColumnName.Name = "ColumnName";
+            // 
             // groupBoxTags
             // 
             this.groupBoxTags.Controls.Add(this.textBoxTag);
@@ -162,7 +177,7 @@
             this.groupBoxTags.Size = new System.Drawing.Size(276, 254);
             this.groupBoxTags.TabIndex = 0;
             this.groupBoxTags.TabStop = false;
-            this.groupBoxTags.Text = "Tags";
+            this.groupBoxTags.Text = "Tags (optional)";
             // 
             // textBoxTag
             // 
@@ -236,21 +251,6 @@
             this.buttonSave.Text = "Save";
             this.buttonSave.UseVisualStyleBackColor = true;
             this.buttonSave.Click += new System.EventHandler(this.ButtonSave_Click);
-            // 
-            // ColumnId
-            // 
-            this.ColumnId.DataPropertyName = "Id";
-            this.ColumnId.FillWeight = 50.76142F;
-            this.ColumnId.HeaderText = "Id";
-            this.ColumnId.Name = "ColumnId";
-            this.ColumnId.ReadOnly = true;
-            // 
-            // ColumnName
-            // 
-            this.ColumnName.DataPropertyName = "Name";
-            this.ColumnName.FillWeight = 149.2386F;
-            this.ColumnName.HeaderText = "Name";
-            this.ColumnName.Name = "ColumnName";
             // 
             // ConfigurationDialog
             // 

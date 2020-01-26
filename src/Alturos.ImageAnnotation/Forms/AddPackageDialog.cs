@@ -47,7 +47,8 @@ namespace Alturos.ImageAnnotation.Forms
             {
                 this._packagePaths = folderBrowser.SelectedFolders.ToList();
 
-                this.dataGridViewPackages.DataSource = folderBrowser.SelectedFolders.Select(o => new {
+                this.dataGridViewPackages.DataSource = folderBrowser.SelectedFolders.Select(o => new
+                {
                     Name = o,
                     ImageCount = PackageHelper.GetImages(o).Length,
                     Size = Math.Round(this.GetDirectorySize(o), 2)
@@ -122,7 +123,8 @@ namespace Alturos.ImageAnnotation.Forms
                 var percentageDone = progress.GetPercentDone();
                 if (!double.IsNaN(percentageDone))
                 {
-                    this.labelUploadProgress.Invoke((MethodInvoker)delegate {
+                    this.labelUploadProgress.Invoke((MethodInvoker)delegate
+                    {
                         this.labelUploadProgress.Text = $"Upload in progress {(int)percentageDone}% (Image {progress.TransferedFiles + 1}/{progress.FileCount} {Path.GetFileName(progress.CurrentFile)})";
                     });
                     this.progressBar.Invoke((MethodInvoker)delegate { this.progressBar.Value = (int)percentageDone; });

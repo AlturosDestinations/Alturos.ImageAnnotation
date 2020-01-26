@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contract\Amazon\AmazonAnnotationPackageProviderConfig.cs" />
     <Compile Include="CustomControls\RotatingPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -80,6 +81,12 @@
     </Compile>
     <Compile Include="CustomControls\YoloExportControl.Designer.cs">
       <DependentUpon>YoloExportControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AmazonConfigurationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AmazonConfigurationDialog.Designer.cs">
+      <DependentUpon>AmazonConfigurationDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\TagSelectionDialog.cs">
       <SubType>Form</SubType>
@@ -101,11 +108,11 @@
     <Compile Include="CustomControls\TagSelectionControl.Designer.cs">
       <DependentUpon>TagSelectionControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ConfigurationDialog.cs">
+    <Compile Include="Forms\AnnotationConfigurationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ConfigurationDialog.Designer.cs">
-      <DependentUpon>ConfigurationDialog.cs</DependentUpon>
+    <Compile Include="Forms\AnnotationConfigurationDialog.Designer.cs">
+      <DependentUpon>AnnotationConfigurationDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Contract\Amazon\AmazonAnnotationPackageProvider.cs" />
     <Compile Include="Contract\Amazon\AnnotationConfigDto.cs" />
@@ -205,12 +212,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\AnnotationBoundingBox.cs" />
-    <Compile Include="Forms\StartupDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\StartupDialog.Designer.cs">
-      <DependentUpon>StartupDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\SyncProgressDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -226,8 +227,8 @@
     <EmbeddedResource Include="CustomControls\YoloExportControl.resx">
       <DependentUpon>YoloExportControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ConfigurationDialog.resx">
-      <DependentUpon>ConfigurationDialog.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\AnnotationConfigurationDialog.resx">
+      <DependentUpon>AnnotationConfigurationDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\AnnotationDrawControl.resx">
       <DependentUpon>AnnotationDrawControl.cs</DependentUpon>
@@ -243,6 +244,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\TagEditControl.resx">
       <DependentUpon>TagEditControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AmazonConfigurationDialog.resx">
+      <DependentUpon>AmazonConfigurationDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ExportDialog.resx">
       <DependentUpon>ExportDialog.cs</DependentUpon>
@@ -275,9 +279,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Forms\StartupDialog.resx">
-      <DependentUpon>StartupDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\SyncProgressDialog.resx">
       <DependentUpon>SyncProgressDialog.cs</DependentUpon>
     </EmbeddedResource>

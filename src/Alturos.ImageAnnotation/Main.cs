@@ -1,7 +1,6 @@
 ﻿using Alturos.ImageAnnotation.Contract;
 using Alturos.ImageAnnotation.Contract.Amazon;
 using Alturos.ImageAnnotation.Forms;
-using Alturos.ImageAnnotation.Helper;
 using Alturos.ImageAnnotation.Model;
 using System;
 using System.Linq;
@@ -21,16 +20,24 @@ namespace Alturos.ImageAnnotation
         public Main()
         {
             this.StartPosition = FormStartPosition.CenterScreen;
+
             try
             {
                 this._annotationPackageProvider = new AmazonAnnotationPackageProvider();
             }
             catch (TaskCanceledException)
             {
-                MessageBox.Show("The local database took too long to respond.\n\n" +
-                    "Make sure your config is correctly setup. Are MinIO and your local DynamoDB running?\n\n" +
+                MessageBox.Show("The local database took too long to respond.\r\n" +
+                    "Make sure your config is correctly setup. Are MinIO and your local DynamoDB running?\r\n" +
                     "Refer to the README.md for further information on how to correctly setup a local database.",
                     "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                this.Load += (s, e) => this.Close();
+                return;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("The configuration is invalid", "Configuration error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 this.Load += (s, e) => this.Close();
                 return;
@@ -41,7 +48,7 @@ namespace Alturos.ImageAnnotation
             {
                 this._annotationConfig = new AnnotationConfig();
 
-                using (var configurationDialog = new ConfigurationDialog())
+                using (var configurationDialog = new AnnotationConfigurationDialog())
                 {
                     configurationDialog.Setup(this._annotationConfig);
                     var dialogResult = configurationDialog.ShowDialog();
@@ -253,7 +260,7 @@ namespace Alturos.ImageAnnotation
 
         private async void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var dialog = new ConfigurationDialog())
+            using (var dialog = new AnnotationConfigurationDialog())
             {
                 dialog.StartPosition = FormStartPosition.CenterParent;
                 dialog.Setup(this._annotationConfig);

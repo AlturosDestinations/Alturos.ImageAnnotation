@@ -6,14 +6,14 @@ using System.Windows.Forms;
 
 namespace Alturos.ImageAnnotation.Forms
 {
-    public partial class ConfigurationDialog : Form
+    public partial class AnnotationConfigurationDialog : Form
     {
         private AnnotationConfig _config;
         private BindingSource _bindingSourceObjectClasses;
         private BindingSource _bindingSourceTags;
         private string _cachedValue;
 
-        public ConfigurationDialog()
+        public AnnotationConfigurationDialog()
         {
             this.InitializeComponent();
 

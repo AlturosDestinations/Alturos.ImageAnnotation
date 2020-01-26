@@ -9,12 +9,16 @@ namespace Alturos.ImageAnnotation.CustomControls
     {
         private void CorrectExifOrientation(Image image)
         {
-            if (image == null) return;
+            if (image == null)
+            {
+                return;
+            }
+
             int orientationId = 0x0112;
             if (image.PropertyIdList.Contains(orientationId))
             {
                 var orientation = (int)image.GetPropertyItem(orientationId).Value[0];
-                var rotateFlip = RotateFlipType.RotateNoneFlipNone;
+                RotateFlipType rotateFlip;
                 switch (orientation)
                 {
                     case 1: rotateFlip = RotateFlipType.RotateNoneFlipNone; break;

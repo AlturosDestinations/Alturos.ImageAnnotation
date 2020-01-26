@@ -1,11 +1,11 @@
-﻿using Alturos.ImageAnnotation.Helper;
+﻿using Alturos.ImageAnnotation.Forms;
+using Alturos.ImageAnnotation.Helper;
 using Alturos.ImageAnnotation.Model;
 using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
-using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
@@ -28,9 +28,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
         private readonly IAmazonS3 _s3Client;
         private readonly IAmazonDynamoDB _dynamoDbClient;
-        private readonly string _bucketName;
-        private readonly string _extractionFolder;
-        private readonly string _dbTableName;
+        private readonly AmazonAnnotationPackageProviderConfig _config;
         private readonly Queue<AnnotationPackage> _packagesToDownload;
         private readonly string _configHashKey = "AnnotationConfiguration";
 
@@ -40,108 +38,143 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
         public AmazonAnnotationPackageProvider()
         {
-            var accessKeyId = ConfigurationManager.AppSettings["accessKeyId"];
-            var secretAccessKey = ConfigurationManager.AppSettings["secretAccessKey"];
+            this._packagesToDownload = new Queue<AnnotationPackage>();
 
-            this._bucketName = ConfigurationManager.AppSettings["bucketName"]?.ToLower();
-            this._extractionFolder = ConfigurationManager.AppSettings["extractionFolder"];
+            var config = this.GetConfig();
 
-            this._dbTableName = ConfigurationManager.AppSettings["dbTableName"];
+            #region Validate config
 
-            var s3ServiceUrl = ConfigurationManager.AppSettings["s3ServiceUrl"];
-            var dynamoDbServiceUrl = ConfigurationManager.AppSettings["dynamoDbServiceUrl"];
-
-            if (string.IsNullOrEmpty(accessKeyId))
+            if (!this.ValidateConfig(config))
             {
-                throw new ConfigurationErrorsException("The accessKeyId has not been configured. Please set it in the App.config");
+                using (var dialog = new AmazonConfigurationDialog())
+                {
+                    dialog.SetConfig(config);
+                    dialog.ShowDialog();
+                }
+
+                config = this.GetConfig();
+
+                if (!this.ValidateConfig(config))
+                {
+                    throw new Exception("Configuration invalid");
+                }
             }
 
-            if (string.IsNullOrEmpty(secretAccessKey))
-            {
-                throw new ConfigurationErrorsException("The secretAccessKey has not been configured. Please set it in the App.config");
-            }
+            #endregion
 
-            if (string.IsNullOrEmpty(this._bucketName))
-            {
-                throw new ConfigurationErrorsException("The bucketName has not been configured. Please set it in the App.config");
-            }
+            this._config = config;
 
-            if (string.IsNullOrEmpty(s3ServiceUrl) || string.IsNullOrEmpty(dynamoDbServiceUrl))
+            if (string.IsNullOrEmpty(config.S3ServiceUrl) || string.IsNullOrEmpty(config.DynamoDbServiceUrl))
             {
-                this._s3Client = new AmazonS3Client(accessKeyId, secretAccessKey, RegionEndpoint.EUWest1);
-                this._dynamoDbClient = new AmazonDynamoDBClient(accessKeyId, secretAccessKey, RegionEndpoint.EUWest1);
+                this._s3Client = new AmazonS3Client(config.AccessKeyId, config.SecretAccessKey, RegionEndpoint.EUWest1);
+                this._dynamoDbClient = new AmazonDynamoDBClient(config.AccessKeyId, config.SecretAccessKey, RegionEndpoint.EUWest1);
             }
             else
             {
                 var s3Config = new AmazonS3Config
                 {
-                    ServiceURL = s3ServiceUrl,
+                    ServiceURL = config.S3ServiceUrl,
                     ForcePathStyle = true
                 };
                 var dbConfig = new AmazonDynamoDBConfig
                 {
-                    ServiceURL = dynamoDbServiceUrl
+                    ServiceURL = config.DynamoDbServiceUrl
                 };
 
-                this._s3Client = new AmazonS3Client(accessKeyId, secretAccessKey, s3Config);
-                this._dynamoDbClient = new AmazonDynamoDBClient(accessKeyId, secretAccessKey, dbConfig);
+                this._s3Client = new AmazonS3Client(config.AccessKeyId, config.SecretAccessKey, s3Config);
+                this._dynamoDbClient = new AmazonDynamoDBClient(config.AccessKeyId, config.SecretAccessKey, dbConfig);
 
-                if (!this._s3Client.DoesS3BucketExist(this._bucketName))
+                using (var tokenSource = new CancellationTokenSource(3000))
                 {
-                    this._s3Client.PutBucket(this._bucketName);
-                }
-
-                var createTableRequest = new CreateTableRequest
-                {
-                    TableName = this._dbTableName,
-                    AttributeDefinitions = new List<AttributeDefinition>(),
-                    KeySchema = new List<KeySchemaElement>(),
-                    GlobalSecondaryIndexes = new List<GlobalSecondaryIndex>(),
-                    LocalSecondaryIndexes = new List<LocalSecondaryIndex>(),
-                    ProvisionedThroughput = new ProvisionedThroughput
+                    if (!this._s3Client.DoesS3BucketExistAsync(this._config.BucketName).GetAwaiter().GetResult())
                     {
-                        ReadCapacityUnits = 1,
-                        WriteCapacityUnits = 1
+                        this._s3Client.PutBucketAsync(this._config.BucketName, tokenSource.Token).GetAwaiter().GetResult();
                     }
-                };
-                createTableRequest.KeySchema = new[]
-                {
-                    new KeySchemaElement
-                    {
-                        AttributeName = "Id",
-                        KeyType = KeyType.HASH,
-                    },
 
-                }.ToList();
-
-                createTableRequest.AttributeDefinitions = new[]
-                {
-                    new AttributeDefinition
+                    var createTableRequest = new CreateTableRequest
                     {
-                        AttributeName = "Id",
-                        AttributeType = ScalarAttributeType.S,
+                        TableName = this._config.DbTableName,
+                        AttributeDefinitions = new List<AttributeDefinition>(),
+                        KeySchema = new List<KeySchemaElement>(),
+                        GlobalSecondaryIndexes = new List<GlobalSecondaryIndex>(),
+                        LocalSecondaryIndexes = new List<LocalSecondaryIndex>(),
+                        ProvisionedThroughput = new ProvisionedThroughput
+                        {
+                            ReadCapacityUnits = 1,
+                            WriteCapacityUnits = 1
+                        }
+                    };
+
+                    createTableRequest.KeySchema = new List<KeySchemaElement>
+                    {
+                        new KeySchemaElement
+                        {
+                            AttributeName = "Id",
+                            KeyType = KeyType.HASH,
+                        },
+                    };
+
+                    createTableRequest.AttributeDefinitions = new List<AttributeDefinition>
+                    {
+                        new AttributeDefinition
+                        {
+                            AttributeName = "Id",
+                            AttributeType = ScalarAttributeType.S,
+                        }
+                    };
+
+                    var tables = this._dynamoDbClient.ListTablesAsync(tokenSource.Token).GetAwaiter().GetResult();
+                    if (!tables.TableNames.Contains(this._config.DbTableName))
+                    {
+                        this._dynamoDbClient.CreateTableAsync(createTableRequest, tokenSource.Token).GetAwaiter().GetResult();
                     }
-                }.ToList();
-
-                var tokenSource = new CancellationTokenSource();
-                var token = tokenSource.Token;
-
-                tokenSource.CancelAfter(10000);
-
-                var tables = this._dynamoDbClient.ListTablesAsync(token).GetAwaiter().GetResult();
-                if (!tables.TableNames.Contains(this._dbTableName))
-                {
-                    this._dynamoDbClient.CreateTableAsync(createTableRequest).GetAwaiter().GetResult();
                 }
             }
-
-            this._packagesToDownload = new Queue<AnnotationPackage>();
         }
 
         public void Dispose()
         {
             this._s3Client?.Dispose();
             this._dynamoDbClient?.Dispose();
+        }
+
+        private AmazonAnnotationPackageProviderConfig GetConfig()
+        {
+            var config = new AmazonAnnotationPackageProviderConfig
+            {
+                AccessKeyId = ConfigurationManager.AppSettings["accessKeyId"],
+                SecretAccessKey = ConfigurationManager.AppSettings["secretAccessKey"],
+
+                ExtractionFolder = ConfigurationManager.AppSettings["extractionFolder"],
+
+                S3ServiceUrl = ConfigurationManager.AppSettings["s3ServiceUrl"],
+                BucketName = ConfigurationManager.AppSettings["bucketName"]?.ToLower(),
+
+                DynamoDbServiceUrl = ConfigurationManager.AppSettings["dynamoDbServiceUrl"],
+                DbTableName = ConfigurationManager.AppSettings["dbTableName"],
+            };
+
+            return config;
+        }
+
+        private bool ValidateConfig(AmazonAnnotationPackageProviderConfig config)
+        {
+            if (string.IsNullOrEmpty(config.BucketName))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(config.AccessKeyId))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(config.SecretAccessKey))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public async Task SetAnnotationConfigAsync(AnnotationConfig config)
@@ -159,14 +192,13 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 {
                     var dbConfig = new DynamoDBOperationConfig
                     {
-                        OverrideTableName = this._dbTableName
+                        OverrideTableName = this._config.DbTableName
                     };
                     await context.SaveAsync(annotationConfig, dbConfig).ConfigureAwait(false);
                 }
             }
             catch (Exception)
             {
-
             }
         }
 
@@ -178,7 +210,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 {
                     var dbConfig = new DynamoDBOperationConfig
                     {
-                        OverrideTableName = this._dbTableName
+                        OverrideTableName = this._config.DbTableName
                     };
                     var annotationConfig = await context.LoadAsync<AnnotationConfigDto>(this._configHashKey, dbConfig).ConfigureAwait(false);
                     return new AnnotationConfig
@@ -230,7 +262,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             {
                 var dbConfig = new DynamoDBOperationConfig
                 {
-                    OverrideTableName = this._dbTableName
+                    OverrideTableName = this._config.DbTableName
                 };
 
                 try
@@ -270,7 +302,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                     // Get local folder if the package was already downloaded
                     foreach (var package in packages)
                     {
-                        var path = Path.Combine(this._extractionFolder, package.PackageName);
+                        var path = Path.Combine(this._config.ExtractionFolder, package.PackageName);
                         if (Directory.Exists(path))
                         {
                             package.AvailableLocally = true;
@@ -305,12 +337,12 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
             this._downloadedPackage = package;
 
-            if (!Directory.Exists(this._extractionFolder))
+            if (!Directory.Exists(this._config.ExtractionFolder))
             {
-                Directory.CreateDirectory(this._extractionFolder);
+                Directory.CreateDirectory(this._config.ExtractionFolder);
             }
 
-            var packagePath = Path.Combine(this._extractionFolder, package.PackageName);
+            var packagePath = Path.Combine(this._config.ExtractionFolder, package.PackageName);
             var tempPath = $"{packagePath}_temp";
 
             if (Directory.Exists(packagePath))
@@ -320,13 +352,13 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
             var files = await this._s3Client.ListObjectsV2Async(new ListObjectsV2Request
             {
-                BucketName = this._bucketName,
+                BucketName = this._config.BucketName,
                 Prefix = package.PackageName
             });
 
             var request = new TransferUtilityDownloadDirectoryRequest
             {
-                BucketName = this._bucketName,
+                BucketName = this._config.BucketName,
                 S3Directory = package.PackageName,
                 LocalDirectory = tempPath
             };
@@ -353,7 +385,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
             package.AvailableLocally = true;
 
-            var path = Path.Combine(this._extractionFolder, package.PackageName);
+            var path = Path.Combine(this._config.ExtractionFolder, package.PackageName);
             package.PrepareImages(path);
 
             this._packagesToDownload.Dequeue();
@@ -419,12 +451,12 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             }
 
             // Create local directory
-            if (!Directory.Exists(this._extractionFolder))
+            if (!Directory.Exists(this._config.ExtractionFolder))
             {
-                Directory.CreateDirectory(this._extractionFolder);
+                Directory.CreateDirectory(this._config.ExtractionFolder);
             }
 
-            var localPackagePath = Path.Combine(this._extractionFolder, Path.GetFileName(packagePath));
+            var localPackagePath = Path.Combine(this._config.ExtractionFolder, Path.GetFileName(packagePath));
 
             if (Directory.Exists(localPackagePath))
             {
@@ -449,14 +481,14 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 {
                     Key = keyName,
                     FilePath = filePath,
-                    BucketName = this._bucketName
+                    BucketName = this._config.BucketName
                 };
 
                 var uploadProgressEventHandler = new EventHandler<UploadProgressArgs>((sender, uploadProgressArgs) =>
                 {
                     this._uploadProgress.CurrentFile = uploadProgressArgs.FilePath;
                     this._uploadProgress.CurrentFilePercentDone = uploadProgressArgs.PercentDone;
-                });
+                });
 
                 uploadRequest.UploadProgressEvent += uploadProgressEventHandler;
 
@@ -507,7 +539,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             {
                 var dbConfig = new DynamoDBOperationConfig
                 {
-                    OverrideTableName = this._dbTableName
+                    OverrideTableName = this._config.DbTableName
                 };
                 await context.SaveAsync(info, dbConfig, token).ConfigureAwait(false);
             }
@@ -521,7 +553,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
             {
                 var dbConfig = new DynamoDBOperationConfig
                 {
-                    OverrideTableName = this._dbTableName
+                    OverrideTableName = this._config.DbTableName
                 };
                 var info = await context.LoadAsync<AnnotationPackageDto>(package.ExternalId, dbConfig, token).ConfigureAwait(false);
 
@@ -570,7 +602,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 {
                     var dbConfig = new DynamoDBOperationConfig
                     {
-                        OverrideTableName = this._dbTableName
+                        OverrideTableName = this._config.DbTableName
                     };
                     await context.DeleteAsync(new AnnotationPackageDto
                     {
@@ -579,14 +611,15 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 }
 
                 // Delete local folder
-                var path = Path.Combine(this._extractionFolder, package.PackageName);
-                if (Directory.Exists(path)) {
+                var path = Path.Combine(this._config.DbTableName, package.PackageName);
+                if (Directory.Exists(path))
+                {
                     Directory.Delete(path, true);
                 }
 
                 return successful;
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
                 return false;
             }
@@ -599,7 +632,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 // Delete image from S3
                 var deleteObjectRequest = new DeleteObjectRequest
                 {
-                    BucketName = this._bucketName,
+                    BucketName = this._config.BucketName,
                     Key = $"{image.Package.PackageName.ReplaceSpecialCharacters()}/{image.ImageName.ReplaceSpecialCharacters()}"
                 };
 
@@ -610,7 +643,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 {
                     var dbConfig = new DynamoDBOperationConfig
                     {
-                        OverrideTableName = this._dbTableName
+                        OverrideTableName = this._config.DbTableName
                     };
                     var package = await context.LoadAsync<AnnotationPackageDto>(image.Package.ExternalId, dbConfig).ConfigureAwait(false);
                     package.Images?.RemoveAll(o => o.ImageName.Equals(image.ImageName));
@@ -618,7 +651,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
                 }
 
                 // Delete local image
-                var localImagePath = Path.Combine(this._extractionFolder, image.Package.PackageName, image.ImageName);
+                var localImagePath = Path.Combine(this._config.ExtractionFolder, image.Package.PackageName, image.ImageName);
                 if (File.Exists(localImagePath))
                 {
                     File.Delete(localImagePath);
@@ -626,7 +659,7 @@ namespace Alturos.ImageAnnotation.Contract.Amazon
 
                 return true;
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
                 return false;
             }
