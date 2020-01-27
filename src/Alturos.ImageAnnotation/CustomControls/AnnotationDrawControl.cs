@@ -311,7 +311,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                     this.DrawLabel(e.Graphics, rectangle.X, rectangle.Y, objectClass);
 
                     var biggerRectangle = Rectangle.Inflate(rectangle, 20, 20);
-                    if (biggerRectangle.Contains(this._mousePosition))
+                    if ((this._draggedBoundingBox == null && biggerRectangle.Contains(this._mousePosition)) || this._draggedBoundingBox == boundingBox)
                     {
                         if (canHighlightBoundingBox)
                         {
@@ -321,6 +321,11 @@ namespace Alturos.ImageAnnotation.CustomControls
                         else
                         {
                             continue;
+                        }
+
+                        if (this._selectedBoundingBox != boundingBox)
+                        {
+                            e.Graphics.DrawRectangle(Pens.Pink, Rectangle.Inflate(rectangle, 2, 2));
                         }
 
                         var dragPoints = this.GetDragPoints(rectangle, drawOffset);
