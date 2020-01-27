@@ -199,6 +199,7 @@
     <Compile Include="Model\DragPointType.cs" />
     <Compile Include="Model\ObjectClass.cs" />
     <Compile Include="Model\AnnotationPackageTag.cs" />
+    <Compile Include="Model\ObjectClassExtended.cs" />
     <Compile Include="Model\PackageSelectionBehavior.cs" />
     <Compile Include="Model\YoloConfig\Convolutional.cs" />
     <Compile Include="Model\YoloConfig\Maxpool.cs" />

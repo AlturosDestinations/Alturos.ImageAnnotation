@@ -31,8 +31,17 @@ namespace Alturos.ImageAnnotation.Forms
             this.labelDownloadProgress.Visible = false;
 
             this._config = this._annotationPackageProvider.GetAnnotationConfigAsync().GetAwaiter().GetResult();
-            this.dataGridViewTags.DataSource = this._config.Tags;
-            this.dataGridViewObjectClasses.DataSource = this._config.ObjectClasses.ToList();
+
+            var tags = this._config.Tags;
+            tags.Insert(0, new AnnotationPackageTag { Value = "All" });
+
+            this.dataGridViewTags.DataSource = tags;
+            this.dataGridViewObjectClasses.DataSource = this._config.ObjectClasses.Select(o => new ObjectClassExtended
+            {
+                Id = o.Id,
+                Name = o.Name,
+                Selected = true
+            }).ToList();
 
             // Set export providers
             var objects = InterfaceHelper.GetImplementations<IAnnotationExportProvider>();
@@ -48,6 +57,10 @@ namespace Alturos.ImageAnnotation.Forms
         private async void ButtonSearch_Click(object sender, EventArgs e)
         {
             var tags = this.dataGridViewTags.SelectedRows.Cast<DataGridViewRow>().Select(o => o.DataBoundItem as AnnotationPackageTag);
+            if (tags.Any(o => o.Value == "All"))
+            {
+                tags = null;
+            }
 
             this.Invoke((MethodInvoker)delegate { this.EnableExportMenu(false); });
 
@@ -68,9 +81,9 @@ namespace Alturos.ImageAnnotation.Forms
 
             foreach (DataGridViewRow row in this.dataGridViewObjectClasses.Rows)
             {
-                if (Convert.ToBoolean(row.Cells[0].Value) == true)
+                if (row.DataBoundItem is ObjectClassExtended item)
                 {
-                    objectClasses.Add(row.DataBoundItem as ObjectClass);
+                    objectClasses.Add(new ObjectClass { Id = item.Id, Name = item.Name });
                 }
             }
 

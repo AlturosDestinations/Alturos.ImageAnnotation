@@ -80,6 +80,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewTags.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridViewTags.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewTags.ColumnHeadersVisible = false;
             this.dataGridViewTags.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ColumnValue});
             this.dataGridViewTags.Location = new System.Drawing.Point(6, 19);
