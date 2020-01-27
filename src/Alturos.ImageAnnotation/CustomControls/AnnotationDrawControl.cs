@@ -466,7 +466,8 @@ namespace Alturos.ImageAnnotation.CustomControls
 
                     var rectangle = new Rectangle((int)x, (int)y, (int)width, (int)height);
 
-                    if (this.PointInRectangle(this._mousePosition, rectangle, 15))
+                    var biggerRectangle = Rectangle.Inflate(rectangle, 20, 20);
+                    if (biggerRectangle.Contains(this._mousePosition))
                     {
                         startDrag = true;
 
