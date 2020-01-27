@@ -262,15 +262,9 @@ namespace Alturos.ImageAnnotation.CustomControls
                 point.Y.Clamp((float)canvasInfo.OffsetY, (float)canvasInfo.OffsetY + (float)canvasInfo.ScaledHeight));
         }
 
-        private AnnotationBoundingBox[] OrderBoundingBoxes(IEnumerable<AnnotationBoundingBox> boundingBoxes, int drawOffset)
+        private AnnotationBoundingBox[] OrderBoundingBoxes(IEnumerable<AnnotationBoundingBox> boundingBoxes)
         {
-            var dict = new Dictionary<AnnotationBoundingBox, float>();
-            foreach (var boundingBox in boundingBoxes)
-            {
-                dict[boundingBox] = this.GetDragPoints(this.GetRectangle(boundingBox), drawOffset).
-                    Min(o => this.PointDistance(this._mousePosition, o.Point));
-            }
-            return dict.OrderBy(o => o.Value).Select(o => o.Key).ToArray();
+            return boundingBoxes.OrderBy(o => o.Width * o.Height).ToArray();
         }
 
         private void PictureBox1_Paint(object sender, PaintEventArgs e)
@@ -297,7 +291,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 var canHighlightBoundingBox = true;
                 var canHighlightDragPoint = true;
 
-                var orderedBoundingBoxes = this.OrderBoundingBoxes(boundingBoxes, drawOffset);
+                var orderedBoundingBoxes = this.OrderBoundingBoxes(boundingBoxes);
 
                 foreach (var boundingBox in orderedBoundingBoxes)
                 {
@@ -452,7 +446,7 @@ namespace Alturos.ImageAnnotation.CustomControls
                 var drawOffset = this._mouseDragElementSize / 2;
                 var canvasInfo = this.GetCanvasInformation();
 
-                var orderedBoundingBoxes = this.OrderBoundingBoxes(boundingBoxes, drawOffset);
+                var orderedBoundingBoxes = this.OrderBoundingBoxes(boundingBoxes);
 
                 foreach (var boundingBox in orderedBoundingBoxes)
                 {
