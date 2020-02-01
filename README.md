@@ -36,6 +36,10 @@ Shortcut | Description |
 
 ## Data preperation
 
+### How many images are required
+
+You should preferably have 2000 different images for each class or more.
+
 ### Extract images from a video
 
 If you have a video file and need the individual frames you can use [ffmpeg](https://ffmpeg.org) to extract the images. This command exports every 10th frame in the video.
