@@ -67,7 +67,7 @@ namespace Alturos.ImageAnnotation.Forms
             var items = await this._annotationPackageProvider.GetPackagesAsync(tags?.ToArray());
 
             var objectClasses = this.GetSelectedObjectClasses();
-            var packages = items.Where(o => o.IsAnnotated && o.Images.Any(p => p.BoundingBoxes.Any(q => objectClasses.Select(t => t.Id).Contains(q.ObjectIndex)))).ToList();
+            var packages = items.Where(o => o.IsAnnotated && o.Images.Any(p => p.BoundingBoxes != null && p.BoundingBoxes.Any(q => objectClasses.Select(t => t.Id).Contains(q.ObjectIndex)))).ToList();
 
             this.dataGridViewResult.DataSource = packages;
             this.labelPackageCount.Text = $"{packages.Count.ToString()} found";
